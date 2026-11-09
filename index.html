@@ -1,0 +1,1720 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0F1E3D">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon-180.png">
+<meta name="apple-mobile-web-app-title" content="Explore London">
+<title>Explore London – a cabbie's guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Poppins:wght@500;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lib/leaflet.css">
+<style>
+:root{--navy:#0F1E3D;--navy2:#1B2E57;--orange:#F28C38;--cream:#FFF4E8;--bg:#DCE2EB;--ink:#0F1E3D;--muted:#55617A;--line:#C9D1DE;--plaque:#2E6FD8;--green:#3E9B6B}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#C9D1DD}
+body{font-family:'Source Sans 3',system-ui,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+#app{max-width:480px;margin:0 auto;min-height:100%;background:var(--bg);position:relative;display:flex;flex-direction:column}
+h1,h2,h3,.disp{font-family:'Archivo',sans-serif}
+a{color:inherit}
+button{font-family:inherit;cursor:pointer}
+.top{background:var(--navy);color:#fff;padding:12px 16px 14px;display:flex;flex-direction:column;gap:10px;position:sticky;top:0;z-index:500}
+.row{display:flex;align-items:center;gap:10px}
+.iconbtn{width:44px;height:44px;border-radius:22px;border:0;background:var(--navy2);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;text-decoration:none}
+.iconbtn.light{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(15,30,61,.15)}
+.search{display:flex;align-items:center;gap:10px;height:46px;min-height:46px;box-sizing:border-box;border-radius:23px;background:#fff;color:var(--muted);padding:0 16px;flex:1;min-width:0}
+.search input{border:0;outline:0;font:inherit;font-size:16px;color:var(--ink);flex:1;min-width:0;background:transparent}
+.content{flex:1;padding:14px 16px 96px;display:flex;flex-direction:column;gap:12px}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.tile{display:flex;flex-direction:column;align-items:center;gap:6px;background:linear-gradient(#fff,#F1F4F8);border:1px solid #D2D9E3;border-radius:14px;padding:8px 4px 10px;min-height:88px;text-decoration:none;text-align:center;box-shadow:inset 0 -4px 0 var(--c,#C9D1DE),0 6px 12px rgba(15,30,61,.16),0 1px 3px rgba(15,30,61,.12);transition:transform .08s,box-shadow .08s}
+.tile:active{transform:translateY(2px);box-shadow:inset 0 -2px 0 var(--c,#C9D1DE),0 2px 4px rgba(15,30,61,.14)}
+@media (prefers-reduced-motion:reduce){.tile{transition:none}}
+.tile .ic{width:44px;height:44px;border-radius:22px;display:flex;align-items:center;justify-content:center}
+.tile span.l{font-size:12.5px;font-weight:600;line-height:1.15}
+.bigbtn{display:flex;justify-content:center;align-items:center;gap:10px;height:50px;border-radius:25px;background:var(--navy);color:#fff;font-family:'Archivo',sans-serif;font-weight:700;font-size:16px;text-decoration:none;border:0;width:100%}
+.bigbtn.orange{background:var(--orange);color:var(--navy);font-weight:800}
+.ghost{display:flex;justify-content:center;align-items:center;height:44px;border-radius:22px;border:1px solid var(--line);background:#fff;padding:0 16px;font-size:15px;font-weight:600;text-decoration:none;color:var(--ink)}
+.sec{display:flex;justify-content:space-between;align-items:baseline}
+.sec h2{margin:0;font-size:18px;font-weight:800}
+.sec a{font-size:14px;font-weight:600}
+.ncard{flex:0 0 150px;display:flex;flex-direction:column;gap:5px;background:#fff;border-radius:16px;padding:10px;text-decoration:none;color:var(--ink);box-shadow:0 1px 3px rgba(15,30,61,.1)}.ncard b{font-size:14.5px;line-height:1.2}.ncard span:last-child{font-size:13px;line-height:1.3;color:var(--muted)}.ncard.more{flex-basis:110px;align-items:center;justify-content:center;text-align:center;background:var(--navy);color:#fff}
+.opin{position:relative;box-sizing:border-box;border-radius:50%;background:#fff;border:3px solid var(--c);box-shadow:0 2px 5px rgba(15,30,61,.35);display:flex;align-items:center;justify-content:center}.opin img{width:62%;height:62%;object-fit:contain}.opin:after{content:'';position:absolute;left:50%;bottom:-9px;transform:translateX(-50%);border:6px solid transparent;border-top:8px solid var(--c);border-bottom:0}
+.cabb{position:absolute;right:-5px;top:-5px;width:15px;height:15px;border-radius:50%;background:#F5B83D;border:1.5px solid #fff;display:flex;align-items:center;justify-content:center}
+.tpin{position:relative;filter:drop-shadow(0 2px 2px rgba(15,30,61,.35))}.tpin svg{display:block}.tpin img{position:absolute;object-fit:contain}.tpin img.wpic{filter:brightness(0) invert(1)}
+.hscroll{display:flex;gap:10px;overflow-x:auto;margin:0 -16px;padding:0 16px 4px;scrollbar-width:none}
+.wcard{width:168px;flex-shrink:0;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 1px 2px rgba(15,30,61,.08);text-decoration:none}
+.wcard .b{height:86px;padding:8px}
+.badge{font-size:11.5px;font-weight:700;border-radius:9px;padding:2px 8px;display:inline-block}
+.wcard .t{padding:8px 10px 10px;display:flex;flex-direction:column;gap:2px}
+.row-card{display:flex;align-items:center;gap:10px;background:#fff;border-radius:12px;padding:8px;text-decoration:none;box-shadow:0 1px 2px rgba(15,30,61,.08)}
+.thumb{width:52px;height:52px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;position:relative}
+.thumb.plaque,.plaquedot{border-radius:50%;background:var(--plaque);box-shadow:inset 0 0 0 3px #fff,0 0 0 1px var(--plaque)}
+.rc-t{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1}
+.rc-n{font-family:'Archivo',sans-serif;font-weight:700;font-size:15px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rc-m{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rc-l{font-size:13px;color:#2B3A55;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.free{position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:800;background:var(--green);color:#fff;border-radius:6px;padding:0 5px}
+.pills{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.pill{height:36px;border-radius:18px;border:0;background:#fff;color:var(--ink);font-size:13px;font-weight:700;padding:0 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pill.on{background:var(--orange)}
+.cpills{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.cpill{display:flex;align-items:center;gap:6px;border-radius:18px;padding:4px 8px 4px 4px;background:#fff;color:var(--ink);border:0;min-height:36px;text-align:left}
+.cpill .ci{width:28px;height:28px;border-radius:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.cpill .ci img{width:18px;height:18px}
+.cpill>span:last-child{font-size:13px;font-weight:700;line-height:1.1}
+.cpill.on{background:var(--orange);box-shadow:inset 0 0 0 2px #fff}
+.hpills{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.hpill{height:34px;border-radius:17px;border:0;background:var(--navy2);color:#fff;font-size:14px;font-weight:600;padding:0 12px;flex-shrink:0;display:flex;align-items:center;gap:6px}
+.hpill.on{background:var(--orange);color:var(--navy);font-weight:700}
+.dot{width:10px;height:10px;border-radius:5px;display:inline-block}
+.filters{display:flex;gap:8px;flex-wrap:wrap}.filters select{flex:1 1 0;min-width:0}.filters.four select{flex:1 1 calc(50% - 4px)}
+.filters select{flex:1;min-width:0;height:40px;border-radius:12px;border:1px solid var(--line);background:#fff;font:inherit;font-size:14px;font-weight:600;color:var(--ink);padding:0 10px}
+nav.tabs{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--navy);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:8px 2px calc(10px + env(safe-area-inset-bottom));z-index:1000}
+nav.tabs a{display:flex;flex-direction:column;align-items:center;gap:3px;min-height:58px;justify-content:center;text-decoration:none;font-size:14px;font-weight:700;color:#A9B6CE;white-space:nowrap}
+nav.tabs a i{width:26px;height:4px;border-radius:2px;background:transparent;margin-top:1px}
+nav.tabs a.on{color:#fff}nav.tabs a.on i{background:var(--orange)}
+.hero{position:relative;height:200px;display:flex;align-items:center;justify-content:center;background-size:cover;background-position:center}
+.hero .acts{position:absolute;top:12px;left:16px;right:16px;display:flex;justify-content:space-between}
+.sheet{background:#fff;border-radius:22px 22px 0 0;margin-top:-18px;padding:16px;position:relative;display:flex;flex-direction:column;gap:10px}
+.kicker{font-size:12.5px;font-weight:700;color:#A8551A;text-transform:uppercase;letter-spacing:.5px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.thumb.sm{border-radius:9px}.thumb.sm.plaque{border-radius:50%}
+.tag{font-size:13px;font-weight:700;background:#F5D9A8;border-radius:12px;padding:3px 10px}
+.story{background:var(--cream);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.story b.k{color:#A8551A}
+.credit{font-size:11.5px;color:var(--muted);padding:4px 16px 0}
+.map{height:calc(100dvh - 200px);min-height:380px;position:relative}
+#leaf{position:absolute;inset:0}
+.overlay{position:absolute;left:12px;right:12px;z-index:600}
+.card{background:#fff;border-radius:16px;box-shadow:0 2px 10px rgba(15,30,61,.16);padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.mins{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.mins button{height:42px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05}
+.mins button b{font-size:14px}.mins button small{font-size:11.5px;color:var(--muted)}
+.mins button.on{background:var(--navy);color:#fff;border-color:var(--navy)}.mins button.on small{color:#F5C79A}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{height:34px;border-radius:17px;border:1px solid var(--line);background:#fff;color:var(--ink);font-size:14px;font-weight:600;padding:0 12px}
+.chip.on{background:var(--navy);color:#fff;border-color:var(--navy);font-weight:700}
+.lbl{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.tick{width:44px;height:44px;border-radius:22px;border:2px solid var(--line);background:#fff;color:var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tick.on{background:var(--green);border-color:var(--green);color:#fff}
+.empty{background:#fff;border-radius:16px;padding:18px;text-align:center;color:var(--muted)}
+.welcome{min-height:100vh;background:var(--navy);color:#fff;display:flex;flex-direction:column;padding:0 0 32px}
+.wel{min-height:100vh;min-height:100dvh;background:#fff;color:#0F0D0B;display:flex;flex-direction:column;font-family:'Poppins',system-ui,sans-serif}
+.wel-top{display:flex;flex-direction:column;align-items:center;gap:6px;padding:calc(40px + env(safe-area-inset-top)) 20px 0;text-align:center}
+.wel-badge{width:46%;max-width:200px;height:auto;display:block}
+.wel h1{margin:8px 0 0;font-family:'Poppins',sans-serif;font-weight:600;font-size:clamp(28px,10.3vw,46px);line-height:1;letter-spacing:-1px;white-space:nowrap}
+.wel-top p{margin:0;font-weight:500;font-size:clamp(11px,3.45vw,15px);letter-spacing:.3px}
+.wel-sky{width:100%;aspect-ratio:390/315;object-fit:cover;object-position:center bottom;display:block;margin-top:2px}
+.wel-band{flex:1;background:#0F0D0B;color:#fff;display:flex;flex-direction:column;align-items:center;gap:10px;padding:0 24px calc(28px + env(safe-area-inset-bottom));text-align:center}
+.wel-cab{width:67%;height:auto;display:block;margin-top:-30.3%}
+.wel-band h2{margin:2px 0 0;font-family:'Poppins',sans-serif;font-weight:600;font-size:20px;line-height:1.2}
+.wel-band p{margin:0;font-size:14px;line-height:1.45;color:#D9D4CC;max-width:330px}
+.wel-go{display:flex;align-items:center;justify-content:center;align-self:stretch;height:56px;border-radius:28px;background:#F9B10F;color:#0F0D0B;font-family:'Poppins',sans-serif;font-weight:700;font-size:18px;text-decoration:none}
+.wel-free{font-size:13px;color:#BDB6AB}
+@media (max-height:700px){.wel-top{padding-top:calc(20px + env(safe-area-inset-top));gap:4px}.wel-badge{width:38%}.wel h1{font-size:clamp(26px,9vw,40px)}.wel-band{gap:8px}}
+.cabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 -8px}
+.cabs img{width:100%;aspect-ratio:1/1;border-radius:14px;display:block;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+.av{width:56px;height:56px;border-radius:28px;border:2px solid var(--orange);object-fit:cover;background:var(--navy2);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-family:'Archivo';font-weight:800;font-size:18px}
+.pin{width:20px;height:20px;border-radius:50%;border:2.5px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.35)}
+.pin.pl{background:var(--plaque)!important;box-shadow:inset 0 0 0 4px var(--plaque),inset 0 0 0 7px #fff,0 1px 3px rgba(0,0,0,.35)}
+.num{width:26px;height:26px;border-radius:13px;background:var(--navy);color:#fff;border:2px solid #fff;font:800 13px 'Archivo';display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,.35)}
+.me{width:18px;height:18px;border-radius:50%;background:var(--plaque);border:3px solid #fff;box-shadow:0 0 0 8px rgba(46,111,216,.2)}
+.stop{display:flex;gap:10px;background:#fff;border-radius:12px;padding:10px;box-shadow:0 1px 2px rgba(15,30,61,.08)}
+.note{font-size:13px;color:var(--muted);line-height:1.4}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:20px;font-size:14px;z-index:2000;max-width:90%}
+.leaflet-container{font-family:inherit}
+.hit{display:inline-block;background:var(--orange);color:var(--navy);font-weight:700;border-radius:8px;padding:0 6px}
+.tgl{grid-column:1/-1;line-height:1;font-size:11px;font-weight:800;color:#0F1E3D;opacity:.65;text-transform:uppercase;letter-spacing:.06em;margin:2px 2px -4px}.tgl:first-child{margin-top:-4px}
+.hg{row-gap:7px}.hg .tile{min-height:0;padding:5px 3px 8px;gap:2px}.hg .tile .ic{width:36px;height:36px}.hg .tile .ic>*{max-width:25px;max-height:25px}.hg .tile span.l{font-size:12px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="lib/leaflet.js"></script>
+<script>
+/* ===== Explore London · launch build 3 Nov 2026 ===== */
+const CONFIG = {
+  whatsapp: '447810057186',            // Matt's WhatsApp number goes here, in international format with no + or spaces, e.g. 447700900000
+  demoStart: [51.5103, -0.1300, 'Leicester Square'],
+  walkSpeed: 80,           // metres per minute
+  umami: '4e631e72-c134-4231-a6ab-554fcc10a9f7' // Umami website ID – visits are only counted once this is filled in
+};
+/* ---------- visit counting (Umami, cookie-free) ---------- */
+const STATS = (() => {
+  const on = !!CONFIG.umami && /allblacktaxis\.co\.uk$/.test(location.hostname);
+  const src = new URLSearchParams(location.search).get('src') || '';
+  let ready = false, q = [];
+  const send = f => { if (!on) return; if (ready && window.umami) { try { f(window.umami); } catch {} } else q.push(f); };
+  if (on) { const t = document.createElement('script'); t.defer = true; t.src = 'https://cloud.umami.is/script.js'; t.dataset.websiteId = CONFIG.umami; t.dataset.autoTrack = 'false';
+    t.onload = () => { ready = true; q.forEach(f => { try { f(window.umami); } catch {} }); q = []; }; document.head.appendChild(t); }
+  if (src) { try { sessionStorage.setItem('el_src', src); } catch {} send(u => u.track('QR / link', {from: src})); }
+  const screen = h => { const [, a, b] = h.split('/'); if (!a) return '/home'; if (a === 'place' && typeof P !== 'undefined') { const x = P.find(y => y.id === +b); return '/place/' + (x ? x.name : b); } return '/' + a + (b ? '/' + b : ''); };
+  return {
+    view: h => setTimeout(() => send(u => u.track(pr => ({...pr, url: screen(h) + (src ? '?src=' + src : ''), title: document.title}))), 400),
+    ev: (name, data) => send(u => u.track(name, data))
+  };
+})();
+addEventListener('click', e => {
+  const el = e.target.closest && e.target.closest('a,button'); if (!el) return;
+  const href = el.getAttribute('href') || '', label = (el.textContent || el.getAttribute('aria-label') || el.id || '').replace(/\s+/g, ' ').trim().slice(0, 40), at = location.hash || '#/';
+  if (/wa\.me/.test(href)) return STATS.ev('WhatsApp transfer enquiry', {screen: at});
+  if (/google\.com\/maps/.test(href)) return STATS.ev('Walk there / directions', {screen: at});
+  if (/^https?:/.test(href)) return STATS.ev('Website link', {site: href.replace(/^https?:\/\/(www\.)?/, '').split('/')[0], screen: at});
+  if (el.classList.contains('cpill')) return STATS.ev('Category pill', {pill: label, screen: at});
+  if (el.tagName === 'BUTTON') return STATS.ev('Button', {button: label || 'icon', screen: at});
+}, true);
+const HOME_GROUPS = [
+  ['Eat, drink &amp; watch the sport', ['Restaurants', 'Pubs', 'Bars & Nightlife', 'Sport']],
+  ['History &amp; sights', ['Landmarks', 'Museums & Galleries', 'History & Curiosities', 'Blue Plaques']],
+  ['Shops &amp; treats', ['Markets & Food Halls', 'Food Shops', 'Shopping', 'Spas & Wellness']],
+  ['Out &amp; about', ['Theatre & Shows', 'Parks & Gardens', 'Games & Activities', 'TUBE']]
+];
+const CATS = [
+  {k:'Restaurants', s:'Restaurants', c:'#E86A4F', t:'#FCDCD3', g:'Eat', i:'fork'},
+  {k:'Pubs', s:'Pubs', c:'#D99A1E', t:'#FDEBC2', g:'Drink', i:'pint'},
+  {k:'Bars & Nightlife', s:'Bars & Nightlife', c:'#3C8DD9', t:'#D6DFEC', g:'Drink', i:'glass'},
+  {k:'Landmarks', s:'Landmarks', c:'#8A5CC2', t:'#E6DBF4', g:'See', i:'tower'},
+  {k:'Museums & Galleries', s:'Museums', c:'#2BB3A3', t:'#CFF0EB', g:'See', i:'museum'},
+  {k:'History & Curiosities', s:'History', c:'#A39A3A', t:'#ECE9C6', g:'See', i:'scroll'},
+  {k:'Blue Plaques', s:'Blue Plaques', c:'#2E6FD8', t:'#D3E6F8', g:'Plaques', i:'plaque'},
+  {k:'Theatre & Shows', s:'Theatre & Cinema', c:'#D6457A', t:'#F8D3E1', g:'See', i:'mask'},
+  {k:'Sport', s:'Sport', c:'#3E5F8A', t:'#D6DFEC', g:'See', i:'ball'},
+  {k:'Parks & Gardens', s:'Parks', c:'#3F8F4E', t:'#D5EBD6', g:'See', i:'tree'},
+  {k:'Markets & Food Halls', s:'Markets', c:'#E08A2E', t:'#F9E0C7', g:'Eat', i:'basket'},
+  {k:'Food Shops', s:'Food Shops', c:'#B5562E', t:'#F5DDCF', g:'Eat', i:'shop'},
+  {k:'Shopping', s:'Shopping', c:'#C2457A', t:'#F8DDEE', g:'See', i:'bag'},
+  {k:'Spas & Wellness', s:'Spas', c:'#7A6BC2', t:'#E6DBF4', g:'See', i:'leaf'},
+  {k:'Games & Activities', s:'Games', c:'#2E8C9A', t:'#CFF0EB', g:'See', i:'dart'}
+];
+const IMG = {'Restaurants':'restaurants','Pubs':'pubs','Bars & Nightlife':'bars','Landmarks':'landmarks','Museums & Galleries':'museums','History & Curiosities':'history','Parks & Gardens':'parks','Markets & Food Halls':'markets','Shopping':'shopping','Spas & Wellness':'spas'};
+const CAT = Object.fromEntries(CATS.map(c => [c.k, c]));
+const DICON = {'Theatre & Shows':'img/d/a4b73c15e57c3170abb1bc5f9d0e8363.svg','Sport':'img/d/337270876bb9d500838834e266439ebb.svg','Games & Activities':'img/d/11d63a230318c745cd74adea87118dd6.svg'};
+const catIcon = (k, size) => DICON[k] ? `<img src="${DICON[k]}" alt="" style="width:${size}px;height:${size}px;object-fit:contain">` : IMG[k] ? `<img src="img/ic-${IMG[k]}.png" alt="" style="width:${size}px;height:${size}px;object-fit:contain">` : k === 'Blue Plaques' ? `<span class="plaquedot" style="width:${Math.round(size*.9)}px;height:${Math.round(size*.9)}px;display:block"></span>` : svg((CAT[k] || CATS[0]).i, size, '#0F1E3D', 1.8);
+const ICONS = {
+  menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',
+  fork:'<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M16 3c-2 1-3 4-3 7h3v11"/>',
+  pint:'<path d="M6 4h10v16a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1z"/><path d="M16 8h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M6 8h10"/>',
+  glass:'<path d="M4 4h16l-8 9z"/><path d="M12 13v7M8 20h8"/>',
+  tower:'<path d="M12 2l3 6H9z"/><path d="M9 8h6v13H9zM6 21h12M12 12v2"/>',
+  museum:'<path d="M3 10l9-6 9 6"/><path d="M5 10v9M9 10v9M15 10v9M19 10v9M3 20h18"/>',
+  scroll:'<path d="M7 4h11a2 2 0 0 1 0 4H7z"/><path d="M7 4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10V8M9 12h6M9 16h4"/>',
+  plaque:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="5"/>',
+  mask:'<path d="M4 5c5 2 11 2 16 0v6a8 8 0 0 1-16 0z"/><path d="M8 10h2M14 10h2M9 15c2 1.5 4 1.5 6 0"/>',
+  ball:'<circle cx="12" cy="12" r="9"/><path d="M12 7l4 3-1.5 4.5h-5L8 10zM12 3v4M21 10l-5 0M3 10h5M8 21l1.5-6.5M16 21l-1.5-6.5"/>',
+  tree:'<path d="M12 3l6 9h-4l5 6H5l5-6H6z"/><path d="M12 18v3"/>',
+  basket:'<path d="M3 10h18l-2 10H5z"/><path d="M8 10l4-6 4 6M9 14v3M15 14v3"/>',
+  bag:'<path d="M5 8h14l-1 13H6z"/><path d="M9 8a3 3 0 0 1 6 0"/>',
+  leaf:'<path d="M5 19c0-9 6-14 15-14 0 9-5 15-14 15"/><path d="M5 19l7-7"/>',
+  dart:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>',
+  back:'<path d="M15 6l-6 6 6 6"/>', heart:'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+  share:'<path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 13v6h14v-6"/>', clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+  near:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>', arrow:'<path d="M5 12h12M13 6l6 6-6 6"/>',
+  check:'<path d="M5 12l5 5 9-10"/>', walk:'<circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h6a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h6"/>',
+  cab:'<path d="M10 4h4l1 2"/><path d="M5 11l2-5h10l2 5"/><rect x="3" y="11" width="18" height="6" rx="2"/><circle cx="7.5" cy="17.5" r="1.8"/><circle cx="16.5" cy="17.5" r="1.8"/>',
+  layers:'<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/>', locate:'<path d="M3 11l18-8-8 18-2-8z"/>',
+  cal:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>', home2:'<path d="M4 20h16M6 20v-7l6-5 6 5v7M10 20v-4h4v4"/>', bolt:'<path d="M13 3L6 13h5l-1 8 7-10h-5z"/>', arch:'<path d="M4 18c2-6 14-6 16 0M4 18h16M8 14v4M16 14v4"/>', note:'<path d="M9 18V6l10-2v12"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="16" r="2"/>',
+  shop:'<path d="M4 10l1.5-5h13L20 10"/><path d="M4 10a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0 2.7 2.7 0 0 0 5.3 0"/><path d="M5 12v8h14v-8M10 20v-5h4v5"/>',
+  pin:'<path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="10" r="2.3"/>',
+  train:'<rect x="5" y="3" width="14" height="14" rx="3"/><path d="M5 10h14M9 21l1.5-4M15 21l-1.5-4"/><circle cx="9" cy="13.5" r="1"/><circle cx="15" cy="13.5" r="1"/>',
+  chat:'<path d="M4 20l1.5-4A8 8 0 1 1 8 18.5z"/>', chev:'<path d="M9 6l6 6-6 6"/>'
+};
+const svg = (n, s = 22, col = 'currentColor', w = 2) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]}</svg>`;
+const esc = s => String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+
+/* ---------- category page collections (from the approved designs, pages 5–20) ---------- */
+const D = id => 'img/d/' + id + (['0286059d50f7d8ce6ab19b537a3bd871','0621dff8cb41d5f3c03ae6b7feb4caae','5268cf905942ac617046818edeea138d','819594e0a4015b8dfad2985f6963c30d','93d6ef0bdc7a23cc554e168d89d97381','c373987804bd233bd5f47d88dd4f7e5a','d26d7ae73cc6f83cede2d3048469a31f','e1219fcf32fde57811c9029286f8b54b','f10c743945a204f748defe5f0f23b931','fbfd3e214ca9e17e2818cb654e64e882'].includes(id) ? '.png' : '.svg');
+const TXT = p => (p.name + ' | ' + p.tags.join(' | ') + ' | ' + (p.cuisine || '') + ' | ' + p.why).toLowerCase();
+const tagIs = (p, ...t) => p.tags.some(x => t.some(y => x.toLowerCase() === y.toLowerCase()));
+const kw = re => p => re.test(TXT(p));
+function yearOf(p) {
+  const t = p.tags.join(' ') + ' ' + p.why + ' ' + p.name;
+  let m = t.match(/(?:since|from|built in|built|dates? (?:back )?(?:to|from)|dating (?:back )?(?:to|from)|established in|opened in|founded in|rebuilt in|trading since|open since|in business since)\s+(?:the\s+)?(1[0-8]\d\d)\b/i);
+  return m ? +m[1] : null;
+}
+const ROYAL8 = /^(hyde park|kensington gardens|the green park|green park|st\.? james'?s park|the regent'?s park|regent'?s park|greenwich park|richmond park|bushy park)\b/i;
+const DAYS = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+const openToday = p => { const t = TXT(p), d = DAYS[new Date().getDay()]; return /daily|every day|seven days|7 days|open all week/.test(t) || t.includes(d) || t.includes(d.slice(0, 3) + ' ') || t.includes(d.slice(0, 3) + '–') || t.includes(d.slice(0, 3) + '-') || ((d === 'saturday' || d === 'sunday') && /weekend/.test(t)); };
+const COLL = {
+  'Restaurants': {banner: {label: 'Michelin-star restaurants', icon: D('61fe58775991c6dd07eec57a2a06c832'), bg: '#FCDCD3', test: kw(/michelin/)}, cuisine: true, def: D('d26d7ae73cc6f83cede2d3048469a31f'),
+    pills: [['Afternoon tea', '563a1f617086844b71381744fcb45907', '#E6DBF4', kw(/afternoon tea/)], ['Sunday roast', '9888d454071435a959d6d6f6608c5480', '#D5EBD6', kw(/sunday roast/)], ['Fish & chips', '43625200ae3a9b7770de5bc546aa7bb6', '#F5D9A8', kw(/fish & chips|fish and chips|chippy/)], ['Pie & mash', 'img/c/british.svg', '#E8DCC8', kw(/pie (&|and) mash/)], ['Brunch', 'ae41c4422538581e3e7b4d169725e2dc', '#FDEBC2', kw(/brunch|breakfast/)], ['Pizza', 'd8effd7e0c445930aa2bd1550493d719', '#F8D3E1', kw(/pizz/)], ['Gluten-free', 'img/c/glutenfree.svg', '#ECE9C6', kw(/gluten[- ]free/)], ['Seasonal', '2a4ad2dcf97987709f060bafda981091', '#FBE0C8', kw(/christmas day|new year|thanksgiving|halloween|seasonal menu/), 'Christmas Day lunches, New Year’s Eve and Thanksgiving dinners are coming in the next version.']]},
+  'Pubs': {banner: {label: 'London’s oldest pubs', badge: 'oldest', bg: '#0F1E3D', test: 'oldest10'}, year: true, def: D('e1219fcf32fde57811c9029286f8b54b'),
+    pills: [['Good food', 'f3e2b576c42084f679c25a72b64652d2', '#FCDCD3', p => tagIs(p, 'Good food')], ['By the river', '98660cd482e88714a5b9a64b3465c3f1', '#D3E6F8', kw(/river|thames|riverside|waterfront/)], ['Watch the sport', '9b42b580bd2d26c3aeccc0ec36b3e2fa', '#CFF0EB', p => tagIs(p, 'Sports') || /sports bar|big screens?|watch the (match|football|rugby|game)/.test(TXT(p))], ['Sunday roast', '9888d454071435a959d6d6f6608c5480', '#D5EBD6', kw(/sunday roast|sunday lunch/)], ['Live music', 'cc643c3b939cac0019456bfa7e50d0ee', '#E6DBF4', kw(/live music|jazz|\bgigs?\b|live bands?/)], ['Beer gardens', 'cccf09c4073af2428c8cb259b7ff19c2', '#E7F2C6', kw(/beer garden|terrace|courtyard/)]]},
+  'Bars & Nightlife': {banner: {label: 'London’s rooftop bars', icon: D('bebf83e8618873f4a70c5e91dec5dca8'), bg: '#D3E6F8', test: p => tagIs(p, 'Rooftop', 'Rooftops') || /rooftop/.test(TXT(p))}, def: D('0286059d50f7d8ce6ab19b537a3bd871'),
+    pills: [['Hotel bars', '7d8f82d0bc8d641cbfb34b6f6e807bc8', '#F5D9A8', p => tagIs(p, 'Hotel bar') || /hotel bar/.test(TXT(p))], ['Secret bars', 'dd8f818bf9a2d2f08483b4f9a4320f60', '#E6DBF4', p => tagIs(p, 'Secret bar') || /speakeasy|secret|hidden/.test(TXT(p))], ['Comedy', '31c953909251a1e64e2f13761f48fa0b', '#F8D3E1', kw(/comedy/)], ['Live music', 'cc643c3b939cac0019456bfa7e50d0ee', '#CFF0EB', kw(/live music|jazz|\bgig|\bband|\bdj\b/)], ['Late nights', '9842d1af30cfc0d34fda44c516f3078b', '#D6DFEC', kw(/late[- ]night|until [1-5] ?am|till [1-5] ?am|[1-5]am|small hours/)], ['LGBTQ+', 'lgbtq', '#F8D3E1', p => tagIs(p, 'LGBTQ+')]]},
+  'Landmarks': {banner: {label: 'First time?', sub: 'the top 10 sights', badge: '10', bg: '#0F1E3D', test: p => tagIs(p, 'Top 10', 'Must-see')}, def: D('0621dff8cb41d5f3c03ae6b7feb4caae'),
+    pills: [['Royal London', '5f40a521c7d0a9578d8dff8ea1c2a68a', '#F5D9A8', p => tagIs(p, 'Royal London') || /\b(royal|palace|crown jewels)\b/.test(TXT(p))], ['Best views', '71f38377faededd13050ab19a7ee1363', '#D3E6F8', p => tagIs(p, 'Best views', 'Rooftop') || /view/.test(TXT(p))], ['Free to visit', 'a56391e2fe4e86026463a39abd278e12', '#D5EBD6', p => tagIs(p, 'Free to visit')], ['Family fun', 'ccc6eead6f553c36c86805040c10c01f', '#FBE0C8', p => tagIs(p, 'Family fun', 'Kids & family')], ['Games & thrills', '01c2649a9237b8f0a73a0f9be70ac1f2', '#E7F2C6', kw(/slide|thrill|zip ?wire|climb|abseil|ride/)], ['Rainy day', 'a2ba4d795a25c0c6625dbeffabad63b3', '#E6DBF4', p => tagIs(p, 'Rainy day')]]},
+  'Museums & Galleries': {banner: {label: 'Free to visit', icon: D('a56391e2fe4e86026463a39abd278e12'), bg: '#D5EBD6', test: p => tagIs(p, 'Free to visit')}, def: D('f10c743945a204f748defe5f0f23b931'),
+    pills: [['Art', 'a780b6b7695ed4f265fe7fb6bd078c77', '#F5D9A8', p => tagIs(p, 'Art')], ['History', 'd74acca3ed3a07a60017eee95d61c7dc', '#FDEBC2', p => tagIs(p, 'History')], ['Science', 'b0ccae1b3a1e90ecf818ec5761628ef3', '#CFF0EB', p => tagIs(p, 'Science')], ['Hidden gems', '179d592528c2d6a003fc16ccfec90ee7', '#E6DBF4', p => tagIs(p, 'Hidden gems')], ['Immersive', '656fffdcabf0d2504dd1ca9c32fefa95', '#F8D3E1', p => tagIs(p, 'Immersive') || /immersive|interactive/.test(TXT(p))], ['Now showing', '95f1c0f511911438f0ec27cf4edb7603', '#FBE0C8', kw(/exhibition|now showing|on show until/)]]},
+  'History & Curiosities': {banner: {label: 'Cabbie’s stories', icon: D('18f4667faefbd283d686181978ee0e7a'), bg: '#FFFFFF', test: p => !!p.story}, def: D('fbfd3e214ca9e17e2818cb654e64e882'),
+    pills: [['Curiosities', '381fff08dcb363e395055851a404fe6a', '#D3E6F8', p => tagIs(p, 'Curiosities', 'Hidden gems')], ['Roman London', 'd74acca3ed3a07a60017eee95d61c7dc', '#FDEBC2', kw(/roman|londinium/)], ['Great Fire', '367a7d377aac76c259dc211968e5bb5e', '#FBE0C8', kw(/great fire|1666/)], ['Dark history', '50a7cd1285b67199f1ac5bd65f7a357c', '#E6DBF4', p => tagIs(p, 'Dark history') || /execut|plague|murder|ghost|ripper|hanged/.test(TXT(p))], ['Music', 'cc643c3b939cac0019456bfa7e50d0ee', '#CFF0EB', p => tagIs(p, 'Music')], ['Film & TV', 'f4f1d7e35414be511fe95ddcb3790a5e', '#F8D3E1', p => tagIs(p, 'Film & TV') || /\bfilm(ed)?\b|movie|harry potter|bridgerton/.test(TXT(p))]]},
+  'Theatre & Shows': {banner: {label: 'Tickets for tonight', sub: 'how to get them', icon: D('65b03e7a22f5305da805c49c2f22c353'), bg: '#0F1E3D', info: 'For tonight: try the TKTS booth in Leicester Square (official half-price booth), the theatre’s own box office when doors open for returns, or day seats and lotteries (TodayTix runs many). Black cabs know the finish times and wait outside, so there’s no need to walk away to find one.'}, def: null,
+    pills: [['Musicals', 'cc643c3b939cac0019456bfa7e50d0ee', '#CFF0EB', kw(/musical/)], ['Plays', 'f7873558efcc5e56251bf93efc83d1a5', '#FDEBC2', kw(/\bplay\b|drama|shakespeare/)], ['Comedy', '2b440527022fbd5d231ee1d6720de513', '#F8D3E1', kw(/comedy|stand-up|comedian/)], ['Opera & ballet', '3976e4724b6c4aec29a1c1d9930189a6', '#E6DBF4', kw(/opera|ballet/)], ['Christmas', '56086acdd234c0b824913f7de1b23cc1', '#D5EBD6', kw(/christmas|panto/)], ['Cinemas', 'f4f1d7e35414be511fe95ddcb3790a5e', '#FBE0C8', p => tagIs(p, 'Cinema')]]},
+  'Sport': {banner: {label: 'Match day', sub: 'eat & drink by the ground', icon: D('fd59a71fc3c66ce47d696652d6c5c3bb'), bg: '#D5EBD6', info: 'Match-day pubs by each ground are coming soon. We’re picking them from our own knowledge, including which ones are home fans only.'}, def: null,
+    pills: [['Stadium tours', 'fd59a71fc3c66ce47d696652d6c5c3bb', '#D5EBD6', p => tagIs(p, 'Stadium tours')], ['Where to watch', '9b42b580bd2d26c3aeccc0ec36b3e2fa', '#CFF0EB', p => tagIs(p, 'Where to watch')], ['Live events', 'cdb7229cd867e1753f045f475b1e89e3', '#E7F2C6', p => tagIs(p, 'Live events', 'Horse racing', 'American sports', 'Tennis')], ['Football', '086bbe3c1f682dcd35c75925f91fbda3', '#D6DFEC', p => tagIs(p, 'Football')], ['Rugby', 'ea3232dcd5cb1a9c34ee4418738d1f75', '#F5D9A8', p => tagIs(p, 'Rugby')], ['Cricket', 'fd6636a3896f8f533cea55756846d9bf', '#FCDCD3', p => tagIs(p, 'Cricket')]]},
+  'Parks & Gardens': {banner: {label: 'The Royal Parks', sub: 'all 8', icon: D('5f40a521c7d0a9578d8dff8ea1c2a68a'), bg: '#F5D9A8', test: p => tagIs(p, 'Royal Park') || ROYAL8.test(p.name)}, def: D('c373987804bd233bd5f47d88dd4f7e5a'),
+    pills: [['Gardens', '3f675a4b68fdf5ec0fb147484f69dde1', '#F8D3E1', p => tagIs(p, 'Gardens') || /garden/.test(p.name.toLowerCase())], ['Best views', '71f38377faededd13050ab19a7ee1363', '#D3E6F8', p => tagIs(p, 'Best views')], ['Wildlife', '0631d1ca9f9fd91dfa3660227ae4bd59', '#F5D9A8', p => tagIs(p, 'Wildlife')], ['Swimming', 'f4a32c141b24d3cf5b6d0a40db2b1d6b', '#CFF0EB', p => tagIs(p, 'Swimming')], ['Kids & picnics', '9198f2a4c986f0771c42a37e280d22dd', '#FDEBC2', p => tagIs(p, 'Kids & picnics')], ['Hidden gems', '179d592528c2d6a003fc16ccfec90ee7', '#E6DBF4', p => tagIs(p, 'Hidden gems')]]},
+  'Markets & Food Halls': {banner: {label: 'What’s open today', sub: 'by day', icon: D('95f1c0f511911438f0ec27cf4edb7603'), bg: '#FFFFFF', test: openToday}, def: D('5268cf905942ac617046818edeea138d'),
+    pills: [['Street food', 'd8effd7e0c445930aa2bd1550493d719', '#F8D3E1', kw(/street food|food stall/)], ['Food halls', 'f3e2b576c42084f679c25a72b64652d2', '#FCDCD3', p => tagIs(p, 'Food halls') || /food hall/.test(TXT(p))], ['Flowers', '3f675a4b68fdf5ec0fb147484f69dde1', '#D5EBD6', kw(/flower/)], ['Antiques & vintage', '179d592528c2d6a003fc16ccfec90ee7', '#E6DBF4', kw(/antique|vintage|bric-a-brac/)], ['Weekend markets', 'ebef37981baff5ad656bb413bbbb0696', '#FBE0C8', kw(/weekend|saturday|sunday/)], ['Christmas', '56086acdd234c0b824913f7de1b23cc1', '#D5EBD6', p => tagIs(p, 'Christmas markets') || /christmas/.test(TXT(p))]]},
+  'Food Shops': {banner: {label: 'Staying a while?', sub: 'tips for self-catering', icon: D('cart'), bg: '#F5DDCF', info: 'In an Airbnb or flat for a few weeks? Supermarkets are everywhere: Tesco Express, Sainsbury’s Local and Little Waitrose for top-ups (many open until 11pm), Lidl and Aldi for low prices, Waitrose and M&S for treats. On Sundays the big supermarkets can only open for six hours (usually 11am–5pm or 12–6pm); small local stores open longer. Bring a bag, as shops charge for carrier bags. Ocado, Tesco, Sainsbury’s and Waitrose deliver, and Deliveroo and Uber Eats bring groceries in about 30 minutes. For something special, the butchers, fishmongers, cheese and wine shops below are worth a visit.'}, def: D('5268cf905942ac617046818edeea138d'),
+    pills: [['Butchers', 'butcher', '#FCDCD3', p => tagIs(p, 'Butchers')], ['Fishmongers', 'fish', '#D3E6F8', p => tagIs(p, 'Fishmongers')], ['Cheese', 'cheese', '#FDEBC2', p => tagIs(p, 'Cheese')], ['Wine shops', 'wine', '#E6DBF4', p => tagIs(p, 'Wine shops')], ['Bakeries & delis', 'bread', '#F8D3E1', p => tagIs(p, 'Bakeries & delis')], ['Big food stores', 'cart', '#D5EBD6', p => tagIs(p, 'Food halls', 'Supermarkets')]]},
+  'Shopping': {banner: {label: 'London’s oldest shops', sub: 'since 1676', icon: D('5f40a521c7d0a9578d8dff8ea1c2a68a'), bg: '#F5D9A8', test: p => tagIs(p, 'Historic shops') || (yearOf(p) || 9999) < 1900}, def: D('819594e0a4015b8dfad2985f6963c30d'),
+    pills: [['Big stores', '0c1ae094c3fdd9d0ffd44bbd0a7bbec4', '#FDEBC2', p => tagIs(p, 'Big stores') || /department store/.test(TXT(p))], ['Famous streets', '6551dbcfa0922d2e5f451e908c38d55f', '#E6DBF4', p => tagIs(p, 'Shopping streets') || /\b(street|road|row|arcade)\b/.test(p.name.toLowerCase())], ['Heritage shops', '5f40a521c7d0a9578d8dff8ea1c2a68a', '#F5D9A8', p => tagIs(p, 'Historic shops') || (yearOf(p) || 9999) < 1900], ['Vintage', '179d592528c2d6a003fc16ccfec90ee7', '#E6DBF4', kw(/vintage|antique|second-hand/)], ['Books', 'caca178f7f41ad511a829a915414baa6', '#D3E6F8', p => tagIs(p, 'Bookshops') || /book/.test(TXT(p))], ['Kids & toys', 'ccc6eead6f553c36c86805040c10c01f', '#FBE0C8', p => tagIs(p, 'Family') || /toy|hamleys|kids|children/.test(TXT(p))]]},
+  'Spas & Wellness': {banner: {label: 'Historic Turkish baths', sub: 'still open', icon: D('2fd931d11a9c65afd647a115421bab59'), bg: '#D3E6F8', test: p => tagIs(p, 'Historic baths') || /turkish|victorian baths|historic baths/.test(TXT(p))}, def: D('93d6ef0bdc7a23cc554e168d89d97381'),
+    pills: [['Hotel spas', '27ec7e2abcee3a721f638d7bca10c32c', '#CFF0EB', p => tagIs(p, 'Luxury hotel spas') || /hotel/.test(TXT(p))], ['Historic baths', 'd74acca3ed3a07a60017eee95d61c7dc', '#FDEBC2', p => tagIs(p, 'Historic baths') || /turkish|victorian/.test(TXT(p))], ['Saunas', '2fd931d11a9c65afd647a115421bab59', '#D3E6F8', kw(/sauna|steam|banya|thermal/)], ['For two', 'f5409f56485722699fd851dc6a42936c', '#F8D3E1', kw(/couple|for two|together/)], ['Swimming', 'f4a32c141b24d3cf5b6d0a40db2b1d6b', '#CFF0EB', kw(/pool|swim/)], ['Day passes', '65b03e7a22f5305da805c49c2f22c353', '#FBE0C8', p => tagIs(p, 'Spa days') || /day pass|spa day/.test(TXT(p))]]},
+  'Games & Activities': {banner: {label: 'Rainy day?', sub: 'all indoors', icon: D('b0e9cf614cec29c038568c91862946ae'), bg: '#E6DBF4', test: p => !/outdoor|open-air/.test(TXT(p))}, def: null,
+    pills: [['Darts & shuffle', '3773b159d5301af0bbf76627f8184a67', '#FBE0C8', p => tagIs(p, 'Darts & shuffle')], ['Golf', '6082fc283ad50eb0bba3f122cdcac09d', '#D5EBD6', p => tagIs(p, 'Golf')], ['Bowling', '1a211fcf55eee4b012d3c9665889fff3', '#D3E6F8', p => tagIs(p, 'Bowling')], ['Escape rooms', '0b67105a17a6706259914b737ed523ac', '#FDEBC2', p => tagIs(p, 'Escape rooms')], ['Arcade & karaoke', '0791164ec37aca5385fa5fde1e00b2c6', '#E6DBF4', p => tagIs(p, 'Arcade & karaoke')], ['Kids & family', 'ccc6eead6f553c36c86805040c10c01f', '#F8D3E1', p => tagIs(p, 'Kids & family', 'Family fun')]]},
+  'Blue Plaques': {banner: null, def: null,
+    pills: ['Music', 'Writers', 'Film & TV', 'Royals & leaders', 'Science', 'Artists'].map(t => [t, null, '#D3E6F8', p => tagIs(p, t)])}
+};
+const PILLS = {}; Object.entries(COLL).forEach(([k, c]) => PILLS[k] = c.pills.map(([label, icon, bg, test, empty]) => ({label, icon: icon && (icon.includes('/') ? icon : D(icon)), bg, test, empty})));
+/* which collection a place shows under on a category page (first match wins) */
+function collOf(p, k) { return (PILLS[k] || []).find(c => c.test(p)) || null; }
+function shortLabel(l) { return {'Hotel bars':'Hotel bar','Secret bars':'Secret bar','Weekend markets':'Weekend market','Famous streets':'Famous street','Heritage shops':'Heritage shop','Big stores':'Department store','Hotel spas':'Hotel spa','Stadium tours':'Stadium tour','Beer gardens':'Beer garden','Musicals':'Musical','Plays':'Play','Escape rooms':'Escape room','Saunas':'Sauna','Food halls':'Food hall'}[l] || l; }
+
+/* ---------- storage (wrapped: some browsers block it) ---------- */
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+};
+let saved = new Set(store.get('el_saved', []));
+let visited = new Set(store.get('el_visited', []));
+const persist = () => { store.set('el_saved', [...saved]); store.set('el_visited', [...visited]); };
+
+/* ---------- data ---------- */
+let P = [], WALKS = [], byId = {};
+let me = null, meReal = false;
+const R = d => d * Math.PI / 180;
+function dist(a, b, c, d) { const x = R(c - a), y = R(d - b); const h = Math.sin(x/2)**2 + Math.cos(R(a))*Math.cos(R(c))*Math.sin(y/2)**2; return 6371000 * 2 * Math.asin(Math.sqrt(h)); }
+const mins = m => Math.max(1, Math.round(m / CONFIG.walkSpeed));
+/* where the person is staying (hotel, Airbnb or home), set on the "Where are you staying?" screen. Used when the phone's location isn't on. */
+let STAY = store.get('el_stay', null), FROM = null;
+const here = () => FROM || (meReal ? me : STAY ? [STAY.lat, STAY.lng, STAY.label] : (me || CONFIG.demoStart));
+function walkTime(p) { if (p.lat == null) return ''; const m = mins(dist(here()[0], here()[1], p.lat, p.lng)); return m > 60 ? `${Math.round(m/6)/10} hr walk` : `${m} min walk`; }
+
+async function load() {
+  const [a, b] = await Promise.all([fetch('places.json').then(r => r.json()), fetch('walks.json').then(r => r.json())]);
+  P = a; WALKS = b; byId = Object.fromEntries(P.map(p => [p.id, p]));
+  applyGeoCache(); geocodeMissing();
+}
+
+/* ---------- search: forgiving, word-start matching with everyday phrases ---------- */
+const STOP = new Set('a an and the of in on at near me my for best good great top nice places place spot spots london some to with where find i want any around nearby what is are get go do somewhere'.split(' '));
+const ALT = {
+  cinema: ['cinema', 'film'], cinemas: ['cinema'], movie: ['cinema', 'film'], movies: ['cinema', 'film'], film: ['cinema', 'film'], films: ['cinema', 'film'], flicks: ['cinema'], imax: ['imax', 'cinema'],
+  quirky: ['never knew', 'curios', 'hidden', 'unusual'], unusual: ['never knew', 'unusual', 'curios'], weird: ['never knew', 'curios'], odd: ['never knew', 'curios', 'odd'], strange: ['never knew', 'curios'],
+  butcher: ['butcher'], butchers: ['butcher'], fishmonger: ['fishmonger'], cheesemonger: ['cheese'], deli: ['deli', 'bakeri'], bakery: ['bakeri', 'deli', 'bread'], baker: ['bakeri', 'bread'],
+  supermarket: ['supermarket', 'food hall'], grocery: ['supermarket', 'deli', 'grocer'], groceries: ['supermarket', 'deli', 'grocer'], grocer: ['supermarket', 'grocer', 'deli'], airbnb: ['supermarket', 'food shop'],
+  curry: ['indian', 'curry', 'curries'], indian: ['indian', 'curry'], boozer: ['pub'], veggie: ['vegetarian', 'vegan', 'veggie', 'plant'],
+  kid: ['kid', 'family', 'children', 'child'], children: ['kid', 'family', 'children'], family: ['family', 'kid', 'children'],
+  gig: ['gig', 'live music', 'jazz', 'band'], view: ['view', 'rooftop', 'skyline', 'panoram'], rooftop: ['rooftop', 'roof'],
+  cheap: ['cheap', 'budget', 'value'], burger: ['burger'], steak: ['steak', 'chophouse', 'grill'], breakfast: ['breakfast', 'brunch'], brunch: ['brunch', 'breakfast'],
+  cocktail: ['cocktail', 'bar'], drink: ['bar', 'pub', 'drink', 'cocktail'], drinking: ['bar', 'pub', 'drink'], eat: ['restaurant', 'food', 'eat'], food: ['food', 'restaurant', 'eat'],
+  museum: ['museum', 'gallery'], gallery: ['gallery', 'museum'], park: ['park', 'garden'], garden: ['garden', 'park'], spa: ['spa', 'wellness', 'sauna'],
+  theatre: ['theatre', 'show', 'musical'], show: ['show', 'theatre', 'musical'], football: ['football', 'soccer'], sport: ['sport'],
+  free: ['free'], old: ['old', 'historic', 'oldest', 'ancient'], oldest: ['oldest', 'old', 'historic'], historic: ['historic', 'history', 'old'],
+  potter: ['potter', 'harry potter', 'hogwarts'], beatle: ['beatle'], plaque: ['plaque'], gay: ['lgbtq', 'gay'], lesbian: ['lesbian'], queer: ['lgbtq', 'queer'], lgbt: ['lgbtq'], river: ['river', 'thames', 'riverside', 'waterfront']
+};
+const sNorm = s => String(s || '').toLowerCase().replace(/[’'`]/g, '').replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, ' ').trim();
+const stem = w => w.length > 4 && w.endsWith('ies') ? w.slice(0, -3) + 'y' : w.length > 4 && /(ches|shes|sses|xes)$/.test(w) ? w.slice(0, -2) : w.length > 3 && w.endsWith('s') && !w.endsWith('ss') ? w.slice(0, -1) : w;
+function phraseFix(q) {
+  return (' ' + q + ' ')
+    .replace(/ (roast dinners?|roast lunch(es)?|sunday lunch(es)?|sunday dinners?|carvery|roasts) /g, ' sunday roast ')
+    .replace(/ (sunday )?roast /g, ' sunday roast ')
+    .replace(/ (chippy|chippie|chippies|fish n chips|fish chips|fish and chip|fish chip|chip shops?) /g, ' fish and chips ')
+    .replace(/ (high tea|cream tea) /g, ' afternoon tea ')
+    .replace(/ (wine merchants?|off licen[cs]es?|offies?|bottle shops?|wine stores?) /g, ' wine shops ')
+    .replace(/ (cheese shops?|cheesemongers?) /g, ' cheese ')
+    .replace(/ (things you never knew existed|things you never knew|never knew existed|(weird|quirky|odd|strange|unusual) (things|places|stuff)|weird|quirky|strange) /g, ' never knew ')
+    .replace(/ (movies?|flicks|the pictures|picture house|cinemas|films?) /g, ' cinema ')
+    .replace(/ (fish shops?|fishmongers) /g, ' fishmonger ')
+    .replace(/ (self catering|food shopping|food shops?) /g, ' food shops ')
+    .replace(/ (plant based) /g, ' vegan ')
+    .replace(/ (open all night|all night|24 7|24hrs?|24 hours) /g, ' 24 hour ')
+    .replace(/ (after midnight|late night|late) /g, ' late night ')
+    .trim().replace(/\s+/g, ' ');
+}
+function prepPlace(p) {
+  if (!p._s) p._s = {name: ' ' + sNorm(p.name), meta: ' ' + sNorm([p.cuisine, (p.tags || []).join(' '), (p.cats || []).join(' '), ['', 'cheap budget cheap eats', 'mid price', 'pricey', 'expensive splurge fine dining special occasion'][p.price || 0]].join(' ')), area: ' ' + sNorm(p.area), text: ' ' + sNorm([p.why, p.story, p.line].join(' '))};
+  return p._s;
+}
+function makeMatcher(raw) {
+  const q = phraseFix(sNorm(raw));
+  let words = q.split(' ').filter(Boolean);
+  let toks = words.filter(w => !STOP.has(w));
+  if (!toks.length) toks = words;
+  toks = [...new Set(toks.map(stem))];
+  const score = p => {
+    const s = prepPlace(p); let sc = 0, got = 0; const hit = new Set();
+    for (const t of toks) {
+      const alts = ALT[t] || [t]; let best = 0;
+      for (const a of alts) {
+        const n = ' ' + a;
+        const v = s.name.includes(n) ? 5 : s.meta.includes(n) ? 3 : s.area.includes(n) ? 2 : s.text.includes(n) ? 1 : 0;
+        if (v > best) best = v;
+      }
+      if (best) { got++; sc += best; hit.add(t); }
+    }
+    if (toks.length > 1 && (s.name + s.meta + s.text).includes(' ' + q)) sc += 4;
+    return {sc, got, all: got === toks.length, hit};
+  };
+  return {q, toks, score};
+}
+function searchPlaces(raw, limit = 40) {
+  const m = makeMatcher(raw); if (!m.toks.length) return {hits: [], exact: true};
+  const near = p => p.lat == null ? 1e9 : dist(here()[0], here()[1], p.lat, p.lng);
+  const scored = P.map(p => [p, m.score(p)]);
+  let list = scored.filter(([, r]) => r.all), exact = true;
+  if (!list.length && m.toks.length > 1) { exact = false; const need = Math.max(1, Math.ceil(m.toks.length / 2)); list = scored.filter(([, r]) => r.got >= need); }
+  const found = new Set(); if (!exact) scored.forEach(([, r]) => r.hit.forEach(t => found.add(t)));
+  const missing = exact ? [] : m.toks.filter(t => !found.has(t));
+  /* features the search asked for (e.g. "Sunday roast"), so each row can say why it matched */
+  const tokSet = new Set(m.toks), feats = [];
+  const wide = new Set(m.toks.flatMap(t => (ALT[t] || [t]).map(x => stem(sNorm(x)))));
+  Object.values(PILLS).flat().forEach(pl => { const lt = phraseFix(sNorm(pl.label)).split(' ').filter(w => w && !STOP.has(w)).map(stem); if (lt.length && lt.every(t => tokSet.has(t)) && !feats.some(f => f.label === pl.label)) feats.push(pl); });
+  const badgeFor = p => { for (const f of feats) { try { if (f.test(p)) return shortLabel(f.label); } catch {} } const c = (p.cuisine || '').split(',').concat(p.tags || []).map(x => x.trim()).filter(Boolean).find(c => { const ct = sNorm(c).split(' ').filter(w => !STOP.has(w)).map(stem); return ct.length && ct.some(t => wide.has(t)); }); return c ? c.replace(/^Rooftops$/, 'Rooftop').replace(/^Never knew$/, 'Curious London') : ''; };
+  /* places that are what was asked for (a butcher for "butcher") come before names that merely contain the word (the Pig and Butcher pub) */
+  const bOf = new Map(list.map(([p]) => [p, badgeFor(p) ? 1 : 0]));
+  list.sort((a, b) => b[1].got - a[1].got || bOf.get(b[0]) - bOf.get(a[0]) || b[1].sc - a[1].sc || near(a[0]) - near(b[0]));
+  return {hits: list.slice(0, limit).map(x => x[0]), total: list.length, exact, missing, badgeFor};
+}
+
+/* Fill missing pins from postcodes (postcodes.io, free and open). Cached on the phone. */
+const PC_FULL = /\b([A-Z]{1,2}\d[A-Z\d]?)\s*(\d[A-Z]{2})\b/i, PC_OUT = /\b([A-Z]{1,2}\d[A-Z\d]?)\b/;
+function applyGeoCache() { const c = store.get('el_geo1', {}); P.forEach(p => { if (p.lat == null && c[p.id]) { [p.lat, p.lng] = c[p.id]; p.approx = c[p.id][2]; } }); }
+async function geocodeMissing() {
+  const cache = store.get('el_geo1', {}), need = P.filter(p => p.lat == null && !cache[p.id]);
+  const full = [], outs = [];
+  need.forEach(p => { const a = (p.address || '').toUpperCase(); const m = a.match(PC_FULL); if (m) full.push([p, (m[1] + ' ' + m[2])]); else { const o = a.match(/\b([EWNS]{1,2}C?\d{1,2}[A-Z]?|SE\d{1,2}|SW\d{1,2}|NW\d{1,2})\b/); if (o) outs.push([p, o[1]]); } });
+  try {
+    for (let i = 0; i < full.length; i += 100) {
+      const chunk = full.slice(i, i + 100);
+      const r = await fetch('https://api.postcodes.io/postcodes', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({postcodes: chunk.map(x => x[1])})}).then(r => r.json());
+      (r.result || []).forEach((res, j) => { if (res.result) cache[chunk[j][0].id] = [res.result.latitude, res.result.longitude, 0]; });
+    }
+    const uniq = [...new Set(outs.map(x => x[1]))];
+    for (const o of uniq) {
+      const r = await fetch('https://api.postcodes.io/outcodes/' + o).then(r => r.json()).catch(() => null);
+      if (r && r.result) outs.filter(x => x[1] === o).forEach(x => cache[x[0].id] = [r.result.latitude, r.result.longitude, 1]);
+    }
+  } catch (e) {}
+  store.set('el_geo1', cache); applyGeoCache();
+  if (location.hash.startsWith('#/map') && window._mapRefresh) window._mapRefresh();
+}
+
+let locErr = null;   /* 1 = permission denied, 2/3 = no fix or timeout */
+const IOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+const LOC_HELP = IOS ? 'To use your location on iPhone: Settings → Privacy & Security → Location Services → Safari Websites → While Using. Then in Safari tap aA → Website Settings → Location → Allow, and tap the arrow on the map.'
+  : 'To use your location: allow Location for this site in your browser (tap the icon left of the web address → Permissions → Location), make sure the phone’s location is on, then tap the arrow on the map.';
+function locate(cb) {
+  if (!navigator.geolocation) return cb && cb(false);
+  navigator.geolocation.getCurrentPosition(pos => {
+    const {latitude: a, longitude: b} = pos.coords;
+    if (a > 51.25 && a < 51.75 && b > -0.6 && b < 0.35) { me = [a, b, 'You']; meReal = true; }
+    cb && cb(true);
+  }, e => { locErr = e && e.code; cb && cb(false); }, {enableHighAccuracy: true, timeout: 8000, maximumAge: 60000});
+}
+
+/* ---------- small pieces ---------- */
+function thumb(p, size = 52, cat) {
+  if (typeof catTile === 'function') return catTile(p, cat, size);
+  if ((cat === 'Blue Plaques') || (!cat && p.cats[0] === 'Blue Plaques')) return `<span class="thumb plaque" style="width:${size}px;height:${size}px"></span>`;
+  const c = CAT[cat] || CAT[p.cats[0]] || CATS[0];
+  const free = p.tags.includes('Free to visit') ? '<span class="free">FREE</span>' : '';
+  return `<span class="thumb" style="width:${size}px;height:${size}px;background:${c.t}">${catIcon(c.k, Math.round(size*.55))}${free}</span>`;
+}
+function meta(p) {
+  const c = CAT[p.cats[0]] || CATS[0];
+  const bits = [p.price ? PRICE[p.price] : '', p.cuisine ? p.cuisine.split(',')[0] : (p.tags.find(t => !/free|must|top 10|rainy|blue plaque/i.test(t)) || c.s), (p.area || '').replace(/ & .*/, '')].filter(Boolean);
+  const w = walkTime(p); if (w) bits.push(w.replace(' walk', ''));
+  return bits.filter(Boolean).join(' · ');
+}
+function row(p, cat, badge) {
+  const m = badge ? [p.area.replace(/ & .*/, ''), walkTime(p).replace(' walk', '')].filter(Boolean).join(' · ') : meta(p);
+  return `<a class="row-card" href="#/place/${p.id}">${thumb(p, 52, cat)}<span class="rc-t"><span class="rc-n">${esc(p.name)}</span><span class="rc-m">${badge ? `<span class="hit">${esc(badge)}</span> · ` : ''}${esc(m)}</span><span class="rc-l">${esc(p.line)}</span></span></a>`;
+}
+function tabs(on) {
+  const t = [['Explore','#/','home2'],['Map','#/map','pin'],['Walks','#/walks','walk'],['My List','#/list','heart'],['Transfers','#/transfers','cab']];
+  return `<nav class="tabs" aria-label="Main">${t.map(([l, h, ic]) => `<a href="${h}" class="${l === on ? 'on' : ''}" ${l === on ? 'aria-current="page"' : ''}>${svg(ic, 26, 'currentColor', 2)}${l}<i></i></a>`).join('')}</nav>`;
+}
+function toast(msg) { const d = document.createElement('div'); d.className = 'toast'; d.textContent = msg; document.body.appendChild(d); setTimeout(() => d.remove(), 2600); }
+function backBtn(h = 'javascript:history.back()') { return `<a class="iconbtn" href="${h}" aria-label="Back">${svg('back', 20)}</a>`; }
+const app = document.getElementById('app');
+/* ---------- base map: our own All Black Taxis map (the live app's), with OpenStreetMap as a fallback ----------
+   Our map = vector tiles on maptiles.allblacktaxi.co.uk + the live app's style (styles/el-style.json), drawn by MapLibre inside Leaflet.
+   If our server won't serve this site (or is slow), the plain OpenStreetMap map is used instead, so the map never goes blank. */
+const OSM_ATTR = '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors';
+let vecLibs = null, vecStyle = null;
+const loadJS = src => new Promise((ok, no) => { const e = document.createElement('script'); e.src = src; e.onload = ok; e.onerror = no; document.head.appendChild(e); });
+function loadVec() {
+  if (!vecLibs) vecLibs = (async () => {
+    const c = document.createElement('link'); c.rel = 'stylesheet'; c.href = 'lib/vec/maplibre-gl.css'; document.head.appendChild(c);
+    await loadJS('lib/vec/maplibre-gl.js'); await loadJS('lib/vec/pmtiles.js'); await loadJS('lib/vec/leaflet-maplibre-gl.js');
+    maplibregl.addProtocol('pmtiles', new pmtiles.Protocol().tile);
+    vecStyle = await fetch('styles/el-style.json').then(r => { if (!r.ok) throw 0; return r.json(); });
+    /* labels and map symbols are hosted on this site (copied from the live app), so only the map tiles come from our map server */
+    const base = location.href.replace(/[#?].*$/, '').replace(/[^/]*$/, '');
+    vecStyle.sprite = base + 'styles/sprites/sprite'; vecStyle.glyphs = base + 'styles/fonts/{fontstack}/{range}.pbf';
+  })();
+  return vecLibs;
+}
+function osmBase(map) { return L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19, attribution: OSM_ATTR}).addTo(map); }
+/* map pins: the live app's glossy pins (a coloured ball with the category picture), blue plaques keep their blue dot */
+const PIN = {'Restaurants':'restaurants','Pubs':'pubs','Bars & Nightlife':'nightlife','Landmarks':'attractions','Museums & Galleries':'museums','History & Curiosities':'curiosity','Theatre & Shows':'music','Sport':'attractions','Parks & Gardens':'parks','Markets & Food Halls':'foodhalls','Food Shops':'foodhalls','Shopping':'shopping','Spas & Wellness':'wellness','Games & Activities':'attractions'};
+/* our own pins: a white disc ringed in the category colour, with the app's own picture inside (restaurants show their cuisine), on a little pointer */
+function pinPic(p) {
+  const k = p.cats[0];
+  if (k === 'Restaurants') { const ck = cuisineKey(p); if (ck) return 'img/c/' + ck + '.svg'; }
+  if (DICON[k]) return DICON[k];
+  if (IMG[k]) return 'img/ic-' + IMG[k] + '.png';
+  const pl = (PILLS[k] || []).find(c => c.icon && c.test(p)); return pl ? pl.icon : (COLL[k] && COLL[k].def) || null;
+}
+const GLASS_PIN = {
+  /* Pubs: amber pin, big white pint glass with amber beer and a white head */
+  'Pubs': {fill: '#C97A0A', art: '<path d="M7.3 5.2h9.4l-1 13.6H8.3z" fill="#fff"/><path d="M8.5 8.4h7l-.8 9.2H9.3z" fill="#F6B73C"/>'},
+  /* Bars: deep wine pin, big white wine glass with wine in the bowl */
+  'Bars & Nightlife': {fill: '#6B1230', art: '<path d="M7.4 4.8h9.2c0 4.4-1.9 7.3-4.6 7.3S7.4 9.2 7.4 4.8z" fill="#fff"/><path d="M8.3 7.6h7.4c-.5 2.5-1.9 3.7-3.7 3.7s-3.2-1.2-3.7-3.7z" fill="#B8325A"/><rect x="11.35" y="11.8" width="1.3" height="5.4" fill="#fff"/><ellipse cx="12" cy="17.6" rx="3.4" ry="1" fill="#fff"/>'}
+};
+function pinIcon(p, big) {
+  const k = p.cats[0], c = CAT[k] || CATS[0], src = k === 'Blue Plaques' ? null : pinPic(p);
+  const g = GLASS_PIN[k];
+  if (g) { const w = big ? 36 : 30, h = Math.round(w * 32 / 24);
+    return L.divIcon({className: '', html: `<div class="tpin" style="width:${w}px;height:${h}px"><svg viewBox="0 0 24 32" width="${w}" height="${h}"><path d="M12 30.6C9.2 25.4 1.3 19.6 1.3 12A10.7 10.7 0 0 1 22.7 12C22.7 19.6 14.8 25.4 12 30.6z" fill="${g.fill}" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/>${g.art}</svg>${p.story ? `<span class="cabb" title="Cabbie's Story">${svg('cab', 10, '#0F1E3D', 2.4)}</span>` : ''}</div>`, iconSize: [w, h], iconAnchor: [w / 2, h - 1]}); }
+  if (src) { const w = big ? 32 : 26, h = Math.round(w * 32 / 24);
+    /* solid teardrop pin (option D, the rounder one): category colour, white rim, white picture */
+    return L.divIcon({className: '', html: `<div class="tpin" style="width:${w}px;height:${h}px"><svg viewBox="0 0 24 32" width="${w}" height="${h}"><path d="M12 30.6C9.2 25.4 1.3 19.6 1.3 12A10.7 10.7 0 0 1 22.7 12C22.7 19.6 14.8 25.4 12 30.6z" fill="${c.c}" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/></svg><img class="wpic" src="${src}" alt="" style="width:${w * .52}px;height:${w * .52}px;left:${w * .24}px;top:${w * .24}px">${p.story ? `<span class="cabb" title="Cabbie's Story">${svg('cab', 10, '#0F1E3D', 2.4)}</span>` : ''}</div>`, iconSize: [w, h], iconAnchor: [w / 2, h - 1]}); }
+  return pinIconOld(p, big);
+}
+function pinIconOld(p, big) {
+  const k = p.cats[0];
+  if (k === 'Blue Plaques' || !PIN[k]) return L.divIcon({className: '', html: `<div class="pin${k === 'Blue Plaques' ? ' pl' : ''}" style="background:${(CAT[k] || CATS[0]).c}"></div>`, iconSize: [20, 20]});
+  const z = big ? 40 : 32;
+  return L.icon({iconUrl: 'img/pins/' + PIN[k] + '.png', iconSize: [z, z], iconAnchor: [z / 2, z - 1], popupAnchor: [0, -z]});
+}
+function addBase(map) {
+  let ok = null; try { ok = sessionStorage.getItem('el_vec'); } catch {}
+  if ((ok && ok.startsWith('no:') && Date.now() - +ok.slice(3) < 120000) || !window.fetch) return osmBase(map);
+  let done = false, layer = null;
+  const fallback = () => { if (done) return; done = true; try { sessionStorage.setItem('el_vec', 'no:' + Date.now()); } catch {} try { layer && map.removeLayer(layer); } catch {} osmBase(map); };
+  const timer = setTimeout(fallback, 12000);
+  loadVec().then(() => {
+    if (done) return;
+    layer = L.maplibreGL({style: vecStyle, attribution: OSM_ATTR + ' · map: All Black Taxis'}).addTo(map);
+    const ml = layer.getMaplibreMap();
+    ml.on('styleimagemissing', e => { if (!ml.hasImage(e.id)) ml.addImage(e.id, {width: 1, height: 1, data: new Uint8Array(4)}); });
+    /* only give up if the map tiles themselves fail (a missing label font is not a reason to switch maps) */
+    ml.on('error', e => { const m = String((e && e.error && (e.error.message || e.error.status)) || ''); if (!done && (e.sourceId === 'openmaptiles' || /pmtiles|map-tiles/i.test(m))) fallback(); });
+    ml.once('idle', () => { if (!done) { done = true; clearTimeout(timer); try { sessionStorage.setItem('el_vec', 'yes'); } catch {} } });
+  }).catch(fallback);
+  return null;
+}
+
+function setTitle(t) { document.title = t ? `${t} · Explore London` : 'Explore London – a cabbie\'s guide'; }
+
+/* ---------- screens ---------- */
+function welcome() {
+  setTitle();
+  app.innerHTML = `<div class="wel">
+    <div class="wel-top">
+      <img class="wel-badge" src="img/welcome/abt-badge.png" alt="All Black Taxis">
+      <h1>EXPLORE LONDON</h1>
+      <p>YOUR GUIDE TO LONDON ALL IN ONE APP</p>
+    </div>
+    <img class="wel-sky" src="img/welcome/skyline.webp" alt="The London skyline over the Thames and Tower Bridge">
+    <div class="wel-band">
+      <img class="wel-cab" src="img/welcome/cab.webp" alt="Cartoon of a London cabbie driving a black cab">
+      <h2>Hop in. We know the way.</h2>
+      <p>Every London cabbie has passed the Knowledge. These are the places we’d take you.</p>
+      <div style="flex:1"></div>
+      <a class="wel-go" href="#/" onclick="store.set('el_seen',1)">Start exploring</a>
+      <span class="wel-free">Free · No sign-up needed</span>
+    </div></div>`;
+}
+
+const ON_THIS_DAY = {
+  '1-1':"1962: the Beatles audition for Decca in West Hampstead – and get turned down",
+  '1-2':"2002: RNLI lifeboats start rescue work on the Thames. Tower station by Waterloo Bridge becomes one of the busiest in Britain",
+  '1-3':"1911: the Siege of Sidney Street in Stepney – Winston Churchill turns up in person to watch",
+  '1-4':"1642: Charles I storms into the Commons to arrest five MPs. No monarch has set foot in the Commons since",
+  '1-5':"1066: Edward the Confessor dies, days after his new Westminster Abbey is consecrated",
+  '1-6':"Twelfth Night: the cast at Drury Lane cut the Baddeley Cake, as actor Robert Baddeley's will asked – every year since 1795",
+  '1-7':"1927: the first transatlantic telephone call is made, London to New York",
+  '1-8':"1947: David Bowie is born in Brixton",
+  '1-9':"1806: Nelson's state funeral at St Paul's Cathedral. He lies in the crypt, right under the dome",
+  '1-10':"1863: the world's first underground railway opens, from Paddington to Farringdon",
+  '1-11':"1569: England's first state lottery is drawn at the west door of old St Paul's",
+  '1-12':"1970: the first Boeing 747 'jumbo jet' lands at Heathrow",
+  '1-13':"1800: the Royal Institution gets its charter – later home to Michael Faraday and the Christmas Lectures",
+  '1-14':"1540: Southwark Priory is handed over to Henry VIII. Its church is now Southwark Cathedral",
+  '1-15':"1759: the British Museum opens to the public, in Montagu House in Bloomsbury",
+  '1-16':"1926: a BBC radio play about a riot in London is mistaken for real news, and causes panic",
+  '1-17':"1706: Benjamin Franklin is born. His only surviving home is at 36 Craven Street, near Charing Cross",
+  '1-18':"1486: Henry VII marries Elizabeth of York, joining the houses of York and Lancaster – hence the Tudor rose",
+  '1-19':"1917: the Silvertown explosion at a munitions factory in east London is heard across the city",
+  '1-20':"1265: Simon de Montfort's parliament meets at Westminster – the first with elected town representatives",
+  '1-21':"1976: Concorde's first passenger flight takes off from Heathrow, bound for Bahrain",
+  '1-22':"1788: Lord Byron is born on Holles Street, just off Oxford Street",
+  '1-23':"1571: Elizabeth I opens the Royal Exchange in the City and gives it its name",
+  '1-24':"1965: Winston Churchill dies at his home in Hyde Park Gate",
+  '1-25':"1533: Henry VIII secretly marries Anne Boleyn at Whitehall Palace",
+  '1-26':"1926: John Logie Baird shows off television for the first time, upstairs at 22 Frith Street, Soho",
+  '1-27':"1606: the Gunpowder Plotters go on trial in Westminster Hall",
+  '1-28':"1807: Pall Mall becomes the first street in the world lit by gas lamps, in a public demonstration",
+  '1-29':"1856: Queen Victoria creates the Victoria Cross",
+  '1-30':"1969: the Beatles play their last live show, on the roof of 3 Savile Row",
+  '1-31':"1606: Guy Fawkes is executed in Old Palace Yard, Westminster",
+  '2-1':"1814: the last Thames Frost Fair begins – an elephant is said to have been led across the ice below Blackfriars Bridge",
+  '2-2':"1602: the first recorded performance of Shakespeare's Twelfth Night, in Middle Temple Hall",
+  '2-3':"2012: Greenwich becomes a Royal Borough, for the Queen's Diamond Jubilee",
+  '2-4':"1817: St Marylebone Parish Church is consecrated – where poets Robert Browning and Elizabeth Barrett secretly married",
+  '2-5':"1953: sweets come off the ration, and children queue round the block at London's sweet shops",
+  '2-6':"1918: women over 30 win the vote. Millicent Fawcett's statue now stands in Parliament Square",
+  '2-7':"1812: Charles Dickens is born. His London home on Doughty Street is now the Charles Dickens Museum",
+  '2-8':"1956: the first Routemaster bus goes into service in London",
+  '2-9':"2002: Princess Margaret dies. She lived at Kensington Palace for over 40 years",
+  '2-10':"1840: Queen Victoria marries Prince Albert at the Chapel Royal, St James's Palace",
+  '2-11':"1930: Mary Quant is born in Blackheath. Her King's Road shop made the miniskirt famous",
+  '2-12':"1554: Lady Jane Grey, queen for nine days, is executed at the Tower of London",
+  '2-13':"1689: William and Mary are offered the crown in the Banqueting House",
+  '2-14':"1852: Great Ormond Street Hospital opens on Valentine's Day, with just 10 beds",
+  '2-15':"1971: Decimal Day – goodbye shillings and pence",
+  '2-16':"1824: the Athenaeum Club is founded on Pall Mall",
+  '2-17':"2003: London's congestion charge begins",
+  '2-18':"1688: first known mention of Edward Lloyd's coffee house – the start of Lloyd's of London",
+  '2-19':"1985: the first episode of EastEnders is shown",
+  '2-20':"1940: Jimmy Greaves, Spurs' record goalscorer, is born in Manor Park",
+  '2-21':"1901: the Apollo Theatre opens on Shaftesbury Avenue",
+  '2-22':"1857: Robert Baden-Powell, founder of the Scouts, is born in Paddington",
+  '2-23':"1633: Samuel Pepys is born, just off Fleet Street. He was baptised at St Bride's",
+  '2-24':"1809: Drury Lane theatre burns down. Its owner Sheridan watches with a drink: 'A man may surely take a glass of wine by his own fireside'",
+  '2-25':"1723: Sir Christopher Wren dies. His tomb in St Paul's says: 'If you seek his monument, look around you'",
+  '2-26':"1909: the world's first colour film show (Kinemacolor) at the Palace Theatre",
+  '2-27':"1907: the Old Bailey's new court building opens, with Lady Justice on the dome",
+  '2-28':"1820: John Tenniel, who drew the pictures for Alice in Wonderland, is born in Bayswater",
+  '2-29':"Leap day: by old tradition, today a woman may propose to a man",
+  '3-1':"1944: Roger Daltrey of The Who is born in Hammersmith",
+  '3-2':"1484: the College of Arms, keeper of coats of arms, gets its royal charter. It's still on Queen Victoria Street",
+  '3-3':"1982: the Queen opens the Barbican Centre",
+  '3-4':"1923: astronomer Patrick Moore is born in Pinner",
+  '3-5':"1948: Elaine Paige, star of Evita and Cats, is born in Barnet",
+  '3-6':"1930: Emmeline Pankhurst's statue is unveiled in Victoria Tower Gardens, next to Parliament",
+  '3-7':"1969: the Queen opens the Victoria line – and buys a ticket like everyone else",
+  '3-8':"1813: the Philharmonic Society gives its first concert. It later commissions Beethoven's Ninth",
+  '3-9':"2000: the London Eye opens to the public",
+  '3-10':"1905: Chelsea Football Club is founded, in the Rising Sun pub opposite Stamford Bridge",
+  '3-11':"1702: the Daily Courant, Britain's first daily newspaper, is published on Fleet Street",
+  '3-12':"1901: the Whitechapel Gallery opens",
+  '3-13':"1807: the Grand Surrey Canal's dock at Rotherhithe opens – the docks are now Surrey Quays",
+  '3-14':"1883: Karl Marx dies in Kentish Town. He's buried in Highgate Cemetery",
+  '3-15':"1909: Selfridges opens on Oxford Street",
+  '3-16':"1872: the first FA Cup final, at the Oval: Wanderers 1, Royal Engineers 0",
+  '3-17':"1969: Alexander McQueen is born in Lewisham",
+  '3-18':"1745: Robert Walpole dies – Britain's first prime minister and the first to live at No. 10",
+  '3-19':"1891: sugar man Henry Tate offers £80,000 for a gallery – it's built on the old Millbank Prison site",
+  '3-20':"1819: Burlington Arcade opens – it still has its own Beadles to keep order",
+  '3-21':"1825: the first performance in Britain of Beethoven's Ninth Symphony, in London",
+  '3-22':"1907: the first taxicabs with meters start working London's streets",
+  '3-23':"1743: Handel's Messiah has its London premiere at Covent Garden",
+  '3-24':"1834: William Morris is born in Walthamstow",
+  '3-25':"1843: Brunel's Thames Tunnel opens – the first tunnel under a navigable river",
+  '3-26':"1985: Keira Knightley is born in Teddington",
+  '3-27':"1988: Jessie J is born in Chadwell Heath",
+  '3-28':"1819: Joseph Bazalgette is born. His sewers and the Embankment cleaned up London after the Great Stink",
+  '3-29':"1871: Queen Victoria opens the Royal Albert Hall",
+  '3-30':"1912: both crews sink in the Boat Race, and it has to be re-rowed",
+  '3-31':"1967: Jimi Hendrix sets fire to his guitar for the first time, at the Astoria in Finsbury Park",
+  '4-1':"1918: the Royal Air Force is founded, with its first headquarters in the Hotel Cecil on the Strand",
+  '4-2':"1911: census night – suffragette Emily Davison hides in a cupboard in the Houses of Parliament so she can give it as her address",
+  '4-3':"2019: the Tottenham Hotspur Stadium opens",
+  '4-4':"1581: Elizabeth I knights Francis Drake aboard the Golden Hind at Deptford",
+  '4-5':"1955: Winston Churchill resigns as Prime Minister and leaves Downing Street",
+  '4-6':"1999: Mamma Mia! opens in the West End",
+  '4-7':"1815: Lord Byron and Walter Scott meet for the first time, at publisher John Murray's on Albemarle Street",
+  '4-8':"1838: the National Gallery opens in its new building on Trafalgar Square",
+  '4-9':"1806: Isambard Kingdom Brunel is born",
+  '4-10':"1848: the great Chartist rally on Kennington Common, demanding votes for all men",
+  '4-11':"1689: William and Mary are crowned together in Westminster Abbey",
+  '4-12':"1941: Bobby Moore, England's 1966 World Cup captain, is born in Barking",
+  '4-13':"1812: a tunnel under Highgate Hill collapses – so a bridge is built instead, the Archway",
+  '4-14':"1759: Handel dies at his house on Brook Street, Mayfair",
+  '4-15':"1755: Samuel Johnson's Dictionary is published",
+  '4-16':"1889: Charlie Chaplin is born in Walworth",
+  '4-17':"1828: the Royal Free Hospital opens – free care for anyone who walked in",
+  '4-18':"1881: the Natural History Museum opens in South Kensington",
+  '4-19':"1802: clown Joseph Grimaldi first plays 'Joey' at Sadler's Wells – why clowns are still called Joeys",
+  '4-20':"1653: Oliver Cromwell throws out Parliament: 'In the name of God, go!'",
+  '4-21':"1926: the future Queen Elizabeth II is born at 17 Bruton Street, Mayfair",
+  '4-22':"2000: the 'Big Number Change' – London's phone numbers become 020",
+  '4-23':"1616: William Shakespeare dies, on St George's Day",
+  '4-24':"2018: Millicent Fawcett becomes the first woman with a statue in Parliament Square",
+  '4-25':"2012: the Cutty Sark reopens in Greenwich after the 2007 fire",
+  '4-26':"1923: the future George VI marries Elizabeth Bowes-Lyon in Westminster Abbey. She leaves her bouquet on the Unknown Warrior's grave – royal brides still do",
+  '4-27':"1828: London Zoo opens in Regent's Park",
+  '4-28':"1923: the first FA Cup final at Wembley – the 'White Horse Final'",
+  '4-29':"2011: Prince William marries Catherine Middleton at Westminster Abbey",
+  '4-30':"1912: J.M. Barrie's Peter Pan statue is put up secretly overnight in Kensington Gardens, to surprise children on May Day",
+  '5-1':"1851: the Great Exhibition opens in the Crystal Palace in Hyde Park",
+  '5-2':"1975: David Beckham is born in Leytonstone",
+  '5-3':"1951: the Festival of Britain opens, with the Royal Festival Hall on the South Bank",
+  '5-4':"2000: Ken Livingstone is elected London's first mayor",
+  '5-5':"1988: Adele is born in Tottenham",
+  '5-6':"2023: King Charles III is crowned in Westminster Abbey",
+  '5-7':"2006: Arsenal play their last game at Highbury, winning 4–2 against Wigan",
+  '5-8':"1945: VE Day – Churchill and the royal family wave from the Buckingham Palace balcony",
+  '5-9':"1671: Colonel Blood tries to steal the Crown Jewels from the Tower",
+  '5-10':"1941: the worst night of the Blitz – the House of Commons chamber is destroyed",
+  '5-11':"1812: Prime Minister Spencer Perceval is shot in the Commons lobby – the only British PM ever assassinated",
+  '5-12':"2000: Tate Modern opens in the old Bankside Power Station",
+  '5-13':"1940: Churchill offers the Commons 'blood, toil, tears and sweat'",
+  '5-14':"1925: Virginia Woolf's Mrs Dalloway is published – a day walking through London",
+  '5-15':"2004: Arsenal finish the season unbeaten – the Invincibles",
+  '5-16':"1763: Samuel Johnson meets James Boswell in a bookshop on Russell Street, Covent Garden",
+  '5-17':"1899: Queen Victoria lays the foundation stone of the V&A, one of her last public duties",
+  '5-18':"1900: news of the Relief of Mafeking – London celebrates so wildly a new word is born: 'mafficking'",
+  '5-19':"1536: Anne Boleyn is beheaded inside the Tower of London",
+  '5-20':"1913: the first Chelsea Flower Show, at the Royal Hospital Chelsea",
+  '5-21':"1471: Henry VI dies in the Tower. The Ceremony of the Lilies and Roses still marks it every year",
+  '5-22':"1859: Arthur Conan Doyle, creator of Sherlock Holmes, is born",
+  '5-23':"1701: Captain Kidd is hanged at Execution Dock in Wapping",
+  '5-24':"1819: Queen Victoria is born at Kensington Palace",
+  '5-25':"1553: Lady Jane Grey marries Guildford Dudley at Durham House on the Strand",
+  '5-26':"1967: the Beatles release Sgt Pepper's Lonely Hearts Club Band, recorded at Abbey Road",
+  '5-27':"1922: Christopher Lee, Dracula and Saruman, is born in Belgravia",
+  '5-28':"1908: Ian Fleming, creator of James Bond, is born in Mayfair",
+  '5-29':"1660: Charles II rides back into London on his 30th birthday – still celebrated as Oak Apple Day at the Royal Hospital Chelsea",
+  '5-30':"1593: playwright Christopher Marlowe is stabbed to death in Deptford",
+  '5-31':"1859: the Great Clock at Westminster (Big Ben) starts keeping time",
+  '6-1':"1533: Anne Boleyn is crowned in Westminster Abbey",
+  '6-2':"1953: Queen Elizabeth II is crowned in Westminster Abbey",
+  '6-3':"2012: 1,000 boats sail down the Thames for the Queen's Diamond Jubilee Pageant",
+  '6-4':"1940: Churchill tells the Commons 'we shall fight on the beaches'",
+  '6-5':"1930: London Zoo stays open late for the first time, with searchlights and a military band",
+  '6-6':"1962: the Beatles' first session at Abbey Road Studios",
+  '6-7':"1977: street parties all over London for the Queen's Silver Jubilee",
+  '6-8':"1397: Richard II names Dick Whittington Lord Mayor of London",
+  '6-9':"1870: Charles Dickens dies. He is buried in Poets' Corner, Westminster Abbey",
+  '6-10':"2000: the Millennium Bridge opens – and wobbles so much it closes two days later",
+  '6-11':"1509: Henry VIII marries Catherine of Aragon at Greenwich",
+  '6-12':"1997: the Queen opens the rebuilt Shakespeare's Globe",
+  '6-13':"1944: the first V-1 'doodlebug' flying bomb hits London, in Bow",
+  '6-14':"1381: the Peasants' Revolt – rebels storm the Tower of London",
+  '6-15':"1381: rebel leader Wat Tyler is killed at Smithfield during the Peasants' Revolt",
+  '6-16':"1824: the RSPCA is founded at Old Slaughter's Coffee House on St Martin's Lane",
+  '6-17':"2016: Tate Modern's new Switch House – the Blavatnik Building – opens",
+  '6-18':"1815: Wellington wins at Waterloo – and two years later to the day, Waterloo Bridge opens",
+  '6-19':"1980: Covent Garden's old market building reopens as shops and cafés",
+  '6-20':"1837: Victoria is woken at Kensington Palace and told she is Queen",
+  '6-21':"1908: 'Women's Sunday' – a huge suffragette rally in Hyde Park",
+  '6-22':"1948: the Empire Windrush docks at Tilbury – now celebrated as Windrush Day",
+  '6-23':"1912: Alan Turing is born in Maida Vale",
+  '6-24':"1509: Henry VIII is crowned in Westminster Abbey",
+  '6-25':"1957: the Cutty Sark opens to the public in Greenwich",
+  '6-26':"1997: Harry Potter and the Philosopher's Stone is published by Bloomsbury",
+  '6-27':"1967: the world's first cash machine opens, at Barclays in Enfield",
+  '6-28':"1491: Henry VIII is born at Greenwich Palace",
+  '6-29':"1613: the Globe burns down when a stage cannon sets the thatch alight during Henry VIII",
+  '6-30':"1894: Tower Bridge opens",
+  '7-1':"1972: London's first Pride march",
+  '7-2':"2005: Live 8 in Hyde Park",
+  '7-3':"1973: David Bowie retires Ziggy Stardust on stage at the Hammersmith Odeon",
+  '7-4':"1829: George Shillibeer runs London's first omnibus, Paddington to the Bank",
+  '7-5':"1969: the Rolling Stones' free concert in Hyde Park",
+  '7-6':"1535: Sir Thomas More is beheaded on Tower Hill",
+  '7-7':"2013: Andy Murray wins Wimbledon – the first British man to do it since 1936",
+  '7-8':"1808: Richard Trevithick gives rides on his steam train 'Catch Me Who Can' near Euston",
+  '7-9':"1877: the first Wimbledon Championships begin",
+  '7-10':"1212: fire on London Bridge and in Southwark – the first 'Great Fire of London'",
+  '7-11':"1859: the great bell, Big Ben, rings out over Westminster for the first time",
+  '7-12':"1962: the Rolling Stones play their first gig, at the Marquee Club",
+  '7-13':"1985: Live Aid at Wembley Stadium",
+  '7-14':"1824: the King of Hawaii, Kamehameha II, dies of measles while visiting London",
+  '7-15':"1964: the Post Office Tower (now the BT Tower) is topped out",
+  '7-16':"1846: the London and North Western Railway is formed, running out of Euston",
+  '7-17':"1717: Handel's Water Music is first played, for George I on a barge on the Thames",
+  '7-18':"1919: the first Cenotaph, made of wood and plaster, is unveiled on Whitehall",
+  '7-19':"1821: George IV is crowned – and his wife Caroline is turned away at the Abbey door",
+  '7-20':"1837: Euston opens – London's first main line station",
+  '7-21':"1897: the Tate Gallery (now Tate Britain) opens",
+  '7-22':"2006: Arsenal's Emirates Stadium hosts its first match",
+  '7-23':"2011: Amy Winehouse dies in Camden",
+  '7-24':"1908: the Olympic marathon – Dorando Pietri is helped over the line at White City",
+  '7-25':"1920: Rosalind Franklin, whose X-ray photo revealed DNA's double helix, is born in Notting Hill",
+  '7-26':"1993: Stormzy is born in Croydon",
+  '7-27':"2012: the London Olympics opening ceremony",
+  '7-28':"1866: Beatrix Potter is born in South Kensington",
+  '7-29':"1981: Charles and Diana marry at St Paul's Cathedral",
+  '7-30':"1966: England win the World Cup at Wembley",
+  '7-31':"2022: the Lionesses win the European Championship at Wembley",
+  '8-1':"1715: the first Doggett's Coat and Badge race – the oldest rowing race in the world, still raced on the Thames",
+  '8-2':"1841: Fenchurch Street station opens",
+  '8-3':"1955: Waiting for Godot has its English premiere, at the Arts Theatre",
+  '8-4':"2012: 'Super Saturday' – three British golds in 46 minutes at the Olympic Stadium",
+  '8-5':"1906: the Bakerloo line reaches Elephant & Castle",
+  '8-6':"1889: the Savoy Hotel opens, with electric lights and lifts",
+  '8-7':"1993: Buckingham Palace's State Rooms open to the public for the first time",
+  '8-8':"1969: the Beatles walk across the zebra crossing outside Abbey Road Studios",
+  '8-9':"1902: Edward VII is crowned in Westminster Abbey",
+  '8-10':"1895: the first Proms concert, at the Queen's Hall",
+  '8-11':"1897: Enid Blyton is born in East Dulwich",
+  '8-12':"1816: the first stretch of the Regent's Canal opens, from Paddington to Camden",
+  '8-13':"1899: Alfred Hitchcock is born in Leytonstone",
+  '8-14':"1675: one of England's very first cheques is written in London, for £9 16s 6d",
+  '8-15':"1945: VJ Day – crowds fill the West End as the Second World War ends",
+  '8-16':"1912: Arsenal's Ted Drake is born – he once scored seven goals in one game",
+  '8-17':"1896: Bridget Driscoll becomes the world's first pedestrian killed by a car, at Crystal Palace – it was doing 4mph",
+  '8-18':"1920: London's first night buses",
+  '8-19':"1897: London's first motor cabs – electric 'Hummingbirds' – take to the streets",
+  '8-20':"1858: Darwin and Wallace's papers on evolution are published by the Linnean Society in Piccadilly",
+  '8-21':"2017: Big Ben falls silent for nearly five years of repairs",
+  '8-22':"1995: Dua Lipa is born in London",
+  '8-23':"1305: William Wallace is executed at Smithfield",
+  '8-24':"St Bartholomew's Day – for 700 years the start of Bartholomew Fair at Smithfield",
+  '8-25':"1919: the world's first daily international flights start, London to Paris",
+  '8-26':"1951: a couple drive their amphibious jeep up the Strand – having crossed the Atlantic in it on honeymoon",
+  '8-27':"1802: the West India Docks open – London's first big commercial docks",
+  '8-28':"1986: Florence Welch of Florence + the Machine is born in Camberwell",
+  '8-29':"2007: Nelson Mandela's statue is unveiled in Parliament Square, with Mandela there",
+  '8-30':"1797: Mary Shelley, who wrote Frankenstein, is born in Somers Town",
+  '8-31':"1987: the Docklands Light Railway opens",
+  '9-1':"1939: evacuation begins – thousands of London children leave by train with labels and gas masks",
+  '9-2':"1666: the Great Fire of London starts in a bakery on Pudding Lane",
+  '9-3':"1939: war is declared – minutes later London's air-raid sirens sound",
+  '9-4':"1666: as the Great Fire spreads, Samuel Pepys buries his parmesan cheese in the garden",
+  '9-5':"1882: Tottenham Hotspur are founded",
+  '9-6':"1997: Diana's funeral at Westminster Abbey",
+  '9-7':"1940: the Blitz begins – 'Black Saturday'",
+  '9-8':"1854: Dr John Snow removes the handle of the Broad Street pump in Soho and stops a cholera outbreak",
+  '9-9':"2015: Elizabeth II becomes the longest-reigning British monarch",
+  '9-10':"2022: Charles III is proclaimed King at St James's Palace",
+  '9-11':"1978: Georgi Markov dies days after being jabbed with a poisoned umbrella on Waterloo Bridge",
+  '9-12':"1878: Cleopatra's Needle is raised on the Victoria Embankment",
+  '9-13':"1940: Buckingham Palace is bombed. The Queen says: 'Now I can look the East End in the face'",
+  '9-14':"2022: 'The Queue' – people wait up to 24 hours to see Elizabeth II lying in state in Westminster Hall",
+  '9-15':"1940: Battle of Britain Day",
+  '9-16':"1977: Marc Bolan dies when his car hits a tree in Barnes – now a shrine",
+  '9-17':"1795: fire guts St Paul's, Covent Garden – the actors' church where My Fair Lady begins",
+  '9-18':"1970: Jimi Hendrix dies in Notting Hill",
+  '9-19':"2022: Queen Elizabeth II's funeral at Westminster Abbey",
+  '9-20':"1976: the 100 Club Punk Special – the Sex Pistols, the Clash and Siouxsie in Oxford Street",
+  '9-21':"1866: H.G. Wells is born in Bromley",
+  '9-22':"1791: Michael Faraday is born in Newington Butts, south London",
+  '9-23':"1940: George VI creates the George Cross, for civilian bravery in the Blitz",
+  '9-24':"1960: the American Embassy in Grosvenor Square officially opens",
+  '9-25':"2006: Young's Ram Brewery in Wandsworth closes – beer had been brewed on the site for centuries",
+  '9-26':"1931: international sheepdog trials are held in Hyde Park",
+  '9-27':"2006: Wicked opens at the Apollo Victoria",
+  '9-28':"1928: Alexander Fleming discovers penicillin at St Mary's Hospital, Paddington",
+  '9-29':"1829: the Metropolitan Police – the 'Peelers' – go out on patrol for the first time",
+  '9-30':"1840: the foundations of Nelson's Column are laid in Trafalgar Square",
+  '10-1':"1868: St Pancras station opens",
+  '10-2':"1909: the first match at Twickenham: Harlequins v Richmond",
+  '10-3':"1956: the Bolshoi Ballet dances Romeo and Juliet at the Royal Opera House – its first visit to the West",
+  '10-4':"1936: the Battle of Cable Street – East Enders stop Mosley's fascists marching",
+  '10-5':"1962: a big day – Dr. No premieres in London and the Beatles release Love Me Do",
+  '10-6':"1827: the first Hammersmith Bridge opens",
+  '10-7':"1959: Simon Cowell is born in Lambeth",
+  '10-8':"1985: Les Misérables opens at the Barbican",
+  '10-9':"1986: The Phantom of the Opera opens at Her Majesty's Theatre",
+  '10-10':"1881: the Savoy Theatre opens – the first public building lit entirely by electricity",
+  '10-11':"1921: the idea for the world's first blood donor service is born at King's College Hospital",
+  '10-12':"1678: magistrate Sir Edmund Berry Godfrey vanishes – his body turns up days later on Primrose Hill",
+  '10-13':"1884: Greenwich is chosen as the Prime Meridian of the world",
+  '10-14':"2022: Battersea Power Station reopens as shops and restaurants",
+  '10-15':"1987: the Great Storm hits overnight – Kew Gardens loses hundreds of trees",
+  '10-16':"1834: the old Houses of Parliament burn down",
+  '10-17':"1814: the London Beer Flood – a vat bursts at a brewery on Tottenham Court Road",
+  '10-18':"1905: Kingsway and Aldwych open, cutting through old slums",
+  '10-19':"1999: The Lion King opens at the Lyceum Theatre",
+  '10-20':"1632: Sir Christopher Wren is born",
+  '10-21':"1805: Nelson wins at Trafalgar, and is killed",
+  '10-22':"1963: the National Theatre gives its first performance – Hamlet, at the Old Vic",
+  '10-23':"1926: Veeraswamy opens on Regent Street – Britain's oldest surviving Indian restaurant",
+  '10-24':"1936: Rolling Stone Bill Wyman is born in Lewisham",
+  '10-25':"1828: St Katharine Docks open, next to the Tower",
+  '10-26':"1863: the Football Association is founded at the Freemasons' Tavern, Covent Garden",
+  '10-27':"1986: 'Big Bang' in the City – the Stock Exchange goes electronic",
+  '10-28':"1844: Queen Victoria opens the present Royal Exchange",
+  '10-29':"1618: Sir Walter Raleigh is beheaded at Westminster",
+  '10-30':"1959: Ronnie Scott's jazz club opens in Soho",
+  '10-31':"1795: John Keats is born in Moorgate",
+  '11-1':"1973: Churchill's statue is unveiled in Parliament Square",
+  '11-2':"1936: the BBC starts the world's first regular TV service, from Alexandra Palace",
+  '11-3':"1963: Arsenal legend Ian Wright is born in Woolwich",
+  '11-4':"2001: Harry Potter and the Philosopher's Stone has its world premiere in Leicester Square",
+  '11-5':"1605: Guy Fawkes is caught under the House of Lords with 36 barrels of gunpowder",
+  '11-6':"1975: the Sex Pistols play their first gig, at St Martin's School of Art",
+  '11-7':"1783: the last hanging at Tyburn, near today's Marble Arch",
+  '11-8':"2001: Handel House opens on Brook Street – Jimi Hendrix lived next door",
+  '11-9':"1922: Ada Salter becomes London's first woman mayor, in Bermondsey",
+  '11-10':"1697: painter William Hogarth is born near Smithfield",
+  '11-11':"1920: the Unknown Warrior is buried in Westminster Abbey",
+  '11-12':"1841: the Jewish Chronicle is first published – the world's oldest Jewish newspaper still running",
+  '11-13':"1849: Dickens watches a public hanging in Southwark, and campaigns to end them",
+  '11-14':"2007: St Pancras International opens as the new home of Eurostar",
+  '11-15':"1708: William Pitt the Elder, 'the Great Commoner', is born in Westminster",
+  '11-16':"1898: Harrods opens London's first escalator – staff offer nervous riders a brandy at the top",
+  '11-17':"1750: Westminster Bridge opens – only the second bridge across the Thames in London",
+  '11-18':"1477: William Caxton prints the first dated book in England, at Westminster",
+  '11-19':"1947: Philip Mountbatten is made Duke of Edinburgh, the day before his wedding",
+  '11-20':"1947: Princess Elizabeth marries Philip Mountbatten at Westminster Abbey",
+  '11-21':"2003: Love Actually opens in UK cinemas",
+  '11-22':"1990: Margaret Thatcher resigns as Prime Minister",
+  '11-23':"1963: the first episode of Doctor Who",
+  '11-24':"1991: Freddie Mercury dies at Garden Lodge, Kensington",
+  '11-25':"1952: The Mousetrap opens – still running today",
+  '11-26':"1983: the Brink's-Mat robbery – £26 million of gold taken at Heathrow",
+  '11-27':"1810: the Berners Street Hoax – a prankster sends hundreds of tradesmen, a fishmonger and even the Lord Mayor to one house",
+  '11-28':"1757: William Blake is born in Soho",
+  '11-29':"1907: Florence Nightingale becomes the first woman to receive the Order of Merit",
+  '11-30':"1936: the Crystal Palace burns down in a single night",
+  '12-1':"1976: the Sex Pistols swear on live teatime TV with Bill Grundy",
+  '12-2':"1697: the first service in Wren's new St Paul's Cathedral",
+  '12-3':"1976: Pink Floyd's giant inflatable pig breaks free over Battersea Power Station",
+  '12-4':"2022: the Museum of London closes on London Wall, to move to Smithfield",
+  '12-5':"1952: the Great Smog descends on London for five days",
+  '12-6':"1938: indoor skiing on a snowy 100-foot mountain at Earls Court",
+  '12-7':"1967: the Beatles' Apple Boutique opens at 94 Baker Street",
+  '12-8':"1660: Margaret Hughes becomes the first woman to act on the English stage, as Desdemona",
+  '12-9':"1868: the world's first traffic lights go up outside Parliament – gas-lit, worked by a policeman",
+  '12-10':"1815: Ada Lovelace, the first computer programmer, is born in London",
+  '12-11':"1886: Dial Square – later Arsenal – play their first game, on the Isle of Dogs",
+  '12-12':"1935: the last trial of a peer by the House of Lords",
+  '12-13':"1784: Samuel Johnson dies at his home off Fleet Street",
+  '12-14':"1861: Prince Albert dies – Victoria wears black for the rest of her life",
+  '12-15':"1906: the Piccadilly line opens",
+  '12-16':"1899: Noël Coward is born in Teddington",
+  '12-17':"1849: the first bowler hat is collected from Lock & Co. hatters on St James's Street",
+  '12-18':"1890: the City & South London Railway opens – the world's first deep electric tube",
+  '12-19':"1843: A Christmas Carol is published",
+  '12-20':"1698: Hampstead's chalybeate well is given 'for the use of the poor' – the start of Hampstead Spa",
+  '12-21':"2017: Hamilton opens in the West End",
+  '12-22':"2010: the Abbey Road zebra crossing becomes a listed site",
+  '12-23':"1834: Joseph Hansom patents his cab – the 'hansom cab'",
+  '12-24':"1904: the London Coliseum opens",
+  '12-25':"1066: William the Conqueror is crowned in Westminster Abbey",
+  '12-26':"1910: the London Palladium opens",
+  '12-27':"1904: Peter Pan opens on stage for the first time, at the Duke of York's Theatre",
+  '12-28':"1065: Westminster Abbey is consecrated",
+  '12-29':"1940: the 'Second Great Fire of London' – St Paul's survives, in the war's most famous photo",
+  '12-30':"1906: film director Carol Reed (Oliver!, The Third Man) is born in Putney",
+  '12-31':"1923: the BBC broadcasts Big Ben's chimes for the first time, to see in the New Year"
+};
+const ON_THIS_DAY_PLACE = {'1-4':349, '1-5':348, '1-8':449, '1-9':353, '1-10':77, '1-11':353, '1-13':702, '1-15':377, '1-18':348, '1-20':349, '1-24':355, '1-25':358, '1-26':839, '1-27':349, '1-29':383, '1-30':83, '1-31':349, '2-2':415, '2-3':496, '2-6':52, '2-7':398, '2-8':77, '2-9':356, '2-10':352, '2-12':347, '2-13':358, '2-20':463, '2-23':34, '2-25':353, '3-3':393, '3-7':77, '3-9':5, '3-10':464, '3-14':433, '3-15':310, '3-16':467, '3-18':361, '3-19':382, '3-20':528, '3-23':68, '3-25':72, '3-29':453, '3-31':85, '4-2':349, '4-3':463, '4-4':422, '4-5':361, '4-8':378, '4-9':72, '4-11':348, '4-12':455, '4-14':68, '4-15':426, '4-18':379, '4-20':349, '4-23':367, '4-24':52, '4-25':369, '4-26':348, '4-27':371, '4-28':455, '4-29':348, '4-30':51, '5-1':128, '5-3':521, '5-6':348, '5-7':462, '5-8':350, '5-9':347, '5-10':349, '5-11':349, '5-12':381, '5-13':355, '5-15':462, '5-16':426, '5-17':64, '5-19':347, '5-21':347, '5-22':399, '5-23':419, '5-24':356, '5-26':81, '5-28':667, '5-31':349, '6-1':348, '6-2':348, '6-4':355, '6-5':371, '6-6':81, '6-9':398, '6-10':381, '6-11':496, '6-12':367, '6-14':347, '6-15':396, '6-17':381, '6-18':437, '6-19':516, '6-20':356, '6-21':128, '6-24':348, '6-25':369, '6-26':430, '6-28':496, '6-29':367, '6-30':6, '7-2':128, '7-3':86, '7-4':77, '7-5':128, '7-6':410, '7-7':469, '7-9':469, '7-11':349, '7-12':443, '7-13':455, '7-17':68, '7-19':348, '7-21':382, '7-22':462, '7-23':460, '7-27':499, '7-29':353, '7-30':455, '7-31':455, '8-4':499, '8-5':77, '8-6':248, '8-7':350, '8-8':81, '8-9':348, '8-10':453, '8-12':503, '8-16':462, '8-17':500, '8-20':698, '8-21':349, '8-23':417, '8-24':396, '8-29':52, '9-2':362, '9-3':355, '9-5':463, '9-6':348, '9-7':355, '9-9':350, '9-10':352, '9-12':418, '9-13':350, '9-14':349, '9-16':448, '9-17':516, '9-18':85, '9-19':348, '9-20':440, '9-22':702, '9-26':128, '9-28':699, '9-30':354, '10-1':989, '10-2':468, '10-8':393, '10-12':129, '10-13':370, '10-14':454, '10-15':493, '10-16':349, '10-20':353, '10-21':354, '10-25':477, '10-29':349, '10-30':92, '10-31':993, '11-1':52, '11-2':588, '11-3':462, '11-4':893, '11-5':349, '11-7':49, '11-8':68, '11-11':348, '11-13':398, '11-14':989, '11-16':308, '11-17':349, '11-18':348, '11-19':348, '11-20':348, '11-21':310, '11-22':361, '11-24':445, '11-29':400, '11-30':500, '12-2':353, '12-3':454, '12-4':396, '12-9':349, '12-11':462, '12-12':349, '12-13':426, '12-15':77, '12-18':77, '12-19':398, '12-20':494, '12-22':81, '12-25':348, '12-27':51, '12-28':348, '12-29':353, '12-31':349};
+/* ---------- Free day plans ("I've got a free day") ---------- */
+let PLANS = null;
+async function loadPlans() { if (!PLANS) { try { PLANS = await fetch('plans.json').then(r => r.json()); } catch { PLANS = []; } } return PLANS; }
+async function plansScreen() {
+  setTitle('Free day plans'); await loadPlans();
+  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/walks')}<div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px">I’ve got a free day</h1><span style="font-size:14px;color:#C9D3E6">Day plans from the cabbies, hour by hour</span></div></div></div>
+    <div class="content">${PLANS.map(pl => `<a class="row-card" href="#/plan/${pl.n}"><span class="thumb" style="background:#FFF4E8"><img src="img/${pl.cab === 'Marcin' ? 'marcin' : 'matt'}.jpg" alt="" style="width:44px;height:44px;border-radius:22px;object-fit:cover"></span><span class="rc-t"><span class="rc-n">${esc(pl.title)}</span><span class="rc-m">${esc(pl.meta)}</span><span class="rc-l">${esc(pl.sub)}</span></span></a>`).join('')}</div>${tabs('Walks')}`;
+}
+async function planScreen(n) {
+  await loadPlans(); const pl = PLANS.find(x => String(x.n) === String(n)); if (!pl) return plansScreen();
+  setTitle(pl.title);
+  const chip = id => { const q = byId[id]; return q ? `<a href="#/place/${q.id}" style="display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #E1E6EE;border-radius:10px;padding:3px 8px 3px 3px;text-decoration:none;color:var(--ink);font-size:13px;font-weight:600">${catTile(q, q.cats[0], 24).replace('class="thumb', 'class="thumb sm')}${esc(q.name)}</a>` : ''; };
+  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/plans')}<div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:21px;line-height:1.15">${esc(pl.title)}</h1><span style="font-size:14px;color:#C9D3E6">${esc(pl.sub)}</span></div></div></div>
+    <div class="content">
+      ${pl.quote ? `<div class="story" style="flex-direction:row;gap:10px;align-items:flex-start"><img src="img/${pl.cab === 'Marcin' ? 'marcin' : 'matt'}.jpg" alt="" style="width:44px;height:44px;border-radius:22px;object-fit:cover;flex-shrink:0"><span style="display:flex;flex-direction:column;gap:3px"><b class="k">Ask a cabbie · ${esc(pl.cab)}</b><span style="font-size:14.5px;line-height:1.4">“${esc(pl.quote)}”</span></span></div>` : ''}
+      <div class="row" style="gap:8px;flex-wrap:wrap"><span class="tag" style="background:#E6DBF4">${esc(pl.meta)}</span></div>
+      <a class="ghost" href="#/walk/plan-${pl.n}">${svg('walk', 18)} See the route on a map</a>
+      ${pl.stops.map(st => `<div style="display:flex;gap:10px;background:#fff;border-radius:14px;padding:10px 12px;box-shadow:0 1px 2px rgba(15,30,61,.08)"><span style="flex-shrink:0;min-width:52px;font-weight:800;font-size:13.5px;color:${st.meal ? '#A8551A' : 'var(--navy)'}">${esc(st.t)}</span><span style="display:flex;flex-direction:column;gap:5px;min-width:0"><b style="font-size:15px">${esc(st.h || st.t)}</b>${st.n ? `<span style="font-size:14px;line-height:1.4">${esc(st.n)}</span>` : ''}${(st.ids || []).length ? `<span style="display:flex;flex-wrap:wrap;gap:5px">${st.ids.map(chip).join('')}</span>` : ''}</span></div>`).join('')}
+      ${(pl.foot || []).map(f => `<p class="note" style="margin:0">${esc(f)}</p>`).join('')}
+      <p class="note" style="margin:0">Opening days and times change, so check anything ticketed or seasonal before you go.</p>
+    </div>${tabs('Walks')}`;
+}
+
+/* ---------- Beyond London: day trips ---------- */
+let TRIPS = null;
+async function loadTrips() { if (!TRIPS) { try { TRIPS = await fetch('trips.json').then(r => r.json()); } catch { TRIPS = []; } } return TRIPS; }
+async function dayTrips() {
+  setTitle('Day trips');
+  await loadTrips();
+  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/walks')}<div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px">Day trips</h1><span style="font-size:14px;color:#C9D3E6">Beyond London, by train or by black cab</span></div></div></div>
+    <div class="content">${TRIPS.map(t => `<a class="row-card" href="#/trip/${t.id}"><span class="thumb" style="background:${t.color}">${svg('train', 24, '#F5D9A8')}</span><span class="rc-t"><span class="rc-n">${esc(t.title)}</span><span class="rc-m">${esc(t.sub)}</span><span class="rc-l">${esc(t.train.split('.')[0])}</span></span></a>`).join('')}
+      <a class="bigbtn orange" href="#/transfers">${svg('cab', 20, '#0F1E3D', 2.2)} Book a day trip by black cab</a></div>${tabs('Walks')}`;
+}
+async function tripScreen(id) {
+  await loadTrips(); const t = TRIPS.find(x => x.id === id); if (!t) return dayTrips();
+  setTitle(t.title);
+  app.innerHTML = `<div class="top" style="background:${t.color}"><div class="row">${backBtn('#/daytrips')}<div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:24px">${esc(t.title)}</h1><span style="font-size:14px;color:#E6E9F0">${esc(t.sub)}</span></div></div></div>
+    <div class="content">
+      <p style="margin:0;font-size:15.5px;line-height:1.5">${esc(t.intro)}</p>
+      <div style="background:#fff;border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 1px 3px rgba(15,30,61,.08)">
+        <h2 style="margin:0;font-size:17px;font-weight:800">Getting there</h2>
+        <div style="display:flex;gap:10px;font-size:14.5px;line-height:1.4">${svg('train', 20, '#0F1E3D', 1.9)}<span><b>By train · </b>${esc(t.train)}</span></div>
+        <div style="display:flex;gap:10px;font-size:14.5px;line-height:1.4">${svg('cab', 20, '#A8551A', 1.9)}<span><b>By black cab · </b>${esc(t.cab)}</span></div>
+        <a class="bigbtn orange" href="#/transfers/trip-${t.id}">${svg('cab', 20, '#0F1E3D', 2.2)} Book a cab for this trip</a>
+      </div>
+      <div class="sec"><h2>The walk</h2><a href="#/walk/trip-${t.id}">See it on a map</a></div>
+      ${t.stops.map((s, i) => `<div class="stop"><span class="num" style="flex-shrink:0">${i + 1}</span><span style="display:flex;flex-direction:column;gap:2px"><b class="disp" style="font-size:15px">${esc(s.name)}</b><span style="font-size:14px;line-height:1.4">${esc(s.note)}</span></span></div>`).join('')}
+      <div class="story" style="gap:6px"><b class="k">Cabbie's tips</b>${t.tips.map(x => `<span style="font-size:14px;line-height:1.4">· ${esc(x)}</span>`).join('')}</div>
+    </div>${tabs('Walks')}`;
+}
+
+/* ---------- Where are you staying? ---------- */
+const STAY_GROUPS = {
+  visit: [['Restaurants', 'Eat'], ['Pubs', 'Pubs'], ['Bars & Nightlife', 'Bars'], ['Landmarks', 'Sights'], ['Museums & Galleries', 'Museums'], ['Parks & Gardens', 'Parks'], ['Food Shops', 'Food shops'], ['Theatre & Shows', 'Shows & cinemas'], ['Markets & Food Halls', 'Markets']],
+  live: [['Food Shops', 'Food shops'], ['Pubs', 'Your locals'], ['Restaurants', 'Eat'], ['Parks & Gardens', 'Parks'], ['Theatre & Shows', 'Cinemas & shows'], ['Markets & Food Halls', 'Markets'], ['Bars & Nightlife', 'Bars'], ['Spas & Wellness', 'Spas & pools'], ['Games & Activities', 'Things to do']]
+};
+const nearStay = (k, n = 5, max = 2500) => STAY ? P.filter(p => p.lat != null && p.cats.includes(k) && !p.cats.includes('Blue Plaques')).map(p => [p, dist(STAY.lat, STAY.lng, p.lat, p.lng)]).filter(x => x[1] <= max).sort((a, b) => a[1] - b[1]).slice(0, n) : [];
+function stayCard() {
+  if (!STAY) return `<a href="#/stay" style="display:flex;align-items:center;gap:12px;background:#fff;border-radius:14px;padding:9px 12px;text-decoration:none;color:var(--ink);box-shadow:0 1px 3px rgba(15,30,61,.1);border-left:5px solid var(--orange)">${svg('home2', 22, '#0F1E3D', 1.9)}<span style="flex:1;font-size:15px;line-height:1.2"><b>Where are you staying?</b> <span style="color:var(--muted);font-size:13.5px">See what’s near you</span></span>${svg('chev', 16)}</a>`;
+  const picks = STAY_GROUPS[STAY.who || 'visit'].map(([k, l]) => { const x = nearStay(k, 1)[0]; return x && [x[0], l, x[1]]; }).filter(Boolean);
+  return `<div style="display:flex;flex-direction:column;gap:8px"><div class="sec"><h2>Near ${esc(STAY.label)}</h2><a href="#/nearstay">See all</a></div>
+    <div class="hscroll">${picks.map(([p, l, d]) => `<a class="ncard" href="#/place/${p.id}">${thumb(p, 56)}<span style="font-size:12px;font-weight:700;color:#A8551A;text-transform:uppercase;letter-spacing:.4px">${esc(l)}</span><b>${esc(p.name)}</b><span>${mins(d)} min walk</span></a>`).join('') || '<span class="note">Nothing in the app close by yet.</span>'}<a class="ncard more" href="#/stay"><b>Change</b>${svg('home2', 22, '#fff')}</a></div></div>`;
+}
+function stayScreen() {
+  setTitle('Where are you staying?');
+  let who = (STAY && STAY.who) || 'visit';
+  const AREAS = Object.entries(P.reduce((m, p) => { if (p.lat != null && p.area && !/London|Beyond/.test(p.area)) (m[p.area] = m[p.area] || []).push(p); return m; }, {})).filter(([, ps]) => ps.length >= 5).map(([a, ps]) => [a, ps.reduce((s, p) => s + p.lat, 0) / ps.length, ps.reduce((s, p) => s + p.lng, 0) / ps.length]).sort((a, b) => a[0].localeCompare(b[0]));
+  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px">Where are you staying?</h1><span style="font-size:14px;color:#C9D3E6">We’ll show what’s close by</span></div></div></div>
+    <div class="content">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${[['visit', 'I’m visiting', 'hotel or Airbnb'], ['live', 'I live here', 'or I’ve just moved']].map(([v, t, sub]) => `<button class="who" data-v="${v}" style="display:flex;flex-direction:column;align-items:flex-start;gap:2px;border-radius:14px;padding:10px 12px;border:2px solid #E1E6EE;background:#fff;color:var(--ink);text-align:left"><b style="font-size:15.5px">${t}</b><span style="font-size:12.5px;color:var(--muted)">${sub}</span></button>`).join('')}</div>
+      <div style="background:#fff;border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 1px 3px rgba(15,30,61,.08)">
+        <label style="display:flex;flex-direction:column;gap:6px"><b style="font-size:15px">Postcode</b><input id="pc" placeholder="e.g. WC2N 5DU" autocomplete="postal-code" style="height:46px;border-radius:12px;border:1px solid #C9D1DE;padding:0 12px;font-size:17px;text-transform:uppercase" value="${esc(STAY && STAY.pc || '')}"></label>
+        <button class="bigbtn" id="savepc">Show what’s near</button>
+        <div style="text-align:center;font-size:13px;color:var(--muted)">or</div>
+        <button class="ghost" id="usegps">${svg('locate', 18)} Use where I am now</button>
+        <select id="areapick" style="height:46px;border-radius:12px;border:1px solid #C9D1DE;padding:0 10px;font-size:15px;background:#fff"><option value="">Pick an area instead</option>${AREAS.map(([a]) => `<option>${esc(a)}</option>`).join('')}</select>
+        <span id="stmsg" style="font-size:13.5px;color:#C8262B"></span>
+      </div>
+      <p class="note" style="margin:0">This stays on your phone only. We don’t send it anywhere, apart from looking up the postcode with the free postcodes.io service.</p>
+      ${STAY ? '<button class="ghost" id="clearstay">Forget where I’m staying</button>' : ''}
+    </div>${tabs('Explore')}`;
+  const paint = () => app.querySelectorAll('.who').forEach(b => { const on = b.dataset.v === who; b.style.borderColor = on ? '#F28C38' : '#E1E6EE'; b.style.background = on ? '#FFF4E8' : '#fff'; });
+  app.querySelectorAll('.who').forEach(b => b.onclick = () => { who = b.dataset.v; paint(); if (STAY) { STAY.who = who; store.set('el_stay', STAY); } });
+  paint();
+  const msg = t => document.getElementById('stmsg').textContent = t;
+  const done = (lat, lng, label, pc) => {
+    if (!(lat > 51.25 && lat < 51.75 && lng > -0.6 && lng < 0.35)) return msg('That’s outside London. Try a London postcode or pick an area.');
+    STAY = {lat, lng, label, who, pc: pc || ''}; store.set('el_stay', STAY); location.hash = '#/nearstay';
+  };
+  document.getElementById('savepc').onclick = async () => {
+    const pc = document.getElementById('pc').value.trim().toUpperCase().replace(/\s+/g, ' ');
+    if (!pc) return msg('Type a postcode first, or use one of the other options.');
+    msg('Looking it up…');
+    try {
+      const full = PC_FULL.test(pc);
+      const r = await fetch(full ? `https://api.postcodes.io/postcodes/${encodeURIComponent(pc)}` : `https://api.postcodes.io/outcodes/${encodeURIComponent(pc)}`).then(r => r.json());
+      if (!r.result) return msg('We couldn’t find that postcode. Check it and try again.');
+      const label = full ? (r.result.admin_ward || r.result.postcode) : pc;
+      done(r.result.latitude, r.result.longitude, label.replace(/ (North|South|East|West)$/, ''), pc);
+    } catch { msg('No connection right now. Try picking an area instead.'); }
+  };
+  document.getElementById('pc').onkeydown = e => { if (e.key === 'Enter') document.getElementById('savepc').click(); };
+  document.getElementById('usegps').onclick = () => { msg('Finding you…'); locate(ok => meReal ? done(me[0], me[1], 'where you are', '') : msg('We couldn’t get your location. Type a postcode instead.')); };
+  document.getElementById('areapick').onchange = e => { const a = AREAS.find(x => x[0] === e.target.value); if (a) done(a[1], a[2], a[0].replace(/ & .*/, ''), ''); };
+  const cl = document.getElementById('clearstay'); if (cl) cl.onclick = () => { STAY = null; store.set('el_stay', null); location.hash = '#/'; };
+}
+function nearStayScreen() {
+  if (!STAY) return stayScreen();
+  setTitle('Near ' + STAY.label);
+  const groups = STAY_GROUPS[STAY.who || 'visit'].map(([k, l]) => [k, l, nearStay(k, 5)]).filter(g => g[2].length);
+  FROM = [STAY.lat, STAY.lng];
+  const html = groups.map(([k, l, xs]) => `<div class="sec" style="margin-top:4px"><h2>${esc(l)}</h2><a href="#/cat/${encodeURIComponent(k)}">More</a></div><div style="display:flex;flex-direction:column;gap:6px">${xs.map(([p]) => row(p, k)).join('')}</div>`).join('');
+  FROM = null;
+  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<div style="display:flex;flex-direction:column;flex:1"><h1 style="margin:0;font-weight:800;font-size:22px">Near ${esc(STAY.label)}</h1><span style="font-size:14px;color:#C9D3E6">${STAY.who === 'live' ? 'Your new local favourites' : 'Close to where you’re staying'} · walking times from there</span></div><a class="iconbtn" href="#/stay" aria-label="Change">${svg('home2', 20)}</a></div></div>
+    <div class="content">${STAY.who === 'live' ? `<div class="story" style="flex-direction:row;gap:10px"><span style="color:#A8551A;flex-shrink:0">${svg('cab', 20, '#A8551A')}</span><span style="font-size:13.5px;line-height:1.4"><b class="k">New to the area? · </b>Start with the butcher, the fishmonger and the local pub. Ask for the landlord’s name: it’s the quickest way to feel at home.</span></div>` : ''}
+      ${html || '<div class="empty">We don’t have much near there yet. Try a nearby area, or tell us your favourites.</div>'}
+    </div>${tabs('Explore')}`;
+}
+
+/* ---------- Things you never knew existed (Home collection) ---------- */
+const NEVER = [
+  ['Little Ben', 'Big Ben’s little brother, by Victoria station'], ['Policeman\'s Coat Hook', 'A hook for police capes, or a cheeky joke?'],
+  ['Wee Tiny Gallery', 'Possibly the world’s smallest art gallery'], ['Tiny Mouse Mansion', 'A mouse-sized No. 5 on Davies Street'],
+  ['Handel and Hendrix Museum', 'Handel and Jimi Hendrix lived next door, 200 years apart'], ['The Philpot Lane Mice', 'London’s smallest statue: two mice and some cheese'],
+  ['Thin House', 'A house that looks one room thick'], ['Spy Lamp Post', 'A KGB dead letter box in Mayfair'],
+  ['Farting Lamp', 'A street lamp that burned sewer gas'], ['Giro the Dog (London\'s only Nazi-era memorial)', 'A dog’s grave: London’s only Nazi-era memorial'],
+  ['Nelson’s Fleet', 'A tiny ship on every lamppost on the Mall'], ['Plaque Marking Centre of London', 'The spot distances to London are measured from'],
+  ['Trafalgar Square', 'A police lookout hidden in a lamp post'], ['Seven Noses of Soho', 'Noses hidden on Soho walls'],
+  ["Cabmen's shelters", 'Green huts where only cabbies eat inside'], ['Skuna Igloo Boats', 'Fondue in a floating igloo'],
+  ['Chaos Karts', 'Real-life Mario Kart'], ['The Double Helix Staircase, Fortnum & Mason', 'A staircase shaped like DNA'],
+  ['Garden at 120', 'A free garden 15 floors up'], ['Cockpit Steps', 'Steps from a royal cockpit, said to be haunted'],
+  ['Golden Boy of Pye Corner', 'Marks where the Great Fire of London stopped'], ['Landseer Lions', 'Look closely at their paws…'],
+  ['London Stone', 'A mystery stone, 900 years old'], ['Cleopatra\'s Needle', 'An obelisk older than London itself'],
+  ['London\'s Roman Amphitheatre', 'A Roman arena under the Guildhall'], ['St Dunstan in the East Church Garden', 'A garden growing in a bombed church'],
+  ['Watts Memorial to Heroic Self-Sacrifice', 'Tiles for everyday heroes who died saving others'], ['Trinity Buoy Wharf', 'London’s only lighthouse'],
+  ['Leake Street Arches', 'A tunnel where graffiti is allowed'], ['Maarten Baas’s Real Time clock', 'A man inside the clock moves the hands'],
+  ['Brydges Place', 'One of London’s narrowest alleys'], ['Ely Place', 'A street with its own beadle'],
+  ['Grant Museum of Zoology', 'A jar full of moles'], ['Word on the Water', 'A bookshop on a barge'],
+  ['Gasholder Park', 'A park inside a gasholder'], ['Helix Tunnel Slide', 'The world’s longest tunnel slide'],
+  ['Host Cafe', 'Coffee under a Gothic church ceiling'], ['Queenhithe Mosaic', 'London’s history in a 30m riverside mosaic'],
+  ['Wellington Arch', 'There was once a police station inside'], ['Absurd City', 'A psychedelic city in Westfield'],
+  ['Balloon Museum: Euphoria', 'Rooms of giant balloons'], ['Charlie and the Chocolate Factory Afternoon Tea', 'Willy Wonka’s afternoon tea'],
+  ['Tokyo Bagel', 'A café made of roses'], ["God's Own Junkyard", 'A warehouse full of glowing neon'], ['Parkland Walk', 'A spooky spriggan on an old railway'],
+  ['Richmond Hill view', 'A view protected by an Act of Parliament'], ['The White Cross', 'A pub the Thames floods at high tide']
+];
+const neverAll = () => NEVER.map(([n, hook]) => [P.find(p => p.name === n), hook]).filter(([p]) => p);
+/* a different order every day (the same for everyone that day), so the Home row changes daily */
+function neverList() {
+  const L = neverAll(), day = Math.floor((Date.now() - new Date().getTimezoneOffset() * 6e4) / 864e5);
+  let x = day * 2654435761 % 4294967296;
+  const rnd = () => (x = (x * 1103515245 + 12345) % 2147483648) / 2147483648;
+  for (let i = L.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [L[i], L[j]] = [L[j], L[i]]; }
+  return L;
+}
+function never() {
+  setTitle('Curious London');
+  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px">Curious London</h1><span style="font-size:14px;color:#C9D3E6">Odd, hidden and surprising – picked by cabbies. New picks on Home every day.</span></div></div></div>
+    <div class="content"><div style="display:flex;flex-direction:column;gap:6px">${neverList().map(([p, hook]) => row(p, undefined, hook)).join('')}</div></div>${tabs('Explore')}`;
+}
+
+function home() {
+  setTitle();
+  const strip = [
+    {href:'#/walks', title:'Harry Potter in London', meta:'3 walks', tag:'New shop 4 Nov', tb:'#F28C38', bg:'#3B2F5C'},
+    ...['ted-lasso','greenwich','hyde-park','music-trail'].map(id => WALKS.find(w => w.id === id)).filter(Boolean).map(w => ({href:'#/walk/' + w.id, title:w.title, meta:w.meta.split('·')[0].replace(/^About /, ''), tag:w.tag, tb:{'Day out':'#F5D9A8','Royal Parks':'#CDE8C5'}[w.tag] || '#F5D9A8', bg:w.color}))];
+  const walkCards = strip.map(w => `<a class="wcard" href="${w.href}"><div class="b" style="background:${w.bg}"><span class="badge" style="background:${w.tb}">${esc(w.tag)}</span></div><div class="t"><span class="disp" style="font-weight:700;font-size:15px;line-height:1.2">${esc(w.title)}</span><span style="font-size:13px;color:var(--muted)">${esc(w.meta)}</span></div></a>`).join('');
+  const d = new Date(), dk = (d.getMonth() + 1) + '-' + d.getDate(), otd = ON_THIS_DAY[dk];
+  const otdStrip = !otd ? '' : `<a href="#/otd" style="display:flex;align-items:center;gap:10px;background:#FFF4E8;border-radius:14px;padding:8px 12px;color:var(--ink);text-decoration:none;margin-top:-6px"><span style="font-size:11px;font-weight:800;color:#A8551A;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap">On this day</span><span style="font-size:14px;font-weight:600;line-height:1.2;flex:1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${esc(otd)}</span>${svg('chev', 16)}</a>`;
+  app.innerHTML = `<div class="top">
+      <div class="row" style="justify-content:space-between"><span class="row"><img src="img/d/32fc1fa585f2d63234e9f7611da8261f.jpg" alt="" style="width:36px;height:36px;border-radius:9px;object-fit:cover"><span class="disp" style="font-weight:800;font-size:19px">Explore London</span></span><a class="iconbtn" href="#/about" aria-label="Menu">${svg('menu', 22)}</a></div>
+      <label class="search">${svg('search', 20)}<span style="position:absolute;left:-9999px">Search</span><input id="q" type="search" enterkeyhint="search" placeholder='Try "Sunday roast" or "Harry Potter"' autocomplete="off"></label>
+    </div>
+    <div class="content">
+      <div id="results" style="display:none;flex-direction:column;gap:6px"></div>
+      <div id="homebody" style="display:flex;flex-direction:column;gap:14px">
+        ${stayCard()}${otdStrip}
+        <div class="tiles hg">${HOME_GROUPS.map(([g, ks]) => `<div class="tgl">${g}</div>` + ks.map(k => k === 'TUBE' ? `<a class="tile" href="#/around" style="--c:#C8262B"><span class="ic" style="background:#F9D6D6">${svg('train', 28, '#0F1E3D', 1.8)}</span><span class="l">Tube &amp; Trains</span></a>` : (c => `<a class="tile" href="#/cat/${encodeURIComponent(c.k)}" style="--c:${c.c}"><span class="ic" style="background:${c.t}">${catIcon(c.k, 28)}</span><span class="l">${c.s}</span></a>`)(CATS.find(c => c.k === k))).join('')).join('')}</div>
+        <a class="bigbtn" href="#/map">${svg('near', 20, '#F28C38', 2.2)} Near me now</a>
+        <div class="sec"><h2>Curious London</h2><a href="#/never">See all</a></div>
+        <span style="font-size:13px;color:var(--muted);margin-top:-8px">Odd, hidden and surprising · new picks every day</span>
+        <div class="hscroll">${neverList().slice(0, 8).map(([p, hook]) => `<a class="ncard" href="#/place/${p.id}">${thumb(p, 64)}<b>${esc(p.name.replace(/, Fortnum & Mason$/, ''))}</b><span>${esc(hook)}</span></a>`).join('')}<a class="ncard more" href="#/never"><b>See all ${neverList().length}</b>${svg('arrow', 22)}</a></div>
+        <div class="sec"><h2>Walks &amp; Guides</h2><a href="#/walks">See all</a></div>
+        <div class="hscroll">${walkCards}</div>
+        ${(() => { const L = neverList(); const x = L[8] || L[0]; if (!x) return ''; const [q, hook] = x; return `<a href="#/place/${q.id}" style="display:flex;align-items:center;gap:12px;background:#E6F2FF;border-radius:16px;padding:10px 12px;color:var(--ink);text-decoration:none">${thumb(q, 40)}<span style="display:flex;flex-direction:column;gap:1px;flex-grow:1;min-width:0"><span style="font-size:12px;font-weight:700;color:#2E6FD8;text-transform:uppercase;letter-spacing:.5px">Did you know?</span><span style="font-size:15px;font-weight:600;line-height:1.25">${esc(hook)}</span><span style="font-size:13px;color:#2E6FD8;font-weight:700">${esc(q.name.replace(/, Fortnum & Mason$/, ''))}</span></span>${svg('chev', 18)}</a>`; })()}
+        <p class="note" style="margin:0">${P.length} places, picked by London cabbies.</p>
+      </div>
+    </div>${tabs('Explore')}`;
+  const q = document.getElementById('q'), res = document.getElementById('results'), body = document.getElementById('homebody');
+  const IDEAS = ['Sunday roast', 'Fish and chips', 'Rooftop bars', 'Free museums', 'Afternoon tea', 'Harry Potter'];
+  const draw = () => {
+    const s = q.value.trim();
+    store.set('el_q', s);
+    if (s.length < 2) { res.style.display = 'none'; body.style.display = 'flex'; return; }
+    body.style.display = 'none'; res.style.display = 'flex';
+    let out;
+    try {
+      const {hits, total, exact, missing, badgeFor} = searchPlaces(s);
+      out = hits.length
+        ? `<span class="lbl">${exact ? (total > hits.length ? `Top ${hits.length} of ${total} results` : `${hits.length} result${hits.length === 1 ? '' : 's'}`) : (missing.length ? `Nothing in the app for “${esc(missing.join(' '))}” yet. Closest results` : 'No exact match. Closest results')}</span>` + hits.map(p => row(p, undefined, badgeFor(p))).join('')
+        : `<div class="empty">Nothing found for “${esc(s)}”. Try a cuisine, an area or a name, or one of these:<div class="chips" style="justify-content:center;margin-top:10px">${IDEAS.map(t => `<button class="chip" data-q="${esc(t)}">${esc(t)}</button>`).join('')}</div></div>`;
+    } catch (e) {
+      console.error(e);
+      out = `<div class="empty">Sorry, the search hit a problem. Please try again.</div>`;
+    }
+    res.innerHTML = out;
+    res.querySelectorAll('[data-q]').forEach(b => b.onclick = () => { q.value = b.dataset.q; draw(); });
+  };
+  q.addEventListener('input', draw);
+  q.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); q.blur(); } });
+  const last = store.get('el_q', '');
+  if (last && last.length >= 2 && history.state && history.state.keepSearch) { q.value = last; draw(); }
+  res.addEventListener('click', e => { if (e.target.closest('.row-card')) { try { history.replaceState({keepSearch: true}, ''); } catch {} } });
+}
+
+function shortAddr(p) { let a = (p.address || '').split(',')[0].trim(); a = a.replace(/\s+(London\b|[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}).*$/i, ''); const ar = (p.area || '').split(/ & /); ar.forEach(x => { a = a.replace(new RegExp('\\s+' + x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$', 'i'), ''); }); return a || p.area; }
+/* restaurant tiles: the cuisine icons approved 29 Oct (Chinese is 中), shown until a place has a photo.
+   Order: Michelin, afternoon tea, Sunday roast, fish & chips first; then what the name says (Kung Fu Burger, Heliot Steak House, Shoryu Ramen); then the main cuisine. */
+const CUI = {british:'#FCDCD3', burger:'#F9E0C7', steak:'#FCDCD3', bbq:'#FCDCD3', indian:'#FDEBC2', chinese:'#F8D3E1', japanese:'#D3E6F8', ramen:'#F9E0C7', asian:'#E7F2C6', korean:'#F8D3E1', thai:'#D5EBD6', vietnamese:'#FDEBC2', italian:'#D5EBD6', pizza:'#FCDCD3', french:'#F5D9A8', european:'#E6DBF4', greek:'#D3E6F8', mediterranean:'#E7F2C6', middleeastern:'#F9E0C7', southamerican:'#D5EBD6', seafood:'#D3E6F8', veg:'#D5EBD6', brunch:'#FDEBC2', glutenfree:'#ECE9C6', caribbean:'#D5EBD6', african:'#F5D9A8'};
+const CUI_NAME = [[/burger/, 'burger'], [/steak|chophouse|grill\b/, 'steak'], [/ramen|hot ?pot|noodle/, 'ramen'], [/pizz/, 'pizza'], [/sushi/, 'japanese'], [/dim sum|dumpling/, 'chinese'], [/bbq|barbecue|smokehouse/, 'bbq'], [/oyster|lobster|seafood|fish(?! &| and)/, 'seafood'], [/curry|tandoor|biryani/, 'indian'], [/pasta|trattoria|osteria/, 'italian'], [/taco|taqueria|mexican/, 'southamerican'], [/kebab|meze|mezze/, 'middleeastern']];
+const CUI_TYPE = [['Hot Pot', 'ramen'], ['Pizza', 'pizza'], ['Burgers/Steakhouse', 'burger'], ['Japanese', 'japanese'], ['Chinese', 'chinese'], ['Korean', 'korean'], ['Thai', 'thai'], ['Vietnamese', 'vietnamese'], ['Indian', 'indian'], ['Italian', 'italian'], ['French', 'french'], ['Greek', 'greek'], ['Turkish', 'middleeastern'], ['Middle Eastern', 'middleeastern'], ['Mediterranean', 'mediterranean'], ['South American', 'southamerican'], ['Seafood', 'seafood'], ['Vegan', 'veg'], ['Vegetarian', 'veg'], ['Gluten Free', 'glutenfree'], ['Asian Fusion', 'asian'], ['Spanish', 'mediterranean'], ['Portuguese', 'mediterranean'], ['Mexican', 'southamerican'], ['Taiwanese', 'asian'], ['Sri Lankan', 'indian'], ['Pakistani', 'indian'], ['American', 'burger'], ['Australian', 'brunch'], ['German', 'european'], ['Austrian', 'european'], ['Swiss', 'european'], ['European', 'european'], ['Caribbean', 'caribbean'], ['African', 'african'], ['Brunch/Breakfast', 'brunch'], ['British', 'british']];
+function cuisineKey(p) {
+  const n = p.name.toLowerCase(); for (const [re, k] of CUI_NAME) if (re.test(n)) return k;
+  const cs = (p.cuisine || '').split(',').map(x => x.trim()); for (const [c, k] of CUI_TYPE) if (cs.includes(c)) return k;
+  return null;
+}
+function restTile(p, size) {
+  const pr = (PILLS['Restaurants'] || []).find(c => ['Afternoon tea', 'Sunday roast', 'Fish & chips'].includes(c.label) && c.test(p));
+  let src, bg;
+  if (COLL['Restaurants'].banner.test(p)) { src = COLL['Restaurants'].banner.icon; bg = '#FCDCD3'; }
+  else if (pr) { src = pr.icon; bg = pr.bg; }
+  else { const k = cuisineKey(p); if (k) { src = 'img/c/' + k + '.svg'; bg = CUI[k]; } }
+  if (!src) return null;
+  return `<span class="thumb" style="width:${size}px;height:${size}px;background:${bg}"><img src="${src}" alt="" style="width:${Math.round(size*.58)}px;height:${Math.round(size*.58)}px;object-fit:contain"></span>`;
+}
+function catTile(p, k, size = 52) {
+  if (typeof k !== 'string' || !CAT[k]) k = null;
+  if (k === 'Blue Plaques' || (!k && p.cats[0] === 'Blue Plaques')) return `<span class="thumb plaque" style="width:${size}px;height:${size}px"></span>`;
+  k = k || (CAT[p.cats[0]] ? p.cats[0] : CATS[0].k);
+  const c = CAT[k], col = collOf(p, k), y = COLL[k] && COLL[k].year ? yearOf(p) : null;
+  if (y && y < 1950) return `<span class="thumb" style="width:${size}px;height:${size}px;background:${c.t};flex-direction:column;line-height:1"><span style="font-size:9px;font-weight:700;color:#6B5440;letter-spacing:.5px">SINCE</span><span class="disp" style="font-weight:800;font-size:16px">${y}</span></span>`;
+  if (k === 'Pubs') return `<span class="thumb" style="width:${size}px;height:${size}px;background:${c.t}">${catIcon(k, Math.round(size*.55))}</span>`;
+  if (k === 'Restaurants') { const t = restTile(p, size); if (t) return t; }
+  const bg = col ? col.bg : c.t, ic = col && col.icon ? `<img src="${col.icon}" alt="" style="width:${Math.round(size*.54)}px;height:${Math.round(size*.54)}px;object-fit:contain">` : catIcon(k, Math.round(size*.55));
+  const fr = k === 'Museums & Galleries' && p.tags.includes('Free to visit') ? '<span class="free">FREE</span>' : '';
+  return `<span class="thumb" style="width:${size}px;height:${size}px;background:${bg}">${ic}${fr}</span>`;
+}
+/* rough price per person, food plus a drink: £ under £20 · ££ £20–45 · £££ £45–90 · ££££ over £90 */
+const PRICE = ['', '£', '££', '£££', '££££'], PRICE_TXT = ['', 'under £20 a head', '£20–45 a head', '£45–90 a head', 'over £90 a head'];
+function catMeta(p, k) {
+  const col = collOf(p, k);
+  let first = k === 'Restaurants' ? (/michelin/i.test(TXT(p)) ? 'Michelin ' + (/3 stars|three/i.test(TXT(p)) ? '★★★' : /2 stars|two/i.test(TXT(p)) ? '★★' : '★') : (col ? shortLabel(col.label) : (p.cuisine || '').split(',')[0].trim())) : col ? shortLabel(col.label) : (p.tags.find(t => !/free|must|top 10|rainy|blue plaque/i.test(t)) || CAT[k].s);
+  if (k === 'Pubs' && (tagIs(p, 'Historic pub') || (!col && yearOf(p)))) first = 'Historic';
+  const bits = [k === 'Restaurants' && p.price ? PRICE[p.price] : '', first, p.area.replace(/ & .*/, '')];
+  const w = walkTime(p); if (w) bits.push(w.replace(' walk', ''));
+  return bits.filter(Boolean).join(' · ');
+}
+function catRow(p, k) {
+  return `<a class="row-card" href="#/place/${p.id}">${catTile(p, k)}<span class="rc-t"><span class="rc-n">${esc(p.name)}</span><span class="rc-m">${esc(catMeta(p, k))}</span><span class="rc-l">${esc(p.line)}</span></span></a>`;
+}
+function category(k) {
+  const c = CAT[k]; if (!c) return home();
+  setTitle(c.s);
+  const cfg = COLL[k] || {pills: []}, pills = PILLS[k] || [];
+  const list = P.filter(p => p.cats.includes(k));
+  let bset = null, b = cfg.banner;
+  if (b && b.test === 'oldest10') bset = new Set(list.filter(p => yearOf(p)).sort((x, y) => yearOf(x) - yearOf(y)).slice(0, 10).map(p => p.id));
+  else if (b && b.test) bset = new Set(list.filter(b.test).map(p => p.id));
+  const oldest = k === 'Pubs' ? Math.min(...list.map(yearOf).filter(Boolean)) : null;
+  const areas = [...new Set(list.map(p => p.area))].sort();
+  const cuisines = k === 'Restaurants' ? [...new Set(list.flatMap(p => (p.cuisine || '').split(',').map(x => x.trim())).filter(Boolean))].sort() : [];
+  const st = {pill: null, banner: false, area: '', cuisine: '', price: 0, sort: 'near'};
+  const banHTML = b ? `<a href="#" id="banner" style="display:flex;align-items:center;gap:10px;background:var(--orange);color:var(--navy);border-radius:14px;padding:8px 12px;text-decoration:none">
+      ${b.badge ? `<span style="width:32px;height:32px;border-radius:16px;background:#0F1E3D;color:#F5B83D;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Archivo';font-weight:800;font-size:${b.badge === 'oldest' ? 11 : 14}px">${b.badge === 'oldest' ? oldest : b.badge}</span>` : `<span style="width:32px;height:32px;border-radius:16px;background:${b.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><img src="${b.icon}" alt="" style="width:22px;height:22px"></span>`}
+      <span class="disp" style="font-weight:800;font-size:16px;flex-grow:1">${esc(b.label)} <span style="font-family:'Source Sans 3';font-weight:600;font-size:14px">· ${b.sub ? esc(b.sub) : (bset ? bset.size : '')}</span></span>
+      <span id="banchev">${svg('chev', 16, 'currentColor', 2.4)}</span></a>` : (k === 'Blue Plaques' ? `<div style="background:var(--orange);color:var(--navy);border-radius:14px;padding:10px 12px;font-size:14px;line-height:1.35"><b class="disp">What's a blue plaque?</b> Round blue signs on houses mark where famous people lived or worked. Look up as you go: it may be someone you know. Most are private homes, so enjoy them from the street.</div>` : '');
+  app.innerHTML = `<div class="top" style="padding:10px 16px 12px">
+      <div class="row" style="gap:12px">${backBtn('#/')}<span class="ic" style="width:40px;height:40px;border-radius:20px;background:${c.t};display:flex;align-items:center;justify-content:center;flex-shrink:0">${catIcon(k, 26)}</span>
+      <div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px;line-height:1.1">${esc(k)}</h1><span style="font-size:14px;color:#C9D3E6">${list.length} places</span></div></div>
+      ${banHTML}
+      <div id="info" style="display:none;background:#fff;color:var(--ink);border-radius:14px;padding:10px 12px;font-size:14px;line-height:1.4"></div>
+      <div class="cpills">${pills.map((t, i) => `<button class="cpill" data-i="${i}"><span class="ci" style="background:${t.bg}">${t.icon ? `<img src="${t.icon}" alt="">` : '<span class="plaquedot" style="width:18px;height:18px;display:block"></span>'}</span><span>${esc(t.label)}</span></button>`).join('')}</div>
+    </div>
+    <div class="content">
+      <div class="filters${k === 'Restaurants' ? ' four' : ''}">${k === 'Restaurants' ? `<select id="cuisine" aria-label="Cuisine"><option value="">Cuisine</option>${cuisines.map(a => `<option>${esc(a)}</option>`).join('')}</select><select id="price" aria-label="Price"><option value="0">Price</option>${[1, 2, 3, 4].map(i => `<option value="${i}">${PRICE[i]} ${PRICE_TXT[i].replace(' a head', '')}</option>`).join('')}</select>` : ''}<select id="area" aria-label="Area"><option value="">Area</option>${areas.map(a => `<option>${esc(a)}</option>`).join('')}</select>
+      <select id="sort" aria-label="Sort"><option value="near">Nearest</option>${STAY ? `<option value="stay">Nearest to ${esc(STAY.label.length > 18 ? 'my stay' : STAY.label)}</option>` : ''}<option value="az">A to Z</option>${k === 'Pubs' || k === 'Shopping' ? '<option value="old">Oldest first</option>' : ''}</select></div>
+      <div id="list" style="display:flex;flex-direction:column;gap:6px"></div>
+    </div>${tabs('Explore')}`;
+  const draw = () => {
+    const pl = st.pill != null ? pills[st.pill] : null;
+    let L = list.filter(p => (!st.area || p.area === st.area) && (!st.cuisine || (p.cuisine || '').includes(st.cuisine)) && (!st.price || p.price === st.price) && (!pl || pl.test(p)) && (!st.banner || (bset && bset.has(p.id))));
+    if (st.sort === 'old' || (st.banner && b && b.test === 'oldest10')) L = L.slice().sort((a, b) => (yearOf(a) || 9999) - (yearOf(b) || 9999));
+    else if (st.sort === 'stay' && STAY) L = L.slice().sort((a, b) => (a.lat == null) - (b.lat == null) || dist(STAY.lat, STAY.lng, a.lat ?? 0, a.lng ?? 0) - dist(STAY.lat, STAY.lng, b.lat ?? 0, b.lng ?? 0));
+    else if (st.sort === 'near') L = L.slice().sort((a, b) => (a.lat == null) - (b.lat == null) || dist(...here().slice(0,2), a.lat ?? 0, a.lng ?? 0) - dist(...here().slice(0,2), b.lat ?? 0, b.lng ?? 0));
+    else L = L.slice().sort((a, b) => a.name.replace(/^(The|Ye Olde) /, '').localeCompare(b.name.replace(/^(The|Ye Olde) /, '')));
+    if (st.sort === 'stay' && STAY) FROM = [STAY.lat, STAY.lng];
+    document.getElementById('list').innerHTML = L.length ? L.map(p => catRow(p, k)).join('') : `<div class="empty">${pl && pl.empty ? esc(pl.empty) : 'Nothing here with those filters yet.'}</div>`;
+    FROM = null;
+  };
+  const ban = document.getElementById('banner');
+  if (ban) ban.onclick = e => { e.preventDefault();
+    if (b.info) { const i = document.getElementById('info'); i.style.display = i.style.display === 'none' ? 'block' : 'none'; i.textContent = b.info; return; }
+    st.banner = !st.banner; st.pill = null; ban.style.boxShadow = st.banner ? 'inset 0 0 0 2px #0F1E3D' : ''; app.querySelectorAll('.cpill').forEach(x => x.classList.remove('on')); draw(); };
+  app.querySelectorAll('.cpill').forEach(bt => bt.onclick = () => { const i = +bt.dataset.i; st.pill = st.pill === i ? null : i; st.banner = false; if (ban) ban.style.boxShadow = ''; app.querySelectorAll('.cpill').forEach(x => x.classList.toggle('on', +x.dataset.i === st.pill)); draw(); });
+  document.getElementById('area').onchange = e => { st.area = e.target.value; draw(); };
+  const cu = document.getElementById('cuisine'); if (cu) cu.onchange = e => { st.cuisine = e.target.value; draw(); };
+  const pz = document.getElementById('price'); if (pz) pz.onchange = e => { st.price = +e.target.value; draw(); };
+  document.getElementById('sort').onchange = e => { st.sort = e.target.value; if (st.sort === 'near' && !meReal) locate(draw); draw(); };
+  draw();
+  if (!meReal) locate(() => meReal && draw());
+}
+
+function place(id) {
+  const p = byId[id]; if (!p) return home();
+  setTitle(p.name);
+  const c = CAT[p.cats[0]] || CATS[0], isPlaque = p.cats.includes('Blue Plaques');
+  const near = p.lat == null ? [] : P.filter(q => q.id !== p.id && q.lat != null).map(q => [q, dist(p.lat, p.lng, q.lat, q.lng)]).filter(x => x[1] < 900).sort((a, b) => a[1] - b[1]).slice(0, 4);
+  const BG = ['#F5D9A8','#E6DBF4','#D3E6F8','#D5EBD6','#F8D3E1'];
+  const badges = [...new Set(p.cats.flatMap(k => (PILLS[k] || []).filter(c => c.test(p)).map(c => shortLabel(c.label))).concat(p.tags.filter(t => /^(Historic pub|Free to visit|Must-see|Top 10)$/.test(t))))].slice(0, 4);
+  const tags = p.price ? [PRICE[p.price] + ' · ' + PRICE_TXT[p.price]].concat(badges) : badges;
+  app.innerHTML = `<div class="hero" id="hero" style="background:${isPlaque ? '#D3E6F8' : c.t}">
+      <span class="heroic">${isPlaque ? '<span class="plaquedot" style="width:96px;height:96px;display:block;box-shadow:inset 0 0 0 7px #fff,0 0 0 2px var(--plaque)"></span>' : catIcon(c.k, 80)}</span>
+      <div class="acts">${backBtn().replace('iconbtn', 'iconbtn light')}<span class="row" style="gap:8px">
+        <button class="iconbtn light" id="share" aria-label="Share">${svg('share', 20)}</button>
+        <button class="iconbtn light" id="save" aria-label="Save to My List" style="color:#E86A4F">${svg('heart', 20)}</button></span></div>
+    </div>
+    <div class="credit" id="credit"></div>
+    <div class="sheet">
+      <span class="kicker">${esc(p.cats.join(' · '))} · ${esc(p.area)}</span>
+      <h1 style="margin:0;font-weight:800;font-size:26px;line-height:1.1">${esc(p.name)}</h1>
+      <span style="font-size:14px;color:var(--muted)">${esc(shortAddr(p))}${p.lat != null ? ' · ' + walkTime(p) : ''}${p.approx ? ' (approx. pin)' : ''}</span>
+      ${tags.length || p.cuisine ? `<div class="tags">${(p.cuisine ? p.cuisine.split(',').map(x => x.trim()).filter(Boolean).slice(0, 2) : []).concat(tags).slice(0, 4).map((t, i) => `<span class="tag" style="background:${BG[i % 5]}">${esc(t)}</span>`).join('')}</div>` : ''}
+      <p style="margin:0;font-size:15.5px;line-height:1.5;white-space:pre-line">${esc(p.why)}</p>
+      <div class="row" style="gap:8px">
+        ${p.lat != null ? `<a class="bigbtn" style="height:46px;flex:1" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=walking">${svg('arrow', 18, '#F28C38', 2.2)} Walk there</a>` : ''}
+        ${p.website ? `<a class="ghost" target="_blank" rel="noopener" href="${esc(p.website)}">Website</a>` : ''}
+        ${p.lat != null && !p.website ? `<a class="ghost" href="#/map/${p.id}">Map</a>` : ''}
+      </div>
+      <div id="gt"></div>
+    </div>
+    <div class="content" style="padding-top:10px">
+      ${p.story ? `<div class="story" style="gap:8px"><span class="row" style="gap:10px"><img src="img/matt.jpg" alt="" style="width:40px;height:40px;border-radius:20px;object-fit:cover;background:var(--orange)"><span style="display:flex;flex-direction:column"><b class="disp" style="font-size:15px">The Cabbie's Story</b><span style="font-size:12.5px;color:#6B5440">from the cabbies</span></span></span><p style="margin:0;font-size:14.5px;line-height:1.4">${esc(p.story)}</p></div>` : ''}
+      ${near.length ? `<h2 style="margin:4px 0 0;font-size:15px;font-weight:800">Also nearby</h2><div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">${near.map(([q, m]) => `<a href="#/place/${q.id}" style="display:flex;align-items:center;gap:8px;background:#fff;border-radius:12px;padding:8px;text-decoration:none;box-shadow:0 1px 2px rgba(15,30,61,.08)">${catTile(q, q.cats[0], 34).replace('class="thumb', 'class="thumb sm')}<span style="display:flex;flex-direction:column;min-width:0"><span style="font-weight:700;font-size:13.5px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(q.name)}</span><span style="font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(q.cats[0] === 'Blue Plaques' ? 'Blue plaque' : (collOf(q, q.cats[0]) ? shortLabel(collOf(q, q.cats[0]).label) : (CAT[q.cats[0]] || CATS[0]).s))} · ${mins(m)} min</span></span></a>`).join('')}</div>` : ''}
+    </div>${tabs('Explore')}`;
+  const sv = document.getElementById('save');
+  const paint = () => { sv.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="${saved.has(p.id) ? '#E86A4F' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true">${ICONS.heart}</svg>`; };
+  paint();
+  sv.onclick = () => { saved.has(p.id) ? saved.delete(p.id) : saved.add(p.id); persist(); paint(); toast(saved.has(p.id) ? 'Saved to My List' : 'Removed from My List'); };
+  document.getElementById('share').onclick = async () => { const d = {title: p.name, text: `${p.name} – worth a visit, from Explore London`, url: location.href}; try { if (navigator.share) await navigator.share(d); else { await navigator.clipboard.writeText(location.href); toast('Link copied'); } } catch {} };
+  loadPhoto(p);
+  gettingThere(p);
+}
+
+/* ---------- Getting there: the nearest stations, and a cab ----------
+   Station list: TfL stations with their lines (from Oliver O'Brien's open TfL data), in stations.json. */
+const LINE_COL = {Bakerloo:'#B36305', Central:'#E32017', Circle:'#FFD300', District:'#00782A', 'H&C':'#F3A9BB', Jubilee:'#A0A5A9', Metropolitan:'#9B0056', Northern:'#000000', Piccadilly:'#003688', Victoria:'#0098D4', 'W&C':'#95CDBA', Elizabeth:'#6950A1', Overground:'#EE7C0E', DLR:'#00A4A7', Tram:'#84B817', Rail:'#555F6E', 'Cable car':'#DC241F'};
+const LINE_TXT = {Circle:'#0F1E3D', 'H&C':'#0F1E3D', Jubilee:'#0F1E3D', 'W&C':'#0F1E3D'};
+let STN = null;
+async function gettingThere(p) {
+  const el = document.getElementById('gt'); if (!el || p.lat == null || p.cats.includes('Blue Plaques') && false) return;
+  try { if (!STN) STN = await fetch('stations.json').then(r => r.json()); } catch { STN = []; }
+  if (location.hash !== '#/place/' + p.id) return;
+  const ns = STN.map(s => [s, dist(p.lat, p.lng, s[1], s[2])]).filter(x => x[1] < 1600).sort((a, b) => a[1] - b[1]).slice(0, 2);
+  const chip = l => `<span style="display:inline-block;font-size:11px;font-weight:700;padding:1px 6px;border-radius:6px;background:${LINE_COL[l] || '#555'};color:${LINE_TXT[l] || '#fff'}">${esc(l)}</span>`;
+  el.innerHTML = `<div style="display:flex;flex-direction:column;gap:6px;border-top:1px solid #E1E6EE;padding-top:10px">
+    <b style="font-size:15px">Getting there</b>
+    ${ns.map(([s, d]) => `<div style="display:flex;align-items:center;gap:8px;font-size:14px">${svg('train', 18, '#0F1E3D', 1.8)}<span style="display:flex;flex-direction:column;gap:3px"><span><b>${esc(s[0])}</b> · ${mins(d)} min walk</span><span style="display:flex;flex-wrap:wrap;gap:3px">${s[3].map(chip).join('')}</span></span></div>`).join('') || '<span style="font-size:14px;color:var(--muted)">No station within a 20-minute walk. Easiest by cab.</span>'}
+  </div>`;
+}
+
+/* Free-licence photos from Wikipedia/Wikimedia Commons, only when the article is right next to the place */
+/* photos Matt has checked and rejected (place ids): never show one for these */
+const PHOTO_BLOCK = new Set([298]);
+/* businesses rarely have their own Wikipedia article, so a "near and sounds similar" match is usually a different building */
+const BIZ = ['Restaurants', 'Pubs', 'Bars & Nightlife', 'Food Shops', 'Shopping', 'Games & Activities', 'Spas & Wellness', 'Markets & Food Halls', 'Theatre & Shows', 'Sport'];
+async function loadPhoto(p) {
+  if (p.lat == null || p.cats.includes('Blue Plaques') || PHOTO_BLOCK.has(p.id) || store.get('el_badphoto', []).includes(p.id)) return;
+  const cache = store.get('el_photo2', {});
+  let ph = cache[p.id];
+  if (ph === undefined) {
+    ph = null;
+    try {
+      const u = `https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&generator=geosearch&ggscoord=${p.lat}|${p.lng}&ggsradius=250&ggslimit=15&prop=pageimages&piprop=thumbnail|name&pithumbsize=900&pilicense=free`;
+      const r = await fetch(u).then(r => r.json());
+      const pages = Object.values((r.query || {}).pages || {}).filter(x => x.thumbnail && x.pageimage);
+      const words = s => s.toLowerCase().replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter(w => w.length > 2 && !['the','and','london','ye','olde','pub','bar','restaurant','museum'].includes(w));
+      const pw = words(p.name);
+      const norm = t => t.toLowerCase().replace(/\s*\([^)]*\)\s*/g, ' ').replace(/^the /, '').replace(/[^a-z0-9]+/g, ' ').trim();
+      const biz = p.cats.every(c => BIZ.includes(c));
+      let best = null, score = 0;
+      pages.forEach(x => {
+        const tw = words(x.title), hit = pw.filter(w => tw.includes(w)).length;
+        /* the article must be about this place: every word of the name, and not much else in the title */
+        let s = pw.length && hit === pw.length && tw.length <= pw.length + 1 ? 1 : 0;
+        /* for restaurants, pubs, bars and shops the article title must be the place's own name, e.g. "Rules (restaurant)" */
+        if (biz && norm(x.title) !== norm(p.name)) s = 0;
+        if (s > score) { score = s; best = x; }
+      });
+      if (best && score >= 1) {
+        const m = await fetch(`https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&titles=File:${encodeURIComponent(best.pageimage)}&prop=imageinfo&iiprop=extmetadata|url`).then(r => r.json());
+        const ii = Object.values(m.query.pages)[0].imageinfo?.[0]; const md = ii?.extmetadata || {};
+        const strip = h => (h || '').replace(/<[^>]+>/g, '').trim();
+        ph = {src: best.thumbnail.source, by: strip(md.Artist?.value).slice(0, 60) || 'Unknown', lic: strip(md.LicenseShortName?.value) || 'free licence', page: ii?.descriptionurl || ''};
+      }
+    } catch (e) { ph = undefined; }
+    if (ph !== undefined) { cache[p.id] = ph; store.set('el_photo2', cache); }
+  }
+  if (ph && location.hash === '#/place/' + p.id) {
+    const h = document.getElementById('hero');
+    h.style.backgroundImage = `url("${ph.src}")`; h.querySelector('.heroic')?.remove();
+    document.getElementById('credit').innerHTML = `Photo: ${esc(ph.by)}, ${esc(ph.lic)}, via <a href="${esc(ph.page)}" target="_blank" rel="noopener">Wikimedia Commons</a> · <a href="#" id="badph" style="color:#C8262B;font-weight:700">Wrong photo?</a>`;
+    document.getElementById('badph').onclick = e => { e.preventDefault(); const b = store.get('el_badphoto', []); if (!b.includes(p.id)) b.push(p.id); store.set('el_badphoto', b); h.style.backgroundImage = ''; document.getElementById('credit').textContent = 'Photo removed. Thanks, it’s on your list in About.'; };
+  }
+}
+
+/* ---------- map ---------- */
+let leaflet = null;
+function mapScreen(focusId) {
+  setTitle('Map');
+  const GROUPS = [['All', null], ['Eat', '#E86A4F'], ['Drink', '#D99A1E'], ['See', '#2BB3A3'], ['Plaques', '#2E6FD8']];
+  const st = {g: 'All', m: store.get('el_mins', 10)};
+  app.innerHTML = `<div class="top">
+      <div class="row"><label class="search">${svg('search', 18)}<span style="position:absolute;left:-9999px">Search the map</span><input id="mq" type="search" enterkeyhint="search" placeholder="Search the map" autocomplete="off"></label></div>
+      <div class="hpills">${GROUPS.map(([g, c]) => `<button class="hpill${g === 'All' ? ' on' : ''}" data-g="${g}">${c ? `<span class="dot" style="background:${c}${g === 'Plaques' ? ';box-shadow:inset 0 0 0 2px #fff' : ''}"></span>` : ''}${g}</button>`).join('')}</div>
+    </div>
+    <div class="map"><div id="leaf"></div>
+      <div class="overlay card" style="top:12px">
+        <div class="row" style="gap:6px">${svg('near', 16, '#F28C38', 2.4)}<b class="disp" style="font-size:15px">Near me now</b><span style="font-size:13px;color:var(--muted)" id="whereami"></span></div>
+        <div class="mins">${[5, 10, 15, 20].map(m => `<button data-m="${m}" class="${m === st.m ? 'on' : ''}"><b>${m} min</b><small id="c${m}">…</small></button>`).join('')}</div>
+      </div>
+      <button class="iconbtn light overlay" id="recentre" aria-label="Centre on me" style="left:auto;right:12px;top:130px;width:44px;color:var(--plaque)">${svg('locate', 20)}</button>
+      <div class="overlay" id="farbox" style="top:118px;display:none"></div>
+      <div class="overlay" id="mcard" style="bottom:12px;display:none"></div>
+    </div>${tabs('Map')}`;
+  const mEl = app.querySelector('.map'), fit = () => { mEl.style.height = Math.max(380, innerHeight - app.querySelector('.top').offsetHeight - app.querySelector('nav.tabs').offsetHeight) + 'px'; };
+  fit();
+  if (leaflet) { leaflet.remove(); leaflet = null; }
+  const map = leaflet = L.map('leaf', {zoomControl: false, attributionControl: true}).setView(here().slice(0, 2), 15);
+  addBase(map);
+  const layer = L.layerGroup().addTo(map);
+  let circle = null, meMk = null;
+  const groupOf = p => p.cats.includes('Blue Plaques') ? 'Plaques' : (CAT[p.cats[0]] || CATS[0]).g;
+  const show = p => {
+    const card = document.getElementById('mcard'); const isPl = p.cats.includes('Blue Plaques');
+    card.style.display = 'block';
+    card.innerHTML = `<div class="card"><div class="row" style="align-items:flex-start">${thumb(p, 48)}<span class="rc-t"><span style="font-size:11.5px;font-weight:700;color:${isPl ? 'var(--plaque)' : '#A8551A'};text-transform:uppercase;letter-spacing:.5px">${esc(isPl ? 'Blue plaque · ' + (p.tags[1] || '') : p.cats[0])}</span><span class="rc-n" style="white-space:normal">${esc(p.name)}</span><span style="font-size:13px;color:#2B3A55">${esc(p.line)}</span><span class="rc-m">${esc(p.area)} · ${walkTime(p)}</span></span>
+      <button class="iconbtn light" id="mclose" aria-label="Close" style="width:36px;height:36px;box-shadow:none">✕</button></div>
+      ${p.story ? `<div class="story" style="padding:8px 10px;font-size:13px;line-height:1.35"><span><b class="k">Cabbie's story · </b>${esc(p.story)}</span></div>` : ''}
+      <div class="row" style="gap:8px"><a class="bigbtn" style="height:44px;flex:1" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=walking">${svg('arrow', 18, '#F28C38', 2.2)} Walk there</a><a class="ghost" href="#/place/${p.id}">More</a></div></div>`;
+    document.getElementById('mclose').onclick = () => card.style.display = 'none';
+  };
+  const draw = () => {
+    const [a, b] = here(); const r = st.m * CONFIG.walkSpeed;
+    layer.clearLayers();
+    if (circle) circle.remove();
+    circle = L.circle([a, b], {radius: r, color: '#F28C38', weight: 2.5, dashArray: '7 6', fillColor: '#F28C38', fillOpacity: .12}).addTo(map);
+    if (meMk) meMk.remove();
+    meMk = L.marker([a, b], {icon: L.divIcon({className: '', html: '<div class="me"></div>', iconSize: [18, 18]}), interactive: false}).addTo(map);
+    const qraw = (document.getElementById('mq').value || '').trim();
+    const mt = qraw.length >= 2 ? makeMatcher(qraw) : null, q = !!mt;
+    const inc = {5: 0, 10: 0, 15: 0, 20: 0};
+    /* far from anything in the app (e.g. outer London)? then show every pin, and offer the nearest ones */
+    const near20 = P.filter(p => p.lat != null && dist(a, b, p.lat, p.lng) <= 20 * CONFIG.walkSpeed).length, far = !near20;
+    const fb = document.getElementById('farbox');
+    const nearest = far ? P.filter(p => p.lat != null && (st.g === 'All' || groupOf(p) === st.g)).map(p => [p, dist(a, b, p.lat, p.lng)]).sort((x, y) => x[1] - y[1]) : [];
+    const farIds = new Set(nearest.slice(0, 40).map(x => x[0].id));
+    if (fb) {
+      if (far && !q && nearest.length && !st.farHide) {
+        const nn = nearest.slice(0, 3);
+        fb.style.display = 'block';
+        fb.innerHTML = `<div class="card" style="display:flex;flex-direction:column;gap:6px"><b style="font-size:14.5px">Nothing in the app within a 20-minute walk of you yet</b><span style="font-size:13px;color:var(--muted)">Nearest: ${nn.map(([p, d]) => esc(p.name) + ' (' + (d / 1609).toFixed(1) + ' miles)').join(', ')}</span><div class="row" style="gap:8px"><button class="ghost" id="fbnear" style="height:38px;flex:1">Show the nearest</button><button class="ghost" id="fbcen" style="height:38px;flex:1">Central London</button></div></div>`;
+        const fitNear = () => map.fitBounds(L.latLngBounds([[a, b]].concat(nearest.slice(0, 8).map(([p]) => [p.lat, p.lng]))), {padding: [50, 50], maxZoom: 15});
+        document.getElementById('fbnear').onclick = fitNear;
+        document.getElementById('fbcen').onclick = () => { st.farHide = true; fb.style.display = 'none'; map.setView(CONFIG.demoStart.slice(0, 2), 14); };
+        if (!st.farFitted) { st.farFitted = true; setTimeout(fitNear, 50); }
+      } else fb.style.display = 'none';
+    }
+    let vb = null; try { vb = map.getBounds().pad(0.4); } catch (e) {}
+    P.forEach(p => { try {
+      if (p.lat == null) return;
+      if (st.g !== 'All' && groupOf(p) !== st.g) return;
+      if (mt && !mt.score(p).all) return;
+      const d = dist(a, b, p.lat, p.lng);
+      [5, 10, 15, 20].forEach(m => { if (d <= m * CONFIG.walkSpeed) inc[m]++; });
+      const inside = d <= r, pl = groupOf(p) === 'Plaques', c = CAT[p.cats[0]] || CATS[0];
+      if (!inside && !q && !(vb && vb.contains([p.lat, p.lng])) && !(far && farIds.has(p.id))) return;
+      const mk = L.marker([p.lat, p.lng], {opacity: inside || q || far ? 1 : .55, icon: pinIcon(p)});
+      mk.on('click', () => show(p)); layer.addLayer(mk);
+    } catch (e) {} });
+    [5, 10, 15, 20].forEach(m => document.getElementById('c' + m).textContent = inc[m] + ' places');
+    const wa = document.getElementById('whereami');
+    if (meReal) wa.textContent = '· from where you are';
+    else if (STAY) wa.textContent = '· from ' + STAY.label;
+    else { wa.innerHTML = `· from ${esc(CONFIG.demoStart[2])}${locErr ? ' · <a href="#" id="lochelp" style="color:#C8262B;font-weight:700">location off?</a>' : ''}`; const lh = document.getElementById('lochelp'); if (lh) lh.onclick = e => { e.preventDefault(); const fb2 = document.getElementById('farbox'); fb2.style.display = 'block'; fb2.innerHTML = `<div class="card" style="display:flex;flex-direction:column;gap:6px"><b style="font-size:14.5px">Your location is off</b><span style="font-size:13.5px;line-height:1.4">${esc(LOC_HELP)}</span><div class="row" style="gap:8px"><a class="ghost" href="#/stay" style="height:38px;flex:1">Set where I’m staying</a><button class="ghost" id="lhclose" style="height:38px;flex:1">OK</button></div></div>`; document.getElementById('lhclose').onclick = () => fb2.style.display = 'none'; }; }
+  };
+  window._mapRefresh = draw;
+  /* redraw the pins whenever the map is moved or zoomed, so whatever is on screen has its pins */
+  let mvT = null; map.on('dragstart', () => { st.farHide = true; }); map.on('moveend', () => { clearTimeout(mvT); mvT = setTimeout(draw, 120); });
+  app.querySelectorAll('.hpill').forEach(b => b.onclick = () => { st.g = b.dataset.g; app.querySelectorAll('.hpill').forEach(x => x.classList.toggle('on', x === b)); draw(); });
+  app.querySelectorAll('.mins button').forEach(b => b.onclick = () => { st.m = +b.dataset.m; store.set('el_mins', st.m); app.querySelectorAll('.mins button').forEach(x => x.classList.toggle('on', x === b)); draw(); map.fitBounds(circle.getBounds(), {padding: [10, 10]}); });
+  document.getElementById('mq').oninput = draw;
+  document.getElementById('mq').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); } });
+  document.getElementById('recentre').onclick = () => locate(ok => { if (!meReal && ok) toast('You look to be outside London, so the map starts at Leicester Square'); map.setView(here().slice(0, 2), 15); draw(); if (!ok && document.getElementById('lochelp')) document.getElementById('lochelp').click(); });
+  draw();
+  if (focusId && byId[focusId] && byId[focusId].lat != null) { const p = byId[focusId]; map.setView([p.lat, p.lng], 16); show(p); }
+  else if (!meReal) locate(() => { if (meReal) map.setView(here().slice(0, 2), 15); draw(); });
+}
+
+/* ---------- walks ---------- */
+const INTERESTS = {
+  'Music': p => p.tags.includes('Music'),
+  'Blue plaques': p => p.cats.includes('Blue Plaques'),
+  'History': p => p.cats.includes('History & Curiosities') || p.cats.includes('Landmarks'),
+  'Harry Potter': p => /harry potter|diagon|hogwarts|platform 9|leaky cauldron/i.test(p.why + p.story + p.name),
+  'Film & TV': p => p.tags.includes('Film & TV') || /\bfilm(ed|s)?\b|movie|bridgerton|james bond|sherlock/i.test(p.why + p.story),
+  'Old pubs': p => p.cats.includes('Pubs') && (p.tags.includes('Historic pub') || /\b1[4-7]\d\d\b|oldest/i.test(p.why)),
+  'LGBTQ+': p => p.tags.includes('LGBTQ+'),
+};
+const WICON = {'Royal':'arch','Royal Parks':'tree','Film & TV':'bolt','Day out':'arch','Music':'note','LGBTQ+':'heart'};
+function walkRows(all) {
+  const hp = WALKS.filter(w => w.id.startsWith('hp-'));
+  const items = all ? WALKS.map(w => ({href:'#/walk/' + w.id, title:w.title, meta:w.meta, line:w.intro, color:w.color, tag:w.tag, isNew:w.isNew}))
+    : [WALKS.find(w => w.id === 'hyde-park'), {id:'hp', title:'Harry Potter in London', meta:'Film & TV · ' + hp.length + ' walks', intro:"King's Cross, Westminster and the City.", color:'#3B2F5C', tag:'Film & TV', isNew:true}, WALKS.find(w => w.id === 'greenwich'), WALKS.find(w => w.id === 'ted-lasso'), WALKS.find(w => w.id === 'music-trail'), WALKS.find(w => w.id === 'lgbtq-soho'), WALKS.find(w => w.id === 'changing-guard')].filter(Boolean)
+      .map(w => ({href: w.id === 'hp' ? '#/walks/all' : '#/walk/' + w.id, title:w.title, meta: w.id === 'hp' ? w.meta : w.tag + ' · ' + w.meta.replace(/^About /, '').split(' · ')[0] + (w.id === 'greenwich' ? ' · by river boat' : w.id === 'hyde-park' ? ' · 10 stops' : ''), line: w.id === 'changing-guard' ? 'Foot guards and mounted guard, with the times to be in each spot.' : w.intro, color:w.color, tag:w.tag, isNew:w.isNew}));
+  return items.map(w => `<a class="row-card" href="${w.href}"><span class="thumb" style="background:${w.color}">${svg(WICON[w.tag] || 'walk', 24, '#F5D9A8')}</span><span class="rc-t"><span class="rc-n">${esc(w.title)}${w.isNew ? ' <span class="badge" style="background:var(--orange);font-size:10.5px;vertical-align:2px">NEW</span>' : ''}</span><span class="rc-m">${esc(w.meta)}</span><span class="rc-l">${esc(w.line)}</span></span></a>`).join('');
+}
+function walks(all) {
+  setTitle('Walks');
+  const st = {i: new Set(store.get('el_int', ['Music', 'Blue plaques'])), t: store.get('el_time', 60)};
+  app.innerHTML = `<div class="top" style="position:static">
+      <div><h1 style="margin:0;font-weight:800;font-size:24px">Walks &amp; Guides</h1><span style="font-size:14px;color:#C9D3E6">Walk London with a cabbie's stories</span></div>
+      <div style="background:#fff;color:var(--ink);border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:10px">
+        <div class="row"><span style="width:36px;height:36px;border-radius:18px;background:var(--orange);display:flex;align-items:center;justify-content:center">${svg('walk', 20, '#0F1E3D', 2.2)}</span><span style="display:flex;flex-direction:column"><b class="disp" style="font-size:17px">Make My Walk</b><span style="font-size:13px;color:var(--muted)">Pick what you like and how long you've got</span></span></div>
+        <span class="lbl">I'm into</span><div class="chips">${Object.keys(INTERESTS).map(k => `<button class="chip${st.i.has(k) ? ' on' : ''}" data-k="${k}">${k}</button>`).join('')}</div>
+        <span class="lbl">I've got</span><div class="mins">${[[30,'30 min'],[60,'1 hour'],[120,'2 hours'],[240,'Half day']].map(([m, l]) => `<button data-t="${m}" class="${m === st.t ? 'on' : ''}" style="height:36px"><b>${l}</b></button>`).join('')}</div>
+        <button class="bigbtn orange" id="build" style="height:46px">Build my walk from here ${svg('arrow', 18, '#0F1E3D', 2.4)}</button>
+      </div></div>
+    <div class="content">
+      <div class="sec"><h2>Ready-made walks</h2><a href="#/walks/all">See all</a></div>
+      ${walkRows(all)}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <a href="#/plans" style="display:flex;align-items:center;gap:8px;background:#FFF4E8;border-radius:14px;padding:12px;text-decoration:none">${svg('cal', 20, '#A8551A')}<span style="display:flex;flex-direction:column"><b class="disp" style="font-size:15px">Free day plans</b><span style="font-size:12.5px;color:var(--muted)">15 days out</span></span></a>
+        <a href="#/daytrips" style="display:flex;align-items:center;gap:8px;background:#FFF4E8;border-radius:14px;padding:12px;text-decoration:none">${svg('train', 20, '#A8551A')}<span style="display:flex;flex-direction:column"><b class="disp" style="font-size:15px">Day trips</b><span style="font-size:12.5px;color:var(--muted)">Beyond London · 9 places</span></span></a>
+      </div>
+    </div>${tabs('Walks')}`;
+  app.querySelectorAll('.chip').forEach(b => b.onclick = () => { const k = b.dataset.k; st.i.has(k) ? st.i.delete(k) : st.i.add(k); b.classList.toggle('on'); store.set('el_int', [...st.i]); });
+  app.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { st.t = +b.dataset.t; store.set('el_time', st.t); app.querySelectorAll('[data-t]').forEach(x => x.classList.toggle('on', x === b)); });
+  document.getElementById('build').onclick = () => { if (!st.i.size) return toast('Pick at least one interest'); location.hash = '#/mywalk'; };
+  app.querySelectorAll('.soon').forEach(a => a.onclick = e => { e.preventDefault(); toast('Coming in the next version'); });
+  if (all) document.querySelector('.sec').scrollIntoView();
+}
+function buildWalk() {
+  const ints = store.get('el_int', ['Music', 'Blue plaques']), T = store.get('el_time', 60);
+  const ok = p => p.lat != null && ints.some(k => INTERESTS[k] && INTERESTS[k](p));
+  const [a, b] = here(); const reach = T * CONFIG.walkSpeed * 0.5;
+  let pool = P.filter(ok).filter(p => dist(a, b, p.lat, p.lng) <= reach);
+  const stops = []; let cur = [a, b], left = T;
+  while (pool.length && stops.length < 12) {
+    pool.sort((x, y) => dist(cur[0], cur[1], x.lat, x.lng) - dist(cur[0], cur[1], y.lat, y.lng));
+    const n = pool[0], walk = dist(cur[0], cur[1], n.lat, n.lng) / CONFIG.walkSpeed, dwell = T >= 120 ? 12 : 7;
+    if (walk + dwell > left) break;
+    stops.push({name: n.name, lat: n.lat, lng: n.lng, note: n.story || n.line, id: n.id, at: Math.round(T - left + walk)});
+    left -= walk + dwell; cur = [n.lat, n.lng]; pool = pool.slice(1);
+  }
+  return {id: 'mine', title: 'My walk: ' + ints.join(', '), meta: `${stops.length} stops · about ${T >= 60 ? T / 60 + ' hour' + (T > 60 ? 's' : '') : T + ' min'}`, intro: meReal ? 'Built from where you are now.' : `Built from ${CONFIG.demoStart[2]}. In London with location on, it starts where you are.`, color: '#F28C38', stops, start: [a, b]};
+}
+/* two-route walks (Changing the Guard): number badges coloured by route – red foot guards, gold mounted guard, navy for both */
+function numSty(s) { return s.route === 'foot' ? 'background:#C8102E;color:#fff' : s.route === 'mounted' ? 'background:#F9B10F;color:#0F1E3D' : 'background:#0F1E3D;color:#fff'; }
+function walkScreen(id) {
+  let w = id === 'mine' ? buildWalk() : WALKS.find(x => x.id === id);
+  if (!w && id && id.startsWith('plan-') && PLANS) { const pl = PLANS.find(x => 'plan-' + x.n === id); if (pl) { const st = pl.stops.filter(x => !x.meal).map(x => (x.ids || []).map(i => byId[i]).find(q => q && q.lat != null)).filter(Boolean); w = {id, title: pl.title + ': the route', meta: st.length + ' stops', intro: pl.sub + '. Meal stops are left out of the map.', color: '#0F1E3D', stops: st.filter((q, i, A) => A.indexOf(q) === i).map(q => ({name: q.name, lat: q.lat, lng: q.lng, note: q.line, id: q.id}))}; } }
+  if (!w && id && id.startsWith('trip-') && TRIPS) { const t = TRIPS.find(x => 'trip-' + x.id === id); if (t) w = {id, title: t.title + ': walking route', meta: t.stops.length + ' stops · from the station', intro: t.intro, color: t.color, stops: t.stops}; }
+  if (!w) return walks();
+  setTitle(w.title);
+  const total = w.stops.reduce((s, x, i, A) => s + (i ? dist(A[i-1].lat, A[i-1].lng, x.lat, x.lng) : 0), 0);
+  const gm = w.stops.length ? `https://www.google.com/maps/dir/?api=1&travelmode=walking&origin=${w.stops[0].lat},${w.stops[0].lng}&destination=${w.stops.at(-1).lat},${w.stops.at(-1).lng}&waypoints=${w.stops.slice(1, -1).slice(0, 9).map(s => s.lat + ',' + s.lng).join('|')}` : '';
+  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/walks')}<div style="display:flex;flex-direction:column;min-width:0"><h1 style="margin:0;font-weight:800;font-size:20px;line-height:1.15">${esc(w.title)}</h1><span style="font-size:13.5px;color:#C9D3E6">${esc(w.meta)}${total && !w.routes ? ' · ' + (total / 1000).toFixed(1) + ' km walking' : ''}</span></div></div></div>
+    <div style="height:300px;position:relative"><div id="leaf"></div></div>
+    <div class="content">
+      <p style="margin:0;font-size:15px;line-height:1.45">${esc(w.intro)}</p>
+      ${w.legend ? `<div class="row" style="gap:14px;flex-wrap:wrap">${w.legend.map(([l, c]) => `<span style="display:flex;align-items:center;gap:6px;font-size:14px;font-weight:700"><i style="width:22px;height:5px;border-radius:3px;background:${c}"></i>${esc(l)} route</span>`).join('')}</div>` : ''}
+      ${w.routes ? '' : w.stops.length ? `<div class="row" style="gap:8px"><a class="bigbtn" style="flex:1;height:46px" target="_blank" rel="noopener" href="${gm}">${svg('walk', 18, '#F28C38', 2.2)} Open in Google Maps</a>${id === 'mine' ? '<a class="ghost" href="#/mywalk" onclick="setTimeout(()=>route(),0)">Rebuild</a>' : ''}</div>` : `<div class="empty">No matching places close enough. Try more interests or more time.</div>`}
+      ${w.stops.map((s, i) => `<div class="stop"><span class="num" style="flex-shrink:0${s.route ? ';' + numSty(s) : ''}">${i + 1}</span><span style="display:flex;flex-direction:column;gap:2px"><b class="disp" style="font-size:15px">${s.id ? `<a href="#/place/${s.id}" style="text-decoration:none">${esc(s.name)}</a>` : esc(s.name)}</b><span style="font-size:14px;line-height:1.4">${esc(s.note)}</span></span></div>`).join('')}
+      <p class="note">${w.routes ? 'Routes are a guide to where the guards go. Timings are for a weekday ceremony day.' : 'Route lines are drawn straight between stops. Google Maps gives the real walking route.'}</p>
+    </div>${tabs('Walks')}`;
+  if (leaflet) { leaflet.remove(); leaflet = null; }
+  const map = leaflet = L.map('leaf', {zoomControl: false});
+  addBase(map);
+  const pts = w.stops.map(s => [s.lat, s.lng]);
+  if (w.start) { L.marker(w.start, {icon: L.divIcon({className: '', html: '<div class="me"></div>', iconSize: [18, 18]})}).addTo(map); pts.unshift(w.start); }
+  if (w.routes) w.routes.forEach(r => { L.polyline(r.pts, {color: '#fff', weight: 8, opacity: .9}).addTo(map); L.polyline(r.pts, {color: r.color, weight: 5}).addTo(map); r.pts.forEach(q => pts.push(q)); });
+  else if (pts.length > 1) L.polyline(pts, {color: '#0F1E3D', weight: 3, dashArray: '6 6'}).addTo(map);
+  w.stops.forEach((s, i) => L.marker([s.lat, s.lng], {icon: L.divIcon({className: '', html: `<div class="num"${s.route ? ` style="${numSty(s)}"` : ''}>${i + 1}</div>`, iconSize: [26, 26]})}).addTo(map).bindTooltip(s.time ? s.time + ' · ' + s.name : s.name));
+  if (pts.length) map.fitBounds(pts, {padding: [24, 24]}); else map.setView(here().slice(0, 2), 14);
+  if (id === 'mine' && !meReal) locate(() => { if (meReal) walkScreen('mine'); });
+}
+
+/* ---------- my list ---------- */
+function listRow(p) {
+  const k = CAT[p.cats[0]] ? p.cats[0] : CATS[0].k, col = collOf(p, k);
+  const m = [k === 'Blue Plaques' ? 'Blue plaque' : col ? shortLabel(col.label) : (p.cuisine ? p.cuisine.split(',')[0] : CAT[k].s), shortAddr(p).replace(/^\d+[a-z]?\s+/i, '')].concat(p.tags.includes('Free to visit') && k !== 'Blue Plaques' ? ['Free'] : []).join(' · ');
+  return `<div class="row-card" style="padding:8px">${catTile(p, k, 44)}<a href="#/place/${p.id}" class="rc-t" style="text-decoration:none"><span class="rc-n">${esc(p.name)}</span><span class="rc-m">${esc(m)}</span></a><button class="tick${visited.has(p.id) ? ' on' : ''}" data-id="${p.id}" aria-label="Mark as visited" aria-pressed="${visited.has(p.id)}">${svg('check', 20, 'currentColor', 2.6)}</button></div>`;
+}
+function myList(view) {
+  view = view || 'area';
+  setTitle('My List');
+  const L0 = [...saved].map(i => byId[i]).filter(Boolean);
+  const groups = {}; L0.forEach(p => (groups[p.area] = groups[p.area] || []).push(p));
+  const big = Object.entries(groups).sort((a, b) => b[1].length - a[1].length)[0];
+  const plaques = P.filter(p => p.cats.includes('Blue Plaques')), seen = plaques.filter(p => visited.has(p.id)).length;
+  app.innerHTML = `<div class="top"><div class="row" style="justify-content:space-between"><div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:24px">My List</h1><span style="font-size:14px;color:#C9D3E6">${L0.length} saved · ${L0.filter(p => visited.has(p.id)).length} visited · kept on this phone</span></div>
+      <button class="iconbtn" id="share" aria-label="Share my list" style="width:auto;padding:0 14px;gap:6px;font-weight:700">${svg('share', 16)} Share</button></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);background:var(--navy2);border-radius:14px;padding:4px;gap:4px">${[['area','By area'],['near','Nearest'],['map','On the map']].map(([v, l]) => `<a href="#/list/${v}" style="height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;text-decoration:none;font-weight:700;font-size:15px;${view === v ? 'background:#fff;color:var(--navy)' : 'color:#fff'}">${l}</a>`).join('')}</div></div>
+    <div class="content">
+      ${big && big[1].length >= 3 ? `<a href="#/daywalk/${encodeURIComponent(big[0])}" style="display:flex;align-items:center;gap:12px;background:var(--orange);border-radius:16px;padding:10px 12px;text-decoration:none"><span style="width:40px;height:40px;border-radius:20px;background:#F5D9A8;display:flex;align-items:center;justify-content:center;flex-shrink:0">${svg('walk', 22, '#0F1E3D', 2.2)}</span><span style="display:flex;flex-direction:column"><b class="disp">Make a day of it</b><span style="font-size:13.5px">${big[1].length} of your places are in ${esc(big[0])}. Walk them in about ${Math.max(1, Math.round(big[1].length * 12 / 60))} hour${big[1].length * 12 / 60 >= 1.5 ? 's' : ''}.</span></span></a>` : ''}
+      <div style="display:flex;align-items:center;gap:10px;background:#fff;border-radius:14px;padding:8px 12px;box-shadow:0 1px 2px rgba(15,30,61,.08)"><span class="plaquedot" style="width:30px;height:30px;flex-shrink:0"></span><span style="display:flex;flex-direction:column;gap:4px;flex:1"><span style="display:flex;justify-content:space-between;font-size:13.5px"><b>Plaque collector</b><span style="color:var(--muted)">${seen} of ${plaques.length} spotted</span></span><span style="height:6px;border-radius:3px;background:#E3E8F0;display:block"><span style="display:block;width:${plaques.length ? Math.round(seen / plaques.length * 100) : 0}%;height:6px;border-radius:3px;background:var(--plaque)"></span></span></span></div>
+      ${view === 'map' ? `<div style="height:420px;border-radius:16px;overflow:hidden;position:relative"><div id="leaf"></div></div>` : view === 'near' && L0.length ? L0.slice().sort((a, b) => (a.lat == null) - (b.lat == null) || dist(...here().slice(0,2), a.lat ?? 0, a.lng ?? 0) - dist(...here().slice(0,2), b.lat ?? 0, b.lng ?? 0)).map(p => listRow(p)).join('') : L0.length ? Object.entries(groups).sort((x, y) => y[1].length - x[1].length || x[0].localeCompare(y[0])).map(([a, ps]) => `<h2 style="margin:4px 0 0;font-size:15px;font-weight:800;display:flex;justify-content:space-between"><span>${esc(a)}</span><span style="font-family:'Source Sans 3';color:var(--muted)">${ps.length}</span></h2>${ps.map(p => listRow(p)).join('')}`).join('')
+        : `<div class="empty">Tap the heart on any place to save it here. Your list stays on this phone, no sign-up needed.</div>`}
+    </div>${tabs('My List')}`;
+  app.querySelectorAll('.tick').forEach(b => b.onclick = () => { const i = +b.dataset.id; visited.has(i) ? visited.delete(i) : visited.add(i); persist(); myList(view); });
+  if (view === 'map') {
+    if (leaflet) { leaflet.remove(); leaflet = null; }
+    const map = leaflet = L.map('leaf', {zoomControl: false});
+    addBase(map);
+    const pts = L0.filter(p => p.lat != null).map(p => { L.marker([p.lat, p.lng], {icon: pinIcon(p)}).addTo(map).on('click', () => location.hash = '#/place/' + p.id); return [p.lat, p.lng]; });
+    if (pts.length) map.fitBounds(pts, {padding: [30, 30], maxZoom: 16}); else map.setView(here().slice(0, 2), 14);
+  }
+  document.getElementById('share').onclick = async () => { const t = 'My London list, from Explore London:\n' + L0.map(p => '• ' + p.name + ' (' + p.area + ')').join('\n'); try { if (navigator.share) await navigator.share({title: 'My London list', text: t}); else { await navigator.clipboard.writeText(t); toast('List copied'); } } catch {} };
+}
+function dayWalk(area) {
+  const ps = [...saved].map(i => byId[i]).filter(p => p && p.area === area && p.lat != null);
+  const stops = []; let pool = ps.slice(), cur = pool.length ? [pool[0].lat, pool[0].lng] : here();
+  while (pool.length) { pool.sort((x, y) => dist(cur[0], cur[1], x.lat, x.lng) - dist(cur[0], cur[1], y.lat, y.lng)); const n = pool.shift(); stops.push({name: n.name, lat: n.lat, lng: n.lng, note: n.story || n.line, id: n.id}); cur = [n.lat, n.lng]; }
+  WALKS = WALKS.filter(w => w.id !== 'day'); WALKS.push({id: 'day', title: 'My day in ' + area, meta: stops.length + ' stops from My List', intro: 'Your saved places, in a sensible walking order.', color: '#F28C38', tag: 'My List', stops});
+  walkScreen('day'); WALKS = WALKS.filter(w => w.id !== 'day');
+}
+
+/* ---------- transfers ---------- */
+function transfers(toId) {
+  setTitle('Transfers');
+  const tripT = toId && String(toId).startsWith('trip-') && TRIPS ? TRIPS.find(x => 'trip-' + x.id === toId) : null;
+  const toP = tripT ? {name: 'Day trip to ' + tripT.title, area: 'Beyond London'} : toId && byId[toId];
+  const D = [['Heathrow', 'All terminals'], ['Gatwick', 'North & South'], ['London City', 'Docklands'], ['Stansted', 'Essex'], ['Luton', 'Bedfordshire'], ['Harry Potter Studio', 'Leavesden, Watford'], ['Day trip', 'Windsor, Oxford, Bath…']];
+  if (tripT) D.unshift([toP.name, 'Day trip from London']);
+  let pick = tripT ? toP.name : 'Heathrow';
+  app.innerHTML = `<div class="top"><div class="row"><span style="width:48px;height:48px;border-radius:24px;background:var(--orange);display:flex;align-items:center;justify-content:center;flex-shrink:0">${svg('cab', 28, '#0F1E3D', 1.9)}</span><div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px">Transfers</h1><span style="font-size:14px;color:#C9D3E6">Airports, the Harry Potter Studio and day trips</span></div></div>
+      <p style="margin:0;font-size:14.5px;line-height:1.4;color:#C9D3E6">Airports and days out, with a London cabbie. Plenty of room for luggage.</p>
+      <div class="row" style="background:var(--orange);color:var(--navy);border-radius:14px;padding:8px 12px"><b class="disp" style="font-size:20px;flex-shrink:0">10% off</b><span style="font-size:14px;font-weight:600;line-height:1.25">the meter on every transfer booked through the app</span></div></div>
+    <div class="content">
+      <h2 style="margin:0;font-size:17px;font-weight:800">Where are you heading?</h2>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">${D.map(([n, m], i) => `<button class="dest" data-n="${n}" style="${i === D.length - 1 ? 'grid-column:span 2;' : ''}display:flex;flex-direction:column;align-items:flex-start;text-align:left;min-height:52px;border-radius:14px;padding:6px 12px;color:var(--ink);background:#fff;border:2px solid #E1E6EE"><b style="font-size:15px">${n}</b><span style="font-size:12.5px;color:var(--muted)">${m}</span></button>`).join('')}</div>
+      <div style="background:#fff;border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 1px 3px rgba(15,30,61,.08)">
+        <span style="font-size:14.5px;line-height:1.4">Tell us where from, when, and how many people and bags.</span>
+        <a class="bigbtn orange" id="wa" target="_blank" rel="noopener" href="#">${svg('chat', 20, '#0F1E3D', 2.2)} Message us on WhatsApp</a>
+        <span style="font-size:13px;color:var(--muted)">We're working cabbies, so please give us 24 hours' notice if you can.</span>
+      </div>
+      <div class="story" style="flex-direction:row;gap:10px"><span style="color:#A8551A;flex-shrink:0">${svg('cab', 20, '#A8551A')}</span><span style="font-size:13.5px;line-height:1.4"><b class="k">Cabbie's tip · </b>The Heathrow Express is £26 each (less if you book a month ahead), and you still have to get to Paddington with your bags. For two, a black cab costs a little more but takes you door to door in about the same time. For three or more, it's usually cheaper.</span></div>
+    </div>${tabs('Transfers')}`;
+  const paint = () => {
+    app.querySelectorAll('.dest').forEach(b => { const on = b.dataset.n === pick; b.style.background = on ? '#FFF4E8' : '#fff'; b.style.borderColor = on ? '#F28C38' : '#E1E6EE'; });
+    const msg = `Hello, I found you on Explore London. I'd like a black cab to ${pick}.\nFrom:\nDate and time:\nPeople and bags:`;
+    document.getElementById('wa').href = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(msg)}`;
+  };
+  app.querySelectorAll('.dest').forEach(b => b.onclick = () => { pick = b.dataset.n; paint(); });
+  paint();
+}
+
+/* ---------- getting around: Tube & Trains ---------- */
+function around() {
+  setTitle('Tube & Trains');
+  const card = (title, body) => `<div style="background:#fff;border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:8px;box-shadow:0 1px 3px rgba(15,30,61,.08)"><h2 style="margin:0;font-size:17px;font-weight:800">${title}</h2>${body}</div>`;
+  const li = a => `<ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:14.5px;line-height:1.4">${a.map(x => `<li>${x}</li>`).join('')}</ul>`;
+  const ST = [
+    ['Paddington', 'Heathrow (Heathrow Express and Elizabeth line), Oxford, Bath, Bristol, Cornwall. Windsor: change at Slough.'],
+    ["King's Cross", 'Edinburgh, York, Cambridge, and Platform 9¾ for Harry Potter fans.'],
+    ['St Pancras International', 'Eurostar to Paris, Brussels and Amsterdam. Fast trains to Canterbury and Kent. Thameslink to Gatwick and Luton Airport.'],
+    ['Euston', 'Manchester, Liverpool, Birmingham, Glasgow. Watford Junction for the shuttle bus to the Harry Potter Studio.'],
+    ['Victoria', 'Gatwick Express, Brighton and the south coast.'],
+    ['Waterloo', 'Windsor & Eton Riverside, Hampton Court, Richmond, Salisbury (for Stonehenge) and Portsmouth.'],
+    ['Liverpool Street', 'Stansted Express, Cambridge, Norwich, and the Elizabeth line.'],
+    ['Marylebone', 'Stratford-upon-Avon, Warwick and Birmingham.'],
+    ['London Bridge', 'Brighton, Gatwick, Greenwich and Kent.']
+  ];
+  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<span style="width:48px;height:48px;border-radius:24px;background:#F9D6D6;display:flex;align-items:center;justify-content:center;flex-shrink:0">${svg('train', 28, '#0F1E3D', 1.9)}</span><div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px">Tube &amp; Trains</h1><span style="font-size:14px;color:#C9D3E6">Getting around London, and getting out of it</span></div></div></div>
+    <div class="content">
+      <a href="#/transfers" class="row" style="background:var(--orange);color:var(--navy);border-radius:18px;padding:12px 14px;text-decoration:none;gap:12px"><span style="flex-shrink:0">${svg('cab', 30, '#0F1E3D', 2)}</span><span style="display:flex;flex-direction:column;gap:2px"><b style="font-size:16px">Off to the airport with bags?</b><span style="font-size:13.5px;line-height:1.35;font-weight:600">A black cab takes you door to door, with no stairs or changes. 10% off the meter when you book through the app.</span></span><span style="flex-shrink:0">${svg('chev', 20, '#0F1E3D', 2.4)}</span></a>
+      ${card('The Tube map', `<span style="font-size:14.5px;line-height:1.4">Transport for London's official maps, always up to date. Save one to your phone before you go underground, as signal can drop out.</span>
+        <a class="bigbtn" href="https://tfl.gov.uk/maps/track/tube" target="_blank" rel="noopener">Open the Tube map</a>
+        <a class="ghost" href="https://tfl.gov.uk/maps/track" target="_blank" rel="noopener">All rail maps (Overground, Elizabeth line, DLR)</a>
+        <span style="font-size:13px;color:var(--muted)">For door-to-door directions, the free TfL Go and Citymapper apps are both excellent.</span>`)}
+      ${card('How to pay', li([
+        '<b>Tap a contactless card or your phone</b> on the yellow reader going in and out. No ticket needed.',
+        'Use the <b>same card or phone</b> every time. The daily and weekly caps then work automatically, so you never pay more than a day ticket.',
+        'No contactless? Buy an <b>Oyster card</b> at any station.',
+        '<b>Buses</b>: tap on only, and they don’t take cash. Change buses within an hour and the second one is free (the Hopper fare).',
+        'Children under 11 travel free with a paying adult.'
+      ]))}
+      ${card('Cabbie’s tips', li([
+        'Stand on the right on escalators. Walk on the left.',
+        'Avoid the rush hours if you can (roughly 7.30–9.30am and 5–7pm). Off-peak fares are cheaper too.',
+        'Some stations are closer than the map suggests: Leicester Square to Covent Garden is a 5-minute walk, quicker than the Tube.',
+        'The <b>Night Tube</b> runs all night on Fridays and Saturdays on the Central, Jubilee, Northern, Piccadilly and Victoria lines.',
+        'Weekend engineering works are common. Check before you travel on the TfL website or app.'
+      ]))}
+      ${card('Main stations: where the trains go', `<div style="display:flex;flex-direction:column;gap:8px">${ST.map(([n, d]) => `<div style="display:flex;flex-direction:column;gap:2px;border-top:1px solid #E1E6EE;padding-top:8px"><b style="font-size:15px">${n}</b><span style="font-size:14px;line-height:1.4;color:var(--ink)">${d}</span></div>`).join('')}</div>
+        <a class="bigbtn" href="https://www.nationalrail.co.uk/live-trains/" target="_blank" rel="noopener">Live train times</a>
+        <span style="font-size:13px;color:var(--muted)">Book trains ahead for the cheapest fares, on National Rail or the train company's app.</span>`)}
+      ${card('Other ways to get around', li([
+        '<b>River bus</b>: Uber Boat by Thames Clippers runs along the Thames, from Westminster and the London Eye to Tower Bridge and Greenwich. A great way to see the sights.',
+        '<b>Santander Cycles</b>: hire bikes from docking stations all over central London, paid by app or card.',
+        '<b>Black cab</b>: hail one with its yellow TAXI light on, or find a rank at stations and big hotels. Every driver has passed the Knowledge, so no sat nav needed.'
+      ]))}
+      <a class="bigbtn orange" href="#/transfers">${svg('cab', 20, '#0F1E3D', 2.2)} Airport transfers</a>
+    </div>${tabs('Explore')}`;
+}
+
+function about() {
+  setTitle('About');
+  const noPin = P.filter(p => p.lat == null).length;
+  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<h1 style="margin:0;font-weight:800;font-size:22px">About Explore London</h1></div></div>
+    <div class="content" style="font-size:15px;line-height:1.5">
+      <p style="margin:0">Explore London is a cabbie's guide to the city, from All Black Taxis. Every place is picked by London cabbies who learned the city doing the Knowledge.</p>
+      <div class="story"><b class="disp">In this version</b><span>${P.length} places in ${CATS.length} categories · ${WALKS.length} ready-made walks · Make My Walk · My List · Airport transfers</span></div>
+      <p style="margin:0"><b>Stations</b> from open TfL data, compiled by Oliver O’Brien (github.com/oobrien/vis). Line colours are TfL’s.</p>
+      <p style="margin:0"><b>Photos</b> come from Wikimedia Commons under free licences, credited on each place. Places without a free photo show their category picture.</p>
+      <p style="margin:0"><b>Maps</b> © OpenStreetMap contributors. Missing pins are filled from postcodes using postcodes.io (contains OS data © Crown copyright and database right).</p>
+      <p style="margin:0"><b>Your privacy.</b> Saved places and settings stay on your phone. If you allow location, it is used on your phone to show what is near you and is not sent to us. A Transfers enquiry only reaches us when you send the WhatsApp message yourself.${CONFIG.umami ? ' We count visits anonymously (which screens are opened, which buttons are pressed) with Umami. No cookies, and nothing that identifies you.' : ''}</p>
+      ${(() => { const b = store.get('el_badphoto', []); if (!b.length) return ''; const txt = 'Wrong photos: ' + b.map(id => { const q = P.find(x => x.id === id); return q ? q.name + ' (' + id + ')' : id; }).join(', '); return `<div class="story"><b class="disp">Photos you flagged (${b.length})</b><span style="font-size:14px">${esc(txt)}</span><button class="ghost" id="copybad">Copy the list to send to Claude</button></div>`; })()}
+      <button class="ghost" id="reset">Clear my saved places and settings</button>
+    </div>${tabs('Explore')}`;
+  const cb = document.getElementById('copybad'); if (cb) cb.onclick = async () => { const b = store.get('el_badphoto', []); const txt = 'Wrong photos: ' + b.map(id => { const q = P.find(x => x.id === id); return q ? q.name + ' (' + id + ')' : id; }).join(', '); try { await navigator.clipboard.writeText(txt); toast('Copied'); } catch { toast('Couldn’t copy. Take a screenshot instead.'); } };
+  document.getElementById('reset').onclick = () => { try { localStorage.clear(); } catch {} saved = new Set(); visited = new Set(); toast('Cleared'); };
+}
+
+
+/* ---------- On this day page (with birthday picker) ---------- */
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+function otdScreen(b) {
+  const now = new Date(); let [m, d] = (b || '').split('-').map(Number);
+  if (!m || !d || !ON_THIS_DAY[m + '-' + d]) { m = now.getMonth() + 1; d = now.getDate(); }
+  const k = m + '-' + d, t = ON_THIS_DAY[k] || '', pid = ON_THIS_DAY_PLACE[k], pl = pid && P.find(p => p.id === pid);
+  const isToday = m === now.getMonth() + 1 && d === now.getDate();
+  const step = n => { const x = new Date(2024, m - 1, d + n); return (x.getMonth() + 1) + '-' + x.getDate(); };
+  setTitle('On this day');
+  const dayOpts = Array.from({length: 31}, (_, i) => `<option value="${i + 1}"${i + 1 === d ? ' selected' : ''}>${i + 1}</option>`).join('');
+  const monOpts = MONTHS.map((n, i) => `<option value="${i + 1}"${i + 1 === m ? ' selected' : ''}>${n}</option>`).join('');
+  const sel = 'height:48px;border-radius:12px;border:1px solid #C9D1DE;padding:0 10px;font-size:17px;background:#fff;color:var(--ink)';
+  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px">On this day</h1><span style="font-size:14px;color:#C9D3E6">A London story for every day of the year</span></div></div></div>
+    <div class="content">
+      <div style="background:#FFF4E8;border-radius:18px;padding:14px 14px 16px;display:flex;flex-direction:column;gap:12px">
+        <div class="row" style="justify-content:space-between;align-items:center">
+          <a class="iconbtn" href="#/otd/${step(-1)}" aria-label="Previous day" style="background:#fff;transform:rotate(180deg)">${svg('chev', 20, '#0F1E3D', 2.4)}</a>
+          <span style="display:flex;flex-direction:column;align-items:center"><b class="disp" style="font-size:21px;color:#A8551A">${d} ${MONTHS[m - 1]}</b>${isToday ? '<span style="font-size:12px;font-weight:700;color:#A8551A;text-transform:uppercase;letter-spacing:.5px">Today</span>' : ''}</span>
+          <a class="iconbtn" href="#/otd/${step(1)}" aria-label="Next day" style="background:#fff">${svg('chev', 20, '#0F1E3D', 2.4)}</a>
+        </div>
+        <p style="margin:0;font-size:18px;line-height:1.4;font-weight:600">${esc(t)}</p>
+        ${pl ? `<a href="#/place/${pl.id}" style="display:flex;align-items:center;gap:10px;background:#fff;border-radius:12px;padding:8px;text-decoration:none;color:var(--ink)">${catTile(pl, pl.cats[0], 40).replace('class="thumb', 'class="thumb sm')}<span style="flex:1;font-weight:700;font-size:15px">See ${esc(pl.name)}</span>${svg('chev', 16)}</a>` : ''}
+        <button class="bigbtn" id="otdshare">${svg('share', 18, '#F28C38', 2.2)} Share this day</button>
+      </div>
+      <div style="background:#fff;border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 1px 3px rgba(15,30,61,.08)">
+        <b class="disp" style="font-size:18px">What happened on your birthday?</b>
+        <span style="font-size:14px;color:var(--muted);margin-top:-6px">Pick a day and month – no year needed.</span>
+        <div style="display:grid;grid-template-columns:1fr 2fr;gap:8px"><select id="od" aria-label="Day" style="${sel}">${dayOpts}</select><select id="om" aria-label="Month" style="${sel}">${monOpts}</select></div>
+        <button class="bigbtn orange" id="ogo">Show me</button>
+      </div>
+    </div>${tabs('Explore')}`;
+  document.getElementById('ogo').onclick = () => {
+    let dd = +document.getElementById('od').value; const mm = +document.getElementById('om').value;
+    dd = Math.min(dd, new Date(2024, mm, 0).getDate());
+    STATS.ev('On this day: date picked', {date: mm + '-' + dd}); location.hash = '#/otd/' + mm + '-' + dd;
+  };
+  document.getElementById('otdshare').onclick = async () => {
+    const url = 'https://explorelondon.allblacktaxis.co.uk/#/otd/' + k;
+    const text = `${d} ${MONTHS[m - 1]} in London – ${t}. What happened on your birthday? Find out on Explore London:`;
+    STATS.ev('On this day: share', {date: k});
+    try { if (navigator.share) { await navigator.share({title: 'On this day in London', text, url}); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
+    try { await navigator.clipboard.writeText(text + ' ' + url); toast('Copied – paste it anywhere'); } catch { toast('Couldn’t share from here'); }
+  };
+}
+
+/* ---------- router ---------- */
+function route() {
+  const h = decodeURIComponent(location.hash.slice(1) || '/');
+  STATS.view(h);
+  window.scrollTo(0, 0);
+  if (h === '/' && !store.get('el_seen', 0)) return welcome();
+  const [, a, b] = h.split('/');
+  if (!a) return home();
+  if (a === 'welcome') return welcome();
+  if (a === 'cat') return category(b);
+  if (a === 'place') return place(+b);
+  if (a === 'map') return mapScreen(b ? +b : null);
+  if (a === 'walks') return walks(b === 'all');
+  if (a === 'walk') return b && b.startsWith('trip-') && !TRIPS ? loadTrips().then(() => walkScreen(b)) : b && b.startsWith('plan-') && !PLANS ? loadPlans().then(() => walkScreen(b)) : walkScreen(b);
+  if (a === 'mywalk') return walkScreen('mine');
+  if (a === 'daywalk') return dayWalk(b);
+  if (a === 'list') return myList(b);
+  if (a === 'transfers') return b && b.startsWith('trip-') && !TRIPS ? loadTrips().then(() => transfers(b)) : transfers(b);
+  if (a === 'around') return around();
+  if (a === 'daytrips') return dayTrips();
+  if (a === 'plans') return plansScreen();
+  if (a === 'plan') return planScreen(b);
+  if (a === 'trip') return tripScreen(b);
+  if (a === 'stay') return stayScreen();
+  if (a === 'nearstay') return nearStayScreen();
+  if (a === 'never') return never();
+  if (a === 'about') return about();
+  if (a === 'otd') return otdScreen(b);
+  home();
+}
+addEventListener('hashchange', route);
+load().then(route).catch(e => { app.innerHTML = '<div class="content"><div class="empty">Sorry, the places didn\'t load. Please refresh.</div></div>'; console.error(e); });
+</script>
+</body>
+</html>

@@ -1,0 +1,744 @@
+[
+ {
+  "id": "hyde-park",
+  "title": "Hyde Park & Kensington Gardens",
+  "tag": "Royal Parks",
+  "meta": "About 2 hours · 4–5 km · 10 stops",
+  "color": "#2F5A3A",
+  "intro": "From the Royal Albert Hall through Kensington Gardens to Hyde Park Corner: Peter Pan, the Serpentine and a palace.",
+  "stops": [
+   {
+    "name": "Royal Albert Hall",
+    "lat": 51.5009,
+    "lng": -0.1774,
+    "note": "Start on the steps. Queen Victoria named it after Albert when she laid the foundation stone in 1867."
+   },
+   {
+    "name": "Albert Memorial",
+    "lat": 51.5024,
+    "lng": -0.1772,
+    "note": "Albert holds the catalogue of his 1851 Great Exhibition."
+   },
+   {
+    "name": "Round Pond & Kensington Palace",
+    "lat": 51.5055,
+    "lng": -0.1848,
+    "note": "Swans and geese, with Diana's old home across the water."
+   },
+   {
+    "name": "Diana Memorial Playground",
+    "lat": 51.5073,
+    "lng": -0.1876,
+    "note": "A pirate ship inspired by Peter Pan. The family stop."
+   },
+   {
+    "name": "Peter Pan Statue",
+    "lat": 51.5087,
+    "lng": -0.1758,
+    "note": "J.M. Barrie had it put up secretly overnight in 1912, so children would think it had appeared by magic."
+   },
+   {
+    "name": "Italian Gardens",
+    "lat": 51.5105,
+    "lng": -0.175,
+    "note": "Fountains said to be Albert's gift to Victoria."
+   },
+   {
+    "name": "Serpentine Bridge & Lake",
+    "lat": 51.5052,
+    "lng": -0.172,
+    "note": "Where Kensington Gardens becomes Hyde Park. Every Christmas morning swimmers race here for the Peter Pan Cup."
+   },
+   {
+    "name": "Diana Memorial Fountain",
+    "lat": 51.5049,
+    "lng": -0.1702,
+    "note": "Opened by the Queen in 2004. You can dip your feet in."
+   },
+   {
+    "name": "Rotten Row",
+    "lat": 51.5035,
+    "lng": -0.162,
+    "note": "Thought to come from 'Route du Roi', the King's Road. Lit with oil lamps in 1690, often called the first lit road in England."
+   },
+   {
+    "name": "Apsley House & Wellington Arch",
+    "lat": 51.5034,
+    "lng": -0.1515,
+    "note": "Finish at 'Number 1, London': the first house you passed coming into town from the west."
+   }
+  ]
+ },
+ {
+  "id": "greenwich",
+  "title": "Greenwich",
+  "tag": "Day out",
+  "meta": "About 2½ hours · 3 km · arrive by river boat",
+  "color": "#1F4E5F",
+  "intro": "Come by boat. Cutty Sark, the Painted Hall, the Prime Meridian and one of the best views in London.",
+  "stops": [
+   {
+    "name": "Cutty Sark",
+    "lat": 51.4828,
+    "lng": -0.0096,
+    "note": "The world's last surviving tea clipper. You can walk underneath her hull."
+   },
+   {
+    "name": "Greenwich Foot Tunnel",
+    "lat": 51.4836,
+    "lng": -0.0098,
+    "note": "Opened in 1902 so dockers could walk to work on the Isle of Dogs."
+   },
+   {
+    "name": "Old Royal Naval College & Painted Hall",
+    "lat": 51.4831,
+    "lng": -0.0062,
+    "note": "On the site of Greenwich Palace, where Henry VIII was born. The ceiling is called Britain's Sistine Chapel."
+   },
+   {
+    "name": "Queen's House",
+    "lat": 51.481,
+    "lng": -0.0036,
+    "note": "See the Tulip Stairs, the first self-supporting spiral staircase in Britain, and the scene of a famous 1966 ghost photo."
+   },
+   {
+    "name": "National Maritime Museum",
+    "lat": 51.481,
+    "lng": -0.0054,
+    "note": "Free. Nelson's coat from Trafalgar, with the bullet hole."
+   },
+   {
+    "name": "Royal Observatory & Prime Meridian",
+    "lat": 51.4769,
+    "lng": -0.0005,
+    "note": "Stand with a foot in each hemisphere. The red time ball drops at exactly 1pm."
+   },
+   {
+    "name": "General Wolfe statue viewpoint",
+    "lat": 51.4775,
+    "lng": -0.0011,
+    "note": "The Queen's House, the college, the river and the City behind. One of London's best views."
+   },
+   {
+    "name": "Ranger's House",
+    "lat": 51.4726,
+    "lng": -0.0068,
+    "note": "The Bridgerton family home in the Netflix series. See it from outside."
+   },
+   {
+    "name": "Greenwich Market",
+    "lat": 51.4817,
+    "lng": -0.0089,
+    "note": "Lunch, crafts and street food. Or head down to the Trafalgar Tavern on the river."
+   }
+  ]
+ },
+ {
+  "id": "hp-west-end",
+  "title": "Harry Potter: West End & Westminster",
+  "tag": "Film & TV",
+  "meta": "About 1 hour 45 · 3.5 km · 8 stops",
+  "color": "#3B2F5C",
+  "intro": "From the new Oxford Street flagship shop (opens 4 Nov 2026) to the Ministry of Magic phone box and the Knight Bus bridge.",
+  "stops": [
+   {
+    "name": "Harry Potter flagship, Oxford Street",
+    "lat": 51.5161,
+    "lng": -0.1328,
+    "note": "From 4 Nov 2026: a Diagon Alley street, a full-size Knight Bus and Butterbeer. Check opening before you go."
+   },
+   {
+    "name": "Palace Theatre",
+    "lat": 51.5131,
+    "lng": -0.1296,
+    "note": "Home of Harry Potter and the Cursed Child."
+   },
+   {
+    "name": "House of MinaLima, Wardour Street",
+    "lat": 51.5147,
+    "lng": -0.1352,
+    "note": "Gallery of the designers who made the films' graphics: the Daily Prophet and the Marauder's Map. Check it's still here."
+   },
+   {
+    "name": "Piccadilly Circus",
+    "lat": 51.51,
+    "lng": -0.1347,
+    "note": "Harry, Ron and Hermione apparate here and dodge a bus in Deathly Hallows Part 1."
+   },
+   {
+    "name": "Leicester Square",
+    "lat": 51.5103,
+    "lng": -0.13,
+    "note": "The films' UK premieres were held here. Look for Harry on his broomstick."
+   },
+   {
+    "name": "Scotland Place",
+    "lat": 51.5065,
+    "lng": -0.1262,
+    "note": "Where Harry and Mr Weasley use a red phone box to enter the Ministry of Magic."
+   },
+   {
+    "name": "Westminster Underground station",
+    "lat": 51.501,
+    "lng": -0.125,
+    "note": "Harry and Mr Weasley go through the barriers on the way to his hearing."
+   },
+   {
+    "name": "Lambeth Bridge",
+    "lat": 51.4944,
+    "lng": -0.1236,
+    "note": "The Knight Bus squeezes between two double-deckers. It's red to match the benches in the House of Lords."
+   }
+  ]
+ },
+ {
+  "id": "hp-city",
+  "title": "Harry Potter: City & South Bank",
+  "tag": "Film & TV",
+  "meta": "About 1 hour 45 · 4.5 km · 5 stops",
+  "color": "#3B2F5C",
+  "intro": "Gringotts, the wobbly bridge and two Leaky Cauldrons.",
+  "stops": [
+   {
+    "name": "Australia House, Strand",
+    "lat": 51.5127,
+    "lng": -0.1155,
+    "note": "Its grand hall was Gringotts bank. See it from outside."
+   },
+   {
+    "name": "St Paul's & the Millennium Bridge",
+    "lat": 51.5095,
+    "lng": -0.0985,
+    "note": "The bridge the Death Eaters destroy. Londoners still call it the wobbly bridge."
+   },
+   {
+    "name": "Borough Market, Stoney Street",
+    "lat": 51.5055,
+    "lng": -0.091,
+    "note": "The Leaky Cauldron entrance in Prisoner of Azkaban. Good stop for lunch."
+   },
+   {
+    "name": "Leadenhall Market",
+    "lat": 51.5128,
+    "lng": -0.0835,
+    "note": "The Leaky Cauldron's blue door in Philosopher's Stone, in Bull's Head Passage. On the site of the Roman forum."
+   }
+  ]
+ },
+ {
+  "id": "hp-kings-cross",
+  "title": "Harry Potter: King's Cross",
+  "tag": "Film & TV",
+  "meta": "About 45 minutes · 1.5 km · 3 stops",
+  "color": "#3B2F5C",
+  "intro": "Platform 9¾, the station that played King's Cross, and Grimmauld Place.",
+  "stops": [
+   {
+    "name": "Platform 9¾, King's Cross",
+    "lat": 51.5322,
+    "lng": -0.124,
+    "note": "The scenes were filmed at platforms 4 and 5. There's no wall between 9 and 10 at all."
+   },
+   {
+    "name": "St Pancras, Euston Road side",
+    "lat": 51.5297,
+    "lng": -0.1262,
+    "note": "The Gothic front you see in the films as 'King's Cross' is really St Pancras next door."
+   },
+   {
+    "name": "Claremont Square",
+    "lat": 51.5309,
+    "lng": -0.1092,
+    "note": "The terrace used for the outside of 12 Grimmauld Place."
+   }
+  ]
+ },
+ {
+  "id": "music-trail",
+  "title": "West End Music Trail",
+  "tag": "Music",
+  "meta": "About 3 hours · 11 stops",
+  "color": "#5C2F3F",
+  "intro": "Beatles, Bowie, Hendrix and punk, in a square mile of Mayfair and Soho. Finish with jazz at Ronnie Scott's.",
+  "stops": [
+   {
+    "name": "Handel & Hendrix House",
+    "lat": 51.5129,
+    "lng": -0.1464,
+    "note": "Two musicians, two hundred years apart, living next door to each other."
+   },
+   {
+    "name": "3 Savile Row",
+    "lat": 51.5105,
+    "lng": -0.1396,
+    "note": "The Apple rooftop, where the Beatles played their last public gig in January 1969."
+   },
+   {
+    "name": "Heddon Street",
+    "lat": 51.5107,
+    "lng": -0.1392,
+    "note": "The Ziggy Stardust plaque, on the spot of the album cover photo."
+   },
+   {
+    "name": "Carnaby Street",
+    "lat": 51.5131,
+    "lng": -0.1388,
+    "note": "Where the mods and the 60s bands bought their clothes."
+   },
+   {
+    "name": "Berwick Street",
+    "lat": 51.5133,
+    "lng": -0.1351,
+    "note": "The Oasis cover street, and vinyl at Sister Ray."
+   },
+   {
+    "name": "Marquee Club site, 90 Wardour Street",
+    "lat": 51.5138,
+    "lng": -0.1347,
+    "note": "The Who, Bowie and Hendrix all played here on their way up."
+   },
+   {
+    "name": "St Anne's Court",
+    "lat": 51.5144,
+    "lng": -0.1342,
+    "note": "The David Bowie plaque at the old Trident Studios."
+   },
+   {
+    "name": "The Toucan",
+    "lat": 51.5151,
+    "lng": -0.1329,
+    "note": "Where a young Jimi Hendrix jammed in the basement in 1966."
+   },
+   {
+    "name": "Soho Square",
+    "lat": 51.515,
+    "lng": -0.132,
+    "note": "Kirsty MacColl's bench."
+   },
+   {
+    "name": "Denmark Street",
+    "lat": 51.5155,
+    "lng": -0.1296,
+    "note": "Tin Pan Alley: the Stones' first studio and the Sex Pistols' old flat."
+   },
+   {
+    "name": "The 100 Club",
+    "lat": 51.5162,
+    "lng": -0.1352,
+    "note": "Home of the 1976 Punk Special. Check what's on tonight."
+   }
+  ]
+ },
+ {
+  "id": "lgbtq-soho",
+  "title": "LGBTQ+ Soho",
+  "tag": "LGBTQ+",
+  "meta": "About 1½ hours · 10 stops",
+  "color": "#6A3D9A",
+  "intro": "From the first Pride march in Trafalgar Square to the bars of Old Compton Street: a short walk through the history of gay London, with plenty of places to stop for a drink.",
+  "stops": [
+   {
+    "name": "Trafalgar Square",
+    "lat": 51.508,
+    "lng": -0.1281,
+    "note": "On 1 July 1972 around 2,000 people gathered here for Britain's first Pride march, and walked to Hyde Park. Many were nervous of being seen; today Pride brings over a million people to these streets.",
+    "id": 354
+   },
+   {
+    "name": "Oscar Wilde memorial, Adelaide Street",
+    "lat": 51.5091,
+    "lng": -0.126,
+    "note": "Maggi Hambling's 'A Conversation with Oscar Wilde' (1998): sit on the bench and chat with him. Wilde was jailed in 1895 for 'gross indecency'. The words carved on it are his: 'We are all in the gutter, but some of us are looking at the stars.'"
+   },
+   {
+    "name": "Heaven",
+    "lat": 51.508,
+    "lng": -0.1237,
+    "note": "Under the arches of Charing Cross station since 1979, Heaven was one of the first big gay superclubs in Europe. Still home to Saturday's G-A-Y night.",
+    "id": 828
+   },
+   {
+    "name": "Ku Bar",
+    "lat": 51.5115,
+    "lng": -0.1305,
+    "note": "On the edge of Chinatown, one of London's biggest gay bars, over three floors.",
+    "id": 827
+   },
+   {
+    "name": "Rupert Street Bar",
+    "lat": 51.5116,
+    "lng": -0.133,
+    "note": "Rupert Street has a cluster of gay bars, including this one and the Yard, hidden in a fairy-lit courtyard.",
+    "id": 824
+   },
+   {
+    "name": "Village Soho",
+    "lat": 51.5133,
+    "lng": -0.1342,
+    "note": "Often called Soho's first gay bar. Wardour Street and Old Compton Street became the heart of gay London in the 1980s and 90s, when bars started opening their windows to the street instead of hiding behind blacked-out glass.",
+    "id": 825
+   },
+   {
+    "name": "Admiral Duncan",
+    "lat": 51.5131,
+    "lng": -0.1316,
+    "note": "On 30 April 1999 a nail bomb exploded in this pub, killing three people and injuring dozens. Soho came out in force; the pub reopened weeks later. Look for the memorial inside.",
+    "id": 819
+   },
+   {
+    "name": "Comptons",
+    "lat": 51.5134,
+    "lng": -0.1312,
+    "note": "One of London's longest-running gay pubs, on the corner of Old Compton Street and Frith Street. Soho's village pub.",
+    "id": 820
+   },
+   {
+    "name": "She Soho",
+    "lat": 51.5131,
+    "lng": -0.1298,
+    "note": "London's best-known lesbian bar, down the stairs at the Charing Cross Road end of Old Compton Street.",
+    "id": 821
+   },
+   {
+    "name": "Soho Square",
+    "lat": 51.5154,
+    "lng": -0.1322,
+    "note": "Finish in the garden of Soho Square. On a Pride day this is party central; on any other day, a quiet place to sit with a coffee."
+   }
+  ]
+ },
+ {
+  "id": "ted-lasso",
+  "title": "Ted Lasso's Richmond",
+  "tag": "Film & TV",
+  "meta": "About 1 hour · from Richmond station",
+  "color": "#C8262B",
+  "intro": "Believe! A short walk round the real Richmond behind AFC Richmond: the Crown & Anchor, Ted's street, the official shop and the river.",
+  "stops": [
+   {
+    "name": "Richmond station",
+    "lat": 51.463,
+    "lng": -0.3017,
+    "note": "District line, Overground and trains from Waterloo. Or about 40 minutes by black cab from the West End."
+   },
+   {
+    "name": "Richmond Theatre",
+    "lat": 51.4628,
+    "lng": -0.3048,
+    "note": "Where Rebecca hosts her charity gala.",
+    "id": 985
+   },
+   {
+    "name": "Richmond Green",
+    "lat": 51.4618,
+    "lng": -0.3075,
+    "note": "Where a little girl dribbles past Ted. A lovely green for a sit down."
+   },
+   {
+    "name": "The Prince's Head",
+    "lat": 51.4613,
+    "lng": -0.306,
+    "note": "The Crown & Anchor in the show. Sit on the bench outside for the photo.",
+    "id": 981
+   },
+   {
+    "name": "Paved Court (Ted's street)",
+    "lat": 51.461,
+    "lng": -0.3055,
+    "note": "The little lane where Ted lives in the show.",
+    "id": 995
+   },
+   {
+    "name": "The Official Ted Lasso Store",
+    "lat": 51.4611,
+    "lng": -0.3057,
+    "note": "Kits, scarves and 'Believe' signs, a few doors from Ted's flat.",
+    "id": 994
+   },
+   {
+    "name": "Richmond Bridge",
+    "lat": 51.4573,
+    "lng": -0.307,
+    "note": "The oldest surviving Thames bridge in London, and the riverside seen in the show.",
+    "id": 996
+   },
+   {
+    "name": "The White Cross",
+    "lat": 51.4587,
+    "lng": -0.3076,
+    "note": "Finish with a pint on the river, in the pub the Thames floods at high tide.",
+    "id": 979
+   }
+  ]
+ },
+ {
+  "id": "whitehall-statues",
+  "title": "Whitehall Statues",
+  "tag": "Statues & monuments",
+  "meta": "About 1½ hours · 12 stops",
+  "color": "#0F1E3D",
+  "intro": "From Nelson down Whitehall, round the riverside memorials behind it and into Parliament Square: kings, generals, airmen and the women of the war, and the stories behind them.",
+  "stops": [
+   {
+    "name": "Nelson's Column, Trafalgar Square",
+    "lat": 51.50775,
+    "lng": -0.12801,
+    "note": "Nelson stands 52 metres up, looking down towards the fleet at Portsmouth. The four lions by Landseer were added in 1867. Look at the Fourth Plinth for the latest artwork."
+   },
+   {
+    "name": "Charles I on horseback",
+    "lat": 51.50703,
+    "lng": -0.12755,
+    "note": "Cast in 1633 and the oldest bronze equestrian statue in London. Distances to London are measured from this spot. After the Civil War it was sold to a brazier to melt down – he hid it instead, and it came back after the Restoration. Charles looks down Whitehall to where he was executed."
+   },
+   {
+    "name": "Horse Guards",
+    "lat": 51.50479,
+    "lng": -0.1269,
+    "note": "Two mounted troopers of the Household Cavalry stand guard here through the day. The Changing of the Guard is at 11am (10am on Sundays)."
+   },
+   {
+    "name": "Banqueting House",
+    "lat": 51.5045,
+    "lng": -0.126,
+    "note": "The Rubens ceiling inside was paid for by Charles I – and on 30 January 1649 he stepped out of a window here onto the scaffold."
+   },
+   {
+    "name": "The Gurkha statue",
+    "lat": 51.50443,
+    "lng": -0.1245,
+    "note": "Down Horse Guards Avenue: a Gurkha soldier, honouring the Nepalese soldiers who have served Britain for over 200 years."
+   },
+   {
+    "name": "Chindit and RAF memorials",
+    "lat": 51.5044,
+    "lng": -0.12345,
+    "note": "On the Embankment: the Chindits, who fought behind Japanese lines in Burma, and the RAF memorial of 1923, its golden eagle facing out across the river."
+   },
+   {
+    "name": "Battle of Britain Monument",
+    "lat": 51.50314,
+    "lng": -0.1232,
+    "note": "A long bronze frieze of pilots running to their planes and people in the Blitz, with the names of 'the Few' – the airmen of 1940 – along the sides."
+   },
+   {
+    "name": "Women of World War II",
+    "lat": 51.50335,
+    "lng": -0.12619,
+    "note": "Back on Whitehall: no figures, just 17 sets of uniforms and work clothes hung up, as the women took them off at the end of the war."
+   },
+   {
+    "name": "Monty, Slim and Alanbrooke",
+    "lat": 51.50345,
+    "lng": -0.1256,
+    "note": "Three Second World War commanders on the green outside the Ministry of Defence. Montgomery stands in his famous beret and duffel coat."
+   },
+   {
+    "name": "The Cenotaph",
+    "lat": 51.50268,
+    "lng": -0.12612,
+    "note": "Lutyens' memorial to 'The Glorious Dead', made in stone in 1920. It looks straight, but its sides lean very slightly – if you carried the lines on up they would meet about 300 metres in the sky. Downing Street's gates are just opposite."
+   },
+   {
+    "name": "Parliament Square statues",
+    "lat": 51.5006,
+    "lng": -0.1269,
+    "note": "Churchill faces Parliament, with Lincoln, Mandela, Gandhi and Millicent Fawcett – the first woman in the square, put up in 2018 – around the green."
+   },
+   {
+    "name": "Boudicca, Westminster Bridge",
+    "lat": 51.50093,
+    "lng": -0.12383,
+    "note": "Finish with the warrior queen in her chariot, who burned Roman London to the ground. Big Ben is right behind you for the photo."
+   }
+  ]
+ },
+ {
+  "id": "changing-guard",
+  "title": "Changing the Guard: the two routes",
+  "tag": "Royal",
+  "isNew": true,
+  "meta": "About 2 hours from 10:15 · 9 stops · free",
+  "color": "#7A1020",
+  "intro": "Two guards change on ceremony mornings. The foot guards (red route) march to Buckingham Palace from Wellington Barracks and St James's Palace. The mounted Household Cavalry (gold route) ride from Hyde Park Barracks, past the palace and down The Mall to Horse Guards, then back again. Usually Mon, Wed, Fri at 11:00 and Sunday at 10:00 (times run about an hour earlier on Sundays); it can be cancelled at short notice, so check householddivision.org.uk on the day. Best plan for a first-timer: Wellington Barracks at 10:15, The Mall by 10:40, then the Victoria Memorial or Horse Guards for 11:00.",
+  "legend": [
+   [
+    "Foot guards",
+    "#C8102E"
+   ],
+   [
+    "Mounted guard",
+    "#F9B10F"
+   ]
+  ],
+  "routes": [
+   {
+    "color": "#C8102E",
+    "pts": [
+     [
+      51.4997,
+      -0.136
+     ],
+     [
+      51.5003,
+      -0.139
+     ],
+     [
+      51.501,
+      -0.1412
+     ],
+     [
+      51.5014,
+      -0.1419
+     ]
+    ]
+   },
+   {
+    "color": "#C8102E",
+    "pts": [
+     [
+      51.5046,
+      -0.1371
+     ],
+     [
+      51.504,
+      -0.1365
+     ],
+     [
+      51.503,
+      -0.1388
+     ],
+     [
+      51.5018,
+      -0.1406
+     ],
+     [
+      51.5014,
+      -0.1419
+     ]
+    ]
+   },
+   {
+    "color": "#F9B10F",
+    "pts": [
+     [
+      51.502,
+      -0.164
+     ],
+     [
+      51.5028,
+      -0.158
+     ],
+     [
+      51.503,
+      -0.153
+     ],
+     [
+      51.5026,
+      -0.1508
+     ],
+     [
+      51.5025,
+      -0.146
+     ],
+     [
+      51.5018,
+      -0.1406
+     ],
+     [
+      51.503,
+      -0.1388
+     ],
+     [
+      51.504,
+      -0.1365
+     ],
+     [
+      51.5058,
+      -0.1312
+     ],
+     [
+      51.5049,
+      -0.1275
+     ]
+    ]
+   }
+  ],
+  "stops": [
+   {
+    "name": "Wellington Barracks, Birdcage Walk",
+    "lat": 51.4997,
+    "lng": -0.136,
+    "route": "foot",
+    "time": "10:15",
+    "note": "10:15 · The New Guard forms up for inspection and the band plays. Watch from the railings: far fewer people than at the palace. At 10:57 they march down Birdcage Walk to the palace. The Guards Museum is here too. Just round the corner are the Cockpit Steps, where two Coldstream Guards said they saw a headless woman in 1804."
+   },
+   {
+    "name": "Friary Court, St James's Palace",
+    "lat": 51.5046,
+    "lng": -0.1371,
+    "route": "foot",
+    "time": "10:25",
+    "id": 352,
+    "note": "10:25 · The Old Guard of the St James's Palace detachment is inspected, then marches down The Mall to the palace at 10:43, band leading."
+   },
+   {
+    "name": "Hyde Park Barracks, Knightsbridge",
+    "lat": 51.502,
+    "lng": -0.164,
+    "route": "mounted",
+    "time": "10:28",
+    "note": "10:28 · Home of the Household Cavalry. The new mounted guard rides out. The troopers are inspected first: the smartest gets the horse, the least smart does the longer duty on foot."
+   },
+   {
+    "name": "Wellington Arch, Hyde Park Corner",
+    "lat": 51.5026,
+    "lng": -0.1508,
+    "route": "mounted",
+    "id": 437,
+    "note": "The riders come round the arch and onto Constitution Hill."
+   },
+   {
+    "name": "Constitution Hill",
+    "lat": 51.5025,
+    "lng": -0.146,
+    "route": "mounted",
+    "time": "~10:40",
+    "note": "~10:40 · A quieter spot to watch the cavalry ride by, with Green Park beside you. In 1840 a young man fired two shots at Queen Victoria's carriage here. Both missed, and she carried on calmly."
+   },
+   {
+    "name": "The Mall (at Marlborough Road)",
+    "lat": 51.504,
+    "lng": -0.1365,
+    "route": "both",
+    "time": "10:40",
+    "note": "10:40–10:45 · Room to breathe. See the cavalry ride past and the Old Guard march by. When the mounted guard passes the foot guards they salute each other. Look up at the little ships on the lamp posts (Nelson's Fleet)."
+   },
+   {
+    "name": "Victoria Memorial",
+    "lat": 51.5018,
+    "lng": -0.1406,
+    "route": "both",
+    "note": "The steps give the best view of the forecourt and both routes. Very busy: arrive well before 10:30."
+   },
+   {
+    "name": "Buckingham Palace",
+    "lat": 51.5014,
+    "lng": -0.1419,
+    "route": "foot",
+    "time": "11:00",
+    "id": 350,
+    "note": "11:00 · The Changing of the Guard on the forecourt, about 45 minutes. At 11:40 the Old Guard marches back to Wellington Barracks, and at 11:45 the new detachment marches up The Mall to St James's Palace."
+   },
+   {
+    "name": "Horse Guards Parade",
+    "lat": 51.5049,
+    "lng": -0.1275,
+    "route": "mounted",
+    "time": "11:00",
+    "id": 357,
+    "note": "11:00 · The Changing of the King's Life Guard, about 30 minutes. Horse Guards is still the official entrance to both palaces. At 11:37 the old guard rides back up The Mall and Constitution Hill to Hyde Park Barracks."
+   }
+  ]
+ }
+]
