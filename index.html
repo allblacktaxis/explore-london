@@ -12,7 +12,6 @@
 <title>Explore London – a cabbie's guide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Poppins:wght@500;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="lib/leaflet.css">
 <style>
 :root{--navy:#0F1E3D;--navy2:#1B2E57;--orange:#F28C38;--cream:#FFF4E8;--bg:#DCE2EB;--ink:#0F1E3D;--muted:#55617A;--line:#C9D1DE;--plaque:#2E6FD8;--green:#3E9B6B}
 *{box-sizing:border-box}
@@ -126,7 +125,7 @@ nav.tabs a.on{color:#fff}nav.tabs a.on i{background:var(--orange)}
 .stop{display:flex;gap:10px;background:#fff;border-radius:12px;padding:10px;box-shadow:0 1px 2px rgba(15,30,61,.08)}
 .note{font-size:13px;color:var(--muted);line-height:1.4}
 .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:20px;font-size:14px;z-index:2000;max-width:90%}
-.leaflet-container{font-family:inherit}
+.maplibregl-map{font-family:inherit}.maplibregl-marker .num{cursor:default}
 .hit{display:inline-block;background:var(--orange);color:var(--navy);font-weight:700;border-radius:8px;padding:0 6px}
 .tgl{grid-column:1/-1;line-height:1;font-size:11px;font-weight:800;color:#0F1E3D;opacity:.65;text-transform:uppercase;letter-spacing:.06em;margin:2px 2px -4px}.tgl:first-child{margin-top:-4px}
 .hg{row-gap:7px}.hg .tile{min-height:0;padding:5px 3px 8px;gap:2px}.hg .tile .ic{width:36px;height:36px}.hg .tile .ic>*{max-width:25px;max-height:25px}.hg .tile span.l{font-size:12px}
@@ -134,7 +133,6 @@ nav.tabs a.on{color:#fff}nav.tabs a.on i{background:var(--orange)}
 </head>
 <body>
 <div id="app"></div>
-<script src="lib/leaflet.js"></script>
 <script>
 /* ===== Explore London · launch build 3 Nov 2026 ===== */
 const CONFIG = {
@@ -444,27 +442,55 @@ function tabs(on) {
 function toast(msg) { const d = document.createElement('div'); d.className = 'toast'; d.textContent = msg; document.body.appendChild(d); setTimeout(() => d.remove(), 2600); }
 function backBtn(h = 'javascript:history.back()') { return `<a class="iconbtn" href="${h}" aria-label="Back">${svg('back', 20)}</a>`; }
 const app = document.getElementById('app');
-/* ---------- base map: our own All Black Taxis map (the live app's), with OpenStreetMap as a fallback ----------
-   Our map = vector tiles on maptiles.allblacktaxi.co.uk + the live app's style (styles/el-style.json), drawn by MapLibre inside Leaflet.
-   If our server won't serve this site (or is slow), the plain OpenStreetMap map is used instead, so the map never goes blank. */
+/* ---------- base map: our own All Black Taxis map (the same map tiles and style as the Taxi Knowledge app), drawn by MapLibre ----------
+   Map tiles: map-tiles-v3 on Cloudflare (maptiles.allblacktaxi.co.uk). The style, labels and map symbols are hosted on this site.
+   If Cloudflare fails, tiles come from our backup copy on this site (TILES_BACKUP), so the map looks the same.
+   Until that backup copy is uploaded, the plain OpenStreetMap map is used instead, so the map never goes blank.
+   Pins, routes and the walking circle are map layers drawn by MapLibre itself (not separate page elements), so panning and zooming stay smooth. */
 const OSM_ATTR = '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors';
-let vecLibs = null, vecStyle = null;
+const TILES_MAIN = 'https://maptiles.allblacktaxi.co.uk/map-tiles-v3.pmtiles';
+/* the backup copy on Netlify: set this to 'tiles/map-tiles-v3.pmtiles' once that file has been uploaded to the site */
+const TILES_BACKUP = null;
+let vecLibs = null, vecStyle = null, tilesOnBackup = false, emap = null;
 const loadJS = src => new Promise((ok, no) => { const e = document.createElement('script'); e.src = src; e.onload = ok; e.onerror = no; document.head.appendChild(e); });
+function tileProtocol() {
+  const proto = new pmtiles.Protocol(), main = 'pmtiles://' + TILES_MAIN;
+  if (!TILES_BACKUP) return proto.tilev4;
+  const backup = 'pmtiles://' + new URL(TILES_BACKUP, location.href).href;
+  /* try Cloudflare first (10 seconds per request); once it fails, use the backup copy for the rest of the visit */
+  return async (params, ac) => {
+    if (!params.url.startsWith(main)) return proto.tilev4(params, ac);
+    if (!tilesOnBackup) {
+      const inner = new AbortController(), stop = () => inner.abort();
+      ac.signal.addEventListener('abort', stop);
+      let timer;
+      try { return await Promise.race([proto.tilev4(params, inner), new Promise((_, no) => { timer = setTimeout(() => no(new Error('Map tile timed out')), 10000); })]); }
+      catch (e) { if (ac.signal.aborted) throw e; tilesOnBackup = true; inner.abort(); }
+      finally { clearTimeout(timer); ac.signal.removeEventListener('abort', stop); }
+    }
+    return proto.tilev4({...params, url: backup + params.url.slice(main.length)}, ac);
+  };
+}
 function loadVec() {
-  if (!vecLibs) vecLibs = (async () => {
-    const c = document.createElement('link'); c.rel = 'stylesheet'; c.href = 'lib/vec/maplibre-gl.css'; document.head.appendChild(c);
-    await loadJS('lib/vec/maplibre-gl.js'); await loadJS('lib/vec/pmtiles.js'); await loadJS('lib/vec/leaflet-maplibre-gl.js');
-    maplibregl.addProtocol('pmtiles', new pmtiles.Protocol().tile);
-    vecStyle = await fetch('styles/el-style.json').then(r => { if (!r.ok) throw 0; return r.json(); });
-    /* labels and map symbols are hosted on this site (copied from the live app), so only the map tiles come from our map server */
-    const base = location.href.replace(/[#?].*$/, '').replace(/[^/]*$/, '');
-    vecStyle.sprite = base + 'styles/sprites/sprite'; vecStyle.glyphs = base + 'styles/fonts/{fontstack}/{range}.pbf';
-  })();
+  if (!vecLibs) {
+    vecLibs = (async () => {
+      const c = document.createElement('link'); c.rel = 'stylesheet'; c.href = 'lib/vec/maplibre-gl.css'; document.head.appendChild(c);
+      await loadJS('lib/vec/maplibre-gl.js'); await loadJS('lib/vec/pmtiles.js');
+      maplibregl.addProtocol('pmtiles', tileProtocol());
+      try {
+        vecStyle = await fetch('styles/map-style-v3.json').then(r => { if (!r.ok) throw 0; return r.json(); });
+        const base = location.href.replace(/[#?].*$/, '').replace(/[^/]*$/, '');
+        vecStyle.sprite = base + 'styles/sprites/sprite'; vecStyle.glyphs = base + 'styles/fonts/{fontstack}/{range}.pbf';
+        vecStyle.sources.openmaptiles.url = 'pmtiles://' + TILES_MAIN;
+      } catch (e) { vecStyle = null; }
+      await pinImages();
+    })();
+    vecLibs.catch(() => { vecLibs = null; });
+  }
   return vecLibs;
 }
-function osmBase(map) { return L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19, attribution: OSM_ATTR}).addTo(map); }
-/* map pins: the live app's glossy pins (a coloured ball with the category picture), blue plaques keep their blue dot */
-const PIN = {'Restaurants':'restaurants','Pubs':'pubs','Bars & Nightlife':'nightlife','Landmarks':'attractions','Museums & Galleries':'museums','History & Curiosities':'curiosity','Theatre & Shows':'music','Sport':'attractions','Parks & Gardens':'parks','Markets & Food Halls':'foodhalls','Food Shops':'foodhalls','Shopping':'shopping','Spas & Wellness':'wellness','Games & Activities':'attractions'};
+/* the plain OpenStreetMap map, used only if our own map can't be loaded */
+const osmStyle = () => ({version: 8, sources: {osm: {type: 'raster', tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'], tileSize: 256, maxzoom: 19}}, layers: [{id: 'osm', type: 'raster', source: 'osm'}]});
 /* our own pins: a white disc ringed in the category colour, with the app's own picture inside (restaurants show their cuisine), on a little pointer */
 function pinPic(p) {
   const k = p.cats[0];
@@ -501,37 +527,127 @@ const PIN_ART = {
   'Games & Activities': {fill: '#37474F', art: '<circle cx="12" cy="11.8" r="6.5" fill="#fff"/><circle cx="12" cy="11.8" r="4.3" fill="#37474F"/><circle cx="12" cy="11.8" r="2.3" fill="#fff"/><circle cx="12" cy="11.8" r=".95" fill="#37474F"/>'}
 };
 const PIN_SHAPE = 'M12 30.6C9.2 25.4 1.3 19.6 1.3 12A10.7 10.7 0 0 1 22.7 12C22.7 19.6 14.8 25.4 12 30.6z';
-/* sel = this pin has just been tapped: it grows a little, and a restaurant swaps its knife and fork for its own cuisine picture */
+/* sel = this pin has just been tapped: it grows a little, and a restaurant swaps its knife and fork for its own cuisine picture.
+   Only the tapped pin is a page element (a MapLibre marker); every other pin is part of the map's pin layer. */
 function pinIcon(p, big, sel) {
   const k = p.cats[0], a = PIN_ART[k];
-  if (!a) return pinIconOld(p, big);
   const w = sel ? 40 : big ? 36 : 30, h = Math.round(w * 32 / 24);
   const pic = sel && k === 'Restaurants' ? pinPic(p) : null;
   const inner = pic ? '' : a.art;
-  return L.divIcon({className: sel ? 'pinsel' : '', html: `<div class="tpin" style="width:${w}px;height:${h}px"><svg viewBox="0 0 24 32" width="${w}" height="${h}"><path d="${PIN_SHAPE}" fill="${a.fill}" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/>${inner}</svg>${pic ? `<img class="wpic" src="${pic}" alt="" style="width:${w * .58}px;height:${w * .58}px;left:${w * .21}px;top:${w * .2}px">` : ''}${p.story ? `<span class="cabb" title="Cabbie's Story">${svg('cab', 10, '#0F1E3D', 2.4)}</span>` : ''}</div>`, iconSize: [w, h], iconAnchor: [w / 2, h - 1]});
+  return `<div class="${sel ? 'pinsel' : ''}"><div class="tpin" style="width:${w}px;height:${h}px"><svg viewBox="0 0 24 32" width="${w}" height="${h}"><path d="${PIN_SHAPE}" fill="${a.fill}" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/>${inner}</svg>${pic ? `<img class="wpic" src="${pic}" alt="" style="width:${w * .58}px;height:${w * .58}px;left:${w * .21}px;top:${w * .2}px">` : ''}${p.story ? `<span class="cabb" title="Cabbie's Story">${svg('cab', 10, '#0F1E3D', 2.4)}</span>` : ''}</div></div>`;
 }
-function pinIconOld(p, big) {
-  const k = p.cats[0];
-  if (k === 'Blue Plaques' || !PIN[k]) return L.divIcon({className: '', html: `<div class="pin${k === 'Blue Plaques' ? ' pl' : ''}" style="background:${(CAT[k] || CATS[0]).c}"></div>`, iconSize: [20, 20]});
-  const z = big ? 40 : 32;
-  return L.icon({iconUrl: 'img/pins/' + PIN[k] + '.png', iconSize: [z, z], iconAnchor: [z / 2, z - 1], popupAnchor: [0, -z]});
+/* ---------- map pins as pictures: each category's pin is drawn once (with and without the Cabbie's Story badge), then MapLibre places them ---------- */
+const PIN_W = 30, PIN_H = 40, PIN_PAD = 6, PIN_IMG = {};
+let pinImgsReady = null;
+function pinImages() {
+  if (pinImgsReady) return pinImgsReady;
+  const pr = Math.min(3, Math.max(2, Math.ceil(window.devicePixelRatio || 1)));
+  const draw = (name, body, W, H, sh) => new Promise(ok => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const cv = document.createElement('canvas'); cv.width = W * pr; cv.height = H * pr;
+        const cx = cv.getContext('2d');
+        cx.shadowColor = sh[0]; cx.shadowOffsetY = sh[1] * pr; cx.shadowBlur = sh[2] * pr;
+        cx.drawImage(img, 0, 0, W * pr, H * pr);
+        PIN_IMG[name] = {data: cx.getImageData(0, 0, cv.width, cv.height), pr};
+      } catch (e) {}
+      ok();
+    };
+    img.onerror = () => ok();
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${W * pr}" height="${H * pr}" viewBox="0 0 ${W} ${H}">${body}</svg>`);
+  });
+  const jobs = [];
+  const W = PIN_W + 2 * PIN_PAD, H = PIN_H + 2 * PIN_PAD, bx = PIN_PAD + PIN_W - 2.5, by = PIN_PAD + 2.5;
+  CATS.forEach(c => {
+    const a = PIN_ART[c.k];
+    if (!a) {
+      /* blue plaques (and anything without its own pin): a dot, as before */
+      const col = c.k === 'Blue Plaques' ? '#2E6FD8' : c.c;
+      jobs.push(draw('pin:' + c.k, `<circle cx="13" cy="13" r="10" fill="#fff"/><circle cx="13" cy="13" r="7.5" fill="${col}"/>${c.k === 'Blue Plaques' ? `<circle cx="13" cy="13" r="3.5" fill="#fff"/><circle cx="13" cy="13" r=".5" fill="${col}"/>` : ''}`, 26, 26, ['rgba(0,0,0,.35)', 1, 3]));
+      return;
+    }
+    const pin = `<svg x="${PIN_PAD}" y="${PIN_PAD}" width="${PIN_W}" height="${PIN_H}" viewBox="0 0 24 32"><path d="${PIN_SHAPE}" fill="${a.fill}" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/>${a.art}</svg>`;
+    const cab = `<circle cx="${bx}" cy="${by}" r="6.75" fill="#F5B83D" stroke="#fff" stroke-width="1.5"/><svg x="${bx - 5}" y="${by - 5}" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#0F1E3D" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${ICONS.cab}</svg>`;
+    jobs.push(draw('pin:' + c.k, pin, W, H, ['rgba(15,30,61,.35)', 2, 2]));
+    jobs.push(draw('pin:' + c.k + ':c', pin + cab, W, H, ['rgba(15,30,61,.35)', 2, 2]));
+  });
+  return pinImgsReady = Promise.all(jobs);
 }
-function addBase(map) {
-  let ok = null; try { ok = sessionStorage.getItem('el_vec'); } catch {}
-  if ((ok && ok.startsWith('no:') && Date.now() - +ok.slice(3) < 120000) || !window.fetch) return osmBase(map);
-  let done = false, layer = null;
-  const fallback = () => { if (done) return; done = true; try { sessionStorage.setItem('el_vec', 'no:' + Date.now()); } catch {} try { layer && map.removeLayer(layer); } catch {} osmBase(map); };
-  const timer = setTimeout(fallback, 12000);
-  loadVec().then(() => {
-    if (done) return;
-    layer = L.maplibreGL({style: vecStyle, attribution: OSM_ATTR + ' · map: All Black Taxis'}).addTo(map);
-    const ml = layer.getMaplibreMap();
-    ml.on('styleimagemissing', e => { if (!ml.hasImage(e.id)) ml.addImage(e.id, {width: 1, height: 1, data: new Uint8Array(4)}); });
-    /* only give up if the map tiles themselves fail (a missing label font is not a reason to switch maps) */
-    ml.on('error', e => { const m = String((e && e.error && (e.error.message || e.error.status)) || ''); if (!done && (e.sourceId === 'openmaptiles' || /pmtiles|map-tiles/i.test(m))) fallback(); });
-    ml.once('idle', () => { if (!done) { done = true; clearTimeout(timer); try { sessionStorage.setItem('el_vec', 'yes'); } catch {} } });
-  }).catch(fallback);
-  return null;
+const pinImgName = p => 'pin:' + p.cats[0] + (PIN_ART[p.cats[0]] && p.story ? ':c' : '');
+const lngLat = q => [q[1], q[0]];
+const FC = features => ({type: 'FeatureCollection', features});
+const pinFeature = (p, dim) => ({type: 'Feature', geometry: {type: 'Point', coordinates: [p.lng, p.lat]}, properties: {id: p.id, img: pinImgName(p), dot: !PIN_ART[p.cats[0]], dim: !!dim}});
+const lineFeature = pts => ({type: 'Feature', geometry: {type: 'LineString', coordinates: pts.map(lngLat)}, properties: {}});
+/* the walking-time circle, as a map shape */
+function circleFeature(lat, lng, r) {
+  const k = Math.cos(lat * Math.PI / 180), ring = [];
+  for (let i = 0; i <= 72; i++) { const t = i / 72 * 2 * Math.PI; ring.push([lng + r * Math.sin(t) / (111320 * k), lat + r * Math.cos(t) / 110574]); }
+  return {type: 'Feature', geometry: {type: 'Polygon', coordinates: [ring]}, properties: {}};
+}
+function circlePts(lat, lng, r) { const dl = r / 110574, dg = r / (111320 * Math.cos(lat * Math.PI / 180)); return [[lat - dl, lng - dg], [lat + dl, lng + dg]]; }
+/* move the map to show all these [lat, lng] points */
+function fitTo(map, pts, pad, maxZoom) {
+  if (!map || !pts.length) return;
+  if (pts.length === 1) return map.jumpTo({center: lngLat(pts[0]), zoom: maxZoom || 15});
+  const b = new maplibregl.LngLatBounds(); pts.forEach(q => b.extend(lngLat(q)));
+  try { map.fitBounds(b, {padding: pad, maxZoom: maxZoom || 18, duration: 0}); } catch (e) {}
+}
+/* a single page element on the map (you-are-here dot, numbered walk stops, the tapped pin) */
+function domMarker(map, q, html, anchor, offset) {
+  const el = document.createElement('div'); el.innerHTML = html;
+  return new maplibregl.Marker({element: el, anchor: anchor || 'center', offset: offset || [0, 0]}).setLngLat(lngLat(q)).addTo(map);
+}
+/* the pin layers: faded pins (outside your walking circle) underneath, the rest on top */
+function addPinLayers(map, id, data) {
+  map.addSource(id, {type: 'geojson', data});
+  const layer = (lid, filter, opacity) => map.addLayer({id: lid, type: 'symbol', source: id, filter, layout: {
+    'icon-image': ['get', 'img'], 'icon-anchor': ['case', ['get', 'dot'], 'center', 'bottom'],
+    'icon-offset': ['case', ['get', 'dot'], ['literal', [0, 0]], ['literal', [0, PIN_PAD + 1]]],
+    'icon-allow-overlap': true, 'icon-ignore-placement': true}, paint: {'icon-opacity': opacity}});
+  layer(id + '-dim', ['==', ['get', 'dim'], true], .55);
+  layer(id, ['!=', ['get', 'dim'], true], 1);
+}
+function pinTaps(map, id, fn) {
+  [id, id + '-dim'].forEach(lid => {
+    map.on('click', lid, e => { const f = e.features && e.features[0]; if (f) fn(f.properties.id); });
+    map.on('mouseenter', lid, () => { map.getCanvas().style.cursor = 'pointer'; });
+    map.on('mouseleave', lid, () => { map.getCanvas().style.cursor = ''; });
+  });
+}
+/* make a map in the box with this id. view: {pts, pad, maxZoom} to fit points, or {center: [lat, lng], zoom}.
+   layers(map) adds this screen's routes and pins; it runs again if the map has to switch to OpenStreetMap. */
+function makeMap(id, view, layers) {
+  if (emap) { try { emap.remove(); } catch (e) {} emap = null; }
+  const box = document.getElementById(id);
+  return loadVec().then(() => {
+    if (!box || !box.isConnected) return null;
+    let ok = null; try { ok = sessionStorage.getItem('el_vec'); } catch {}
+    const osm = !vecStyle || !!(ok && ok.startsWith('no:') && Date.now() - +ok.slice(3) < 120000);
+    const pts = view.pts || [], opts = {container: box, style: osm ? osmStyle() : vecStyle, attributionControl: false, dragRotate: false, pitchWithRotate: false, touchPitch: false, maxPitch: 0};
+    if (pts.length > 1) { const b = new maplibregl.LngLatBounds(); pts.forEach(q => b.extend(lngLat(q))); opts.bounds = b; opts.fitBoundsOptions = {padding: view.pad || 30, maxZoom: view.maxZoom || 18}; }
+    else { opts.center = lngLat(pts[0] || view.center || here()); opts.zoom = pts.length ? view.maxZoom || 15 : view.zoom || 14; }
+    const map = new maplibregl.Map(opts);
+    map.touchZoomRotate.disableRotation(); map.keyboard.disableRotation();
+    map.addControl(new maplibregl.AttributionControl({compact: true, customAttribution: OSM_ATTR}));
+    map.on('styleimagemissing', e => { if (!map.hasImage(e.id)) map.addImage(e.id, {width: 1, height: 1, data: new Uint8Array(4)}); });
+    map.on('style.load', () => {
+      Object.entries(PIN_IMG).forEach(([n, im]) => { if (!map.hasImage(n)) map.addImage(n, im.data, {pixelRatio: im.pr}); });
+      try { layers && layers(map); } catch (e) { console.error(e); }
+    });
+    if (!osm) {
+      /* our map didn't load (server down or not allowing this site)? switch to OpenStreetMap, and remember that for 2 minutes */
+      let done = false;
+      const fallback = () => { if (done) return; done = true; clearTimeout(timer); try { sessionStorage.setItem('el_vec', 'no:' + Date.now()); } catch {} try { map.setStyle(osmStyle(), {diff: false}); } catch (e) {} };
+      const timer = setTimeout(fallback, TILES_BACKUP ? 25000 : 12000);
+      /* only give up if the map tiles themselves fail (a missing label font is not a reason to switch maps) */
+      map.on('error', e => { const m = String((e && e.error && (e.error.message || e.error.status)) || ''); if (!done && (e.sourceId === 'openmaptiles' || /pmtiles|map-tiles/i.test(m))) fallback(); });
+      map.once('idle', () => { if (!done) { done = true; clearTimeout(timer); try { sessionStorage.setItem('el_vec', 'yes'); } catch {} } });
+      map.once('remove', () => { done = true; clearTimeout(timer); });
+    }
+    emap = map;
+    return map;
+  });
 }
 
 function setTitle(t) { document.title = t ? `${t} · Explore London` : 'Explore London – a cabbie\'s guide'; }
@@ -1340,7 +1456,6 @@ async function loadPhoto(p) {
 }
 
 /* ---------- map ---------- */
-let leaflet = null;
 function mapScreen(focusId) {
   setTitle('Map');
   const GROUPS = [['All', null], ['Eat', '#E86A4F'], ['Drink', '#D99A1E'], ['See', '#2BB3A3'], ['Plaques', '#2E6FD8']];
@@ -1360,11 +1475,7 @@ function mapScreen(focusId) {
     </div>${tabs('Map')}`;
   const mEl = app.querySelector('.map'), fit = () => { mEl.style.height = Math.max(380, innerHeight - app.querySelector('.top').offsetHeight - app.querySelector('nav.tabs').offsetHeight) + 'px'; };
   fit();
-  if (leaflet) { leaflet.remove(); leaflet = null; }
-  const map = leaflet = L.map('leaf', {zoomControl: false, attributionControl: true}).setView(here().slice(0, 2), 15);
-  addBase(map);
-  const layer = L.layerGroup().addTo(map);
-  let circle = null, meMk = null;
+  let map = null, meMk = null, selMk = null, pins = FC([]), ring = FC([]);
   const groupOf = p => p.cats.includes('Blue Plaques') ? 'Plaques' : (CAT[p.cats[0]] || CATS[0]).g;
   const show = p => {
     const card = document.getElementById('mcard'); const isPl = p.cats.includes('Blue Plaques');
@@ -1376,62 +1487,76 @@ function mapScreen(focusId) {
     document.getElementById('mclose').onclick = () => { card.style.display = 'none'; if (st.sel) { st.sel = null; draw(); } };
     if (st.sel !== p.id) { st.sel = p.id; draw(); }
   };
+  /* works out which pins to show and how; the map only gets new pin data when a filter, the minutes or your location change, never on a pan or zoom */
   const draw = () => {
     const [a, b] = here(); const r = st.m * CONFIG.walkSpeed;
-    layer.clearLayers();
-    if (circle) circle.remove();
-    circle = L.circle([a, b], {radius: r, color: '#F28C38', weight: 2.5, dashArray: '7 6', fillColor: '#F28C38', fillOpacity: .12}).addTo(map);
-    if (meMk) meMk.remove();
-    meMk = L.marker([a, b], {icon: L.divIcon({className: '', html: '<div class="me"></div>', iconSize: [18, 18]}), interactive: false}).addTo(map);
+    ring = FC([circleFeature(a, b, r)]);
     const qraw = (document.getElementById('mq').value || '').trim();
     const mt = qraw.length >= 2 ? makeMatcher(qraw) : null, q = !!mt;
     const inc = {5: 0, 10: 0, 15: 0, 20: 0};
-    /* far from anything in the app (e.g. outer London)? then show every pin, and offer the nearest ones */
+    /* far from anything in the app (e.g. outer London)? then show every pin at full strength, and offer the nearest ones */
     const near20 = P.filter(p => p.lat != null && dist(a, b, p.lat, p.lng) <= 20 * CONFIG.walkSpeed).length, far = !near20;
     const fb = document.getElementById('farbox');
     const nearest = far ? P.filter(p => p.lat != null && (st.g === 'All' || groupOf(p) === st.g)).map(p => [p, dist(a, b, p.lat, p.lng)]).sort((x, y) => x[1] - y[1]) : [];
-    const farIds = new Set(nearest.slice(0, 40).map(x => x[0].id));
     if (fb) {
       if (far && !q && nearest.length && !st.farHide) {
         const nn = nearest.slice(0, 3);
         fb.style.display = 'block';
         fb.innerHTML = `<div class="card" style="display:flex;flex-direction:column;gap:6px"><b style="font-size:14.5px">Nothing in the app within a 20-minute walk of you yet</b><span style="font-size:13px;color:var(--muted)">Nearest: ${nn.map(([p, d]) => esc(p.name) + ' (' + (d / 1609).toFixed(1) + ' miles)').join(', ')}</span><div class="row" style="gap:8px"><button class="ghost" id="fbnear" style="height:38px;flex:1">Show the nearest</button><button class="ghost" id="fbcen" style="height:38px;flex:1">Central London</button></div></div>`;
-        const fitNear = () => map.fitBounds(L.latLngBounds([[a, b]].concat(nearest.slice(0, 8).map(([p]) => [p.lat, p.lng]))), {padding: [50, 50], maxZoom: 15});
+        const fitNear = () => fitTo(map, [[a, b]].concat(nearest.slice(0, 8).map(([p]) => [p.lat, p.lng])), 50, 15);
         document.getElementById('fbnear').onclick = fitNear;
-        document.getElementById('fbcen').onclick = () => { st.farHide = true; fb.style.display = 'none'; map.setView(CONFIG.demoStart.slice(0, 2), 14); };
-        if (!st.farFitted) { st.farFitted = true; setTimeout(fitNear, 50); }
+        document.getElementById('fbcen').onclick = () => { st.farHide = true; fb.style.display = 'none'; if (map) map.jumpTo({center: lngLat(CONFIG.demoStart), zoom: 14}); };
+        if (!st.farFitted && map) { st.farFitted = true; setTimeout(fitNear, 50); }
       } else fb.style.display = 'none';
     }
-    let vb = null; try { vb = map.getBounds().pad(0.4); } catch (e) {}
+    const feats = [];
     P.forEach(p => { try {
       if (p.lat == null) return;
       if (st.g !== 'All' && groupOf(p) !== st.g) return;
       if (mt && !mt.score(p).all) return;
       const d = dist(a, b, p.lat, p.lng);
       [5, 10, 15, 20].forEach(m => { if (d <= m * CONFIG.walkSpeed) inc[m]++; });
-      const inside = d <= r, pl = groupOf(p) === 'Plaques', c = CAT[p.cats[0]] || CATS[0];
-      if (!inside && !q && !(vb && vb.contains([p.lat, p.lng])) && !(far && farIds.has(p.id))) return;
-      const sel = st.sel === p.id;
-      const mk = L.marker([p.lat, p.lng], {opacity: sel || inside || q || far ? 1 : .55, icon: pinIcon(p, false, sel), zIndexOffset: sel ? 1000 : 0});
-      mk.on('click', () => show(p)); layer.addLayer(mk);
+      if (st.sel === p.id && PIN_ART[p.cats[0]]) return; /* the tapped pin is drawn on its own, bigger, on top */
+      feats.push(pinFeature(p, !(d <= r || q || far)));
     } catch (e) {} });
+    pins = FC(feats);
     [5, 10, 15, 20].forEach(m => document.getElementById('c' + m).textContent = inc[m] + ' places');
     const wa = document.getElementById('whereami');
     if (meReal) wa.textContent = '· from where you are';
     else if (STAY) wa.textContent = '· from ' + STAY.label;
     else { wa.innerHTML = `· from ${esc(CONFIG.demoStart[2])}${locErr ? ' · <a href="#" id="lochelp" style="color:#C8262B;font-weight:700">location off?</a>' : ''}`; const lh = document.getElementById('lochelp'); if (lh) lh.onclick = e => { e.preventDefault(); const fb2 = document.getElementById('farbox'); fb2.style.display = 'block'; fb2.innerHTML = `<div class="card" style="display:flex;flex-direction:column;gap:6px"><b style="font-size:14.5px">Your location is off</b><span style="font-size:13.5px;line-height:1.4">${esc(LOC_HELP)}</span><div class="row" style="gap:8px"><a class="ghost" href="#/stay" style="height:38px;flex:1">Set where I’m staying</a><button class="ghost" id="lhclose" style="height:38px;flex:1">OK</button></div></div>`; document.getElementById('lhclose').onclick = () => fb2.style.display = 'none'; }; }
+    if (!map) return;
+    const ps = map.getSource('pins'), rs = map.getSource('ring');
+    if (ps) ps.setData(pins);
+    if (rs) rs.setData(ring);
+    if (!meMk) meMk = domMarker(map, [a, b], '<div class="me"></div>');
+    meMk.setLngLat([b, a]);
+    if (selMk) { selMk.remove(); selMk = null; }
+    const sp = st.sel && byId[st.sel];
+    if (sp && sp.lat != null && PIN_ART[sp.cats[0]]) selMk = domMarker(map, [sp.lat, sp.lng], pinIcon(sp, false, true), 'bottom', [0, 1]);
   };
   window._mapRefresh = draw;
-  /* redraw the pins whenever the map is moved or zoomed, so whatever is on screen has its pins */
-  let mvT = null; map.on('dragstart', () => { st.farHide = true; }); map.on('moveend', () => { clearTimeout(mvT); mvT = setTimeout(draw, 120); });
   app.querySelectorAll('.hpill').forEach(b => b.onclick = () => { st.g = b.dataset.g; app.querySelectorAll('.hpill').forEach(x => x.classList.toggle('on', x === b)); draw(); });
-  app.querySelectorAll('.mins button').forEach(b => b.onclick = () => { st.m = +b.dataset.m; store.set('el_mins', st.m); app.querySelectorAll('.mins button').forEach(x => x.classList.toggle('on', x === b)); draw(); map.fitBounds(circle.getBounds(), {padding: [10, 10]}); });
+  app.querySelectorAll('.mins button').forEach(b => b.onclick = () => { st.m = +b.dataset.m; store.set('el_mins', st.m); app.querySelectorAll('.mins button').forEach(x => x.classList.toggle('on', x === b)); draw(); const [a, c] = here(); fitTo(map, circlePts(a, c, st.m * CONFIG.walkSpeed), 10); });
   document.getElementById('mq').oninput = draw;
   document.getElementById('mq').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); } });
-  document.getElementById('recentre').onclick = () => locate(ok => { if (!meReal && ok) toast('You look to be outside London, so the map starts at Leicester Square'); map.setView(here().slice(0, 2), 15); draw(); if (!ok && document.getElementById('lochelp')) document.getElementById('lochelp').click(); });
+  document.getElementById('recentre').onclick = () => locate(ok => { if (!meReal && ok) toast('You look to be outside London, so the map starts at Leicester Square'); if (map) map.jumpTo({center: lngLat(here()), zoom: 15}); draw(); if (!ok && document.getElementById('lochelp')) document.getElementById('lochelp').click(); });
   draw();
-  if (focusId && byId[focusId] && byId[focusId].lat != null) { const p = byId[focusId]; map.setView([p.lat, p.lng], 16); show(p); }
-  else if (!meReal) locate(() => { if (meReal) map.setView(here().slice(0, 2), 15); draw(); });
+  const fp = focusId && byId[focusId] && byId[focusId].lat != null ? byId[focusId] : null;
+  makeMap('leaf', fp ? {center: [fp.lat, fp.lng], zoom: 16} : {center: here(), zoom: 15}, m => {
+    m.addSource('ring', {type: 'geojson', data: ring});
+    m.addLayer({id: 'ring-fill', type: 'fill', source: 'ring', paint: {'fill-color': '#F28C38', 'fill-opacity': .12}});
+    m.addLayer({id: 'ring-line', type: 'line', source: 'ring', paint: {'line-color': '#F28C38', 'line-width': 2.5, 'line-dasharray': [2.8, 2.4]}});
+    addPinLayers(m, 'pins', pins);
+  }).then(m => {
+    if (!m) return;
+    map = m;
+    pinTaps(m, 'pins', id => { if (byId[id]) show(byId[id]); });
+    m.on('dragstart', () => { st.farHide = true; });
+    draw();
+  }).catch(e => console.error('Map could not start', e));
+  if (fp) show(fp);
+  else if (!meReal) locate(() => { if (meReal && map) map.jumpTo({center: lngLat(here()), zoom: 15}); draw(); });
 }
 
 /* ---------- walks ---------- */
@@ -1511,15 +1636,27 @@ function walkScreen(id) {
       ${w.stops.map((s, i) => `<div class="stop"><span class="num" style="flex-shrink:0${s.route ? ';' + numSty(s) : ''}">${i + 1}</span><span style="display:flex;flex-direction:column;gap:2px"><b class="disp" style="font-size:15px">${s.id ? `<a href="#/place/${s.id}" style="text-decoration:none">${esc(s.name)}</a>` : esc(s.name)}</b><span style="font-size:14px;line-height:1.4">${esc(s.note)}</span></span></div>`).join('')}
       <p class="note">${w.routes ? 'Routes are a guide to where the guards go. Timings are for a weekday ceremony day.' : 'Route lines are drawn straight between stops. Google Maps gives the real walking route.'}</p>
     </div>${tabs('Walks')}`;
-  if (leaflet) { leaflet.remove(); leaflet = null; }
-  const map = leaflet = L.map('leaf', {zoomControl: false});
-  addBase(map);
+  /* route lines are map layers; the start dot and the numbered stops are a few page elements on top */
   const pts = w.stops.map(s => [s.lat, s.lng]);
-  if (w.start) { L.marker(w.start, {icon: L.divIcon({className: '', html: '<div class="me"></div>', iconSize: [18, 18]})}).addTo(map); pts.unshift(w.start); }
-  if (w.routes) w.routes.forEach(r => { L.polyline(r.pts, {color: '#fff', weight: 8, opacity: .9}).addTo(map); L.polyline(r.pts, {color: r.color, weight: 5}).addTo(map); r.pts.forEach(q => pts.push(q)); });
-  else if (pts.length > 1) L.polyline(pts, {color: '#0F1E3D', weight: 3, dashArray: '6 6'}).addTo(map);
-  w.stops.forEach((s, i) => L.marker([s.lat, s.lng], {icon: L.divIcon({className: '', html: `<div class="num"${s.route ? ` style="${numSty(s)}"` : ''}>${i + 1}</div>`, iconSize: [26, 26]})}).addTo(map).bindTooltip(s.time ? s.time + ' · ' + s.name : s.name));
-  if (pts.length) map.fitBounds(pts, {padding: [24, 24]}); else map.setView(here().slice(0, 2), 14);
+  if (w.start) pts.unshift(w.start);
+  const linePts = pts.slice();
+  if (w.routes) w.routes.forEach(r => r.pts.forEach(q => pts.push(q)));
+  makeMap('leaf', pts.length ? {pts, pad: 24} : {center: here(), zoom: 14}, m => {
+    if (w.routes) w.routes.forEach((r, i) => {
+      m.addSource('route' + i, {type: 'geojson', data: lineFeature(r.pts)});
+      m.addLayer({id: 'route' + i + '-edge', type: 'line', source: 'route' + i, layout: {'line-join': 'round', 'line-cap': 'round'}, paint: {'line-color': '#fff', 'line-width': 8, 'line-opacity': .9}});
+      m.addLayer({id: 'route' + i, type: 'line', source: 'route' + i, layout: {'line-join': 'round', 'line-cap': 'round'}, paint: {'line-color': r.color, 'line-width': 5}});
+    });
+    else if (linePts.length > 1) {
+      m.addSource('route', {type: 'geojson', data: lineFeature(linePts)});
+      m.addLayer({id: 'route', type: 'line', source: 'route', layout: {'line-join': 'round'}, paint: {'line-color': '#0F1E3D', 'line-width': 3, 'line-dasharray': [2, 2]}});
+    }
+  }).then(m => {
+    if (!m) return;
+    m._elPts = pts;
+    if (w.start) domMarker(m, w.start, '<div class="me"></div>');
+    w.stops.forEach((s, i) => domMarker(m, [s.lat, s.lng], `<div class="num" title="${esc(s.time ? s.time + ' · ' + s.name : s.name)}"${s.route ? ` style="${numSty(s)}"` : ''}>${i + 1}</div>`));
+  }).catch(e => console.error('Map could not start', e));
   if (id === 'mine' && !meReal) locate(() => { if (meReal) walkScreen('mine'); });
 }
 
@@ -1547,11 +1684,10 @@ function myList(view) {
     </div>${tabs('My List')}`;
   app.querySelectorAll('.tick').forEach(b => b.onclick = () => { const i = +b.dataset.id; visited.has(i) ? visited.delete(i) : visited.add(i); persist(); myList(view); });
   if (view === 'map') {
-    if (leaflet) { leaflet.remove(); leaflet = null; }
-    const map = leaflet = L.map('leaf', {zoomControl: false});
-    addBase(map);
-    const pts = L0.filter(p => p.lat != null).map(p => { L.marker([p.lat, p.lng], {icon: pinIcon(p)}).addTo(map).on('click', () => location.hash = '#/place/' + p.id); return [p.lat, p.lng]; });
-    if (pts.length) map.fitBounds(pts, {padding: [30, 30], maxZoom: 16}); else map.setView(here().slice(0, 2), 14);
+    /* saved places: the same pin layer as the Map tab; tap a pin to open the place */
+    const ps = L0.filter(p => p.lat != null), pts = ps.map(p => [p.lat, p.lng]);
+    makeMap('leaf', pts.length ? {pts, pad: 30, maxZoom: 16} : {center: here(), zoom: 14}, m => addPinLayers(m, 'pins', FC(ps.map(p => pinFeature(p, false)))))
+      .then(m => { if (m) pinTaps(m, 'pins', id => { location.hash = '#/place/' + id; }); }).catch(e => console.error('Map could not start', e));
   }
   document.getElementById('share').onclick = async () => { const t = 'My London list, from Explore London:\n' + L0.map(p => '• ' + p.name + ' (' + p.area + ')').join('\n'); try { if (navigator.share) await navigator.share({title: 'My London list', text: t}); else { await navigator.clipboard.writeText(t); toast('List copied'); } } catch {} };
 }

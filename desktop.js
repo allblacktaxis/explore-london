@@ -88,7 +88,7 @@
   var st = document.createElement('style'); st.id = 'el-desktop-css'; st.textContent = css; document.head.appendChild(st);
 
   var mq = window.matchMedia(DESK), app = document.getElementById('app'), busy = false, lastWalkFit = null;
-  function getMap() { try { return typeof leaflet !== 'undefined' ? leaflet : null; } catch (e) { return null; } }
+  function getMap() { try { return typeof emap !== 'undefined' ? emap : null; } catch (e) { return null; } }
 
   /* Home: put each "heading + tiles" pair in a box, and the boxes two across */
   function groupTiles() {
@@ -140,11 +140,10 @@
       if (m && leaf && document.body.contains(leaf)) {
         requestAnimationFrame(function () {
           try {
-            m.invalidateSize(false);
-            if (isWalk && lastWalkFit !== location.hash) {
+            m.resize();
+            if (isWalk && lastWalkFit !== location.hash && m._elPts) {
               lastWalkFit = location.hash;
-              var pts = []; m.eachLayer(function (l) { if (l.getLatLng && !l.getRadius) pts.push(l.getLatLng()); });
-              if (pts.length) m.fitBounds(pts, {padding: [50, 50], maxZoom: 16});
+              if (m._elPts.length) fitTo(m, m._elPts, 50, 16);
             }
           } catch (e) {}
         });
