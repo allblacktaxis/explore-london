@@ -234,18 +234,24 @@ if (NATIVE) {
   native('CapacitorUpdater', 'notifyAppReady').catch(() => {});
   /* the phone's own share sheet */
   navigator.share = d => native('Share', 'share', d);
+  /* what the update check did, shown at the bottom of About inside the app */
+  window.UPDNOTE = 'not checked yet';
   setTimeout(async () => {
+    const say = t => { window.UPDNOTE = t; };
     try {
       const mine = await fetch('bundle.json').then(r => r.json()).catch(() => ({}));
       window.BUNDLE_VER = mine.version;
-      const latest = await fetch(SITE_URL + 'app-bundle/latest.json', {cache: 'no-store'}).then(r => r.json());
-      if (!latest.version || !latest.url || latest.version === mine.version) return;
+      say('checking');
+      const latest = await fetch(SITE_URL + 'app-bundle/latest.json', {cache: 'no-store'}).then(r => { if (!r.ok) throw new Error('latest.json ' + r.status); return r.json(); });
+      if (!latest.version || !latest.url) return say('latest.json has no version');
+      if (latest.version === mine.version) return say('up to date');
       const {bundles = []} = await native('CapacitorUpdater', 'list');
       let b = bundles.find(x => x.version === latest.version && x.status !== 'error');
-      if (!b) b = await native('CapacitorUpdater', 'download', {url: latest.url, version: latest.version});
+      if (!b) { say('downloading ' + latest.version); b = await native('CapacitorUpdater', 'download', {url: latest.url, version: latest.version}); }
       await native('CapacitorUpdater', 'setMultiDelay', {conditionMode: 'or', delayConditions: [{kind: 'kill'}, {kind: 'background', value: '300000'}]});
       await native('CapacitorUpdater', 'next', {id: b.id});
-    } catch (e) {}
+      say(latest.version + ' downloaded, used after the app is closed');
+    } catch (e) { say('failed: ' + ((e && e.message) || e)); }
   }, 4000);
 }
 if (navigator.standalone) document.documentElement.classList.add('ios-app');
@@ -2014,7 +2020,7 @@ function about() {
       <p style="margin:0"><b>Your privacy.</b> Saved places and settings stay on your phone. If you allow location, it is used on your phone to show what is near you and is not sent to us. A Transfers enquiry only reaches us when you send the WhatsApp message yourself.${CONFIG.umami ? ' We count visits anonymously (which screens are opened, which buttons are pressed) with Umami. No cookies, and nothing that identifies you.' : ''}</p>
       ${(() => { const b = store.get('el_badphoto', []); if (!b.length) return ''; const txt = 'Wrong photos: ' + b.map(id => { const q = P.find(x => x.id === id); return q ? q.name + ' (' + id + ')' : id; }).join(', '); return `<div class="story"><b class="disp">Photos you flagged (${b.length})</b><span style="font-size:14px">${esc(txt)}</span><button class="ghost" id="copybad">Copy the list to send to Claude</button></div>`; })()}
       <button class="ghost" id="reset">Clear my saved places and settings</button>
-      ${NATIVE ? `<p style="margin:0;font-size:12.5px;color:var(--muted)">App check · map: ${esc(MAPNOTE)} · website copy ${esc(window.BUNDLE_VER || '?')}</p>` : ''}
+      ${NATIVE ? `<p style="margin:0;font-size:12.5px;color:var(--muted)">App check · map: ${esc(MAPNOTE)} · website copy ${esc(window.BUNDLE_VER || '?')} · update: ${esc(window.UPDNOTE || '?')}</p>` : ''}
     </div>${tabs('Explore')}`;
   const cb = document.getElementById('copybad'); if (cb) cb.onclick = async () => { const b = store.get('el_badphoto', []); const txt = 'Wrong photos: ' + b.map(id => { const q = P.find(x => x.id === id); return q ? q.name + ' (' + id + ')' : id; }).join(', '); try { await navigator.clipboard.writeText(txt); toast('Copied'); } catch { toast('Couldn’t copy. Take a screenshot instead.'); } };
   const a2b = document.getElementById('a2about'); if (a2b) a2b.onclick = a2Sheet;
