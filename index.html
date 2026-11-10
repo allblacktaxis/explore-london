@@ -1132,8 +1132,8 @@ let PLANS = null;
 async function loadPlans() { if (!PLANS) { try { PLANS = await fetch('plans.json').then(r => r.json()); } catch { PLANS = []; } } return PLANS; }
 async function plansScreen() {
   setTitle('Free day plans'); await loadPlans();
-  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/walks')}<div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px">I’ve got a free day</h1><span style="font-size:14px;color:#C9D3E6">Day plans from the cabbies, hour by hour</span></div></div></div>
-    <div class="content">${PLANS.map(pl => `<a class="row-card" href="#/plan/${pl.n}"><span class="thumb" style="background:#FFF4E8"><img src="img/${pl.cab === 'Marcin' ? 'marcin' : 'matt'}.jpg" alt="" style="width:44px;height:44px;border-radius:22px;object-fit:cover"></span><span class="rc-t"><span class="rc-n">${esc(pl.title)}</span><span class="rc-m">${esc(pl.meta)}</span><span class="rc-l">${esc(pl.sub)}</span></span></a>`).join('')}</div>${tabs('Walks')}`;
+  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px">I’ve got a free day</h1><span style="font-size:14px;color:#C9D3E6">Day plans from the cabbies, hour by hour</span></div></div></div>
+    <div class="content">${PLANS.map(pl => `<a class="row-card" href="#/plan/${pl.n}"><span class="thumb" style="background:#FFF4E8"><img src="img/${pl.cab === 'Marcin' ? 'marcin' : 'matt'}.jpg" alt="" style="width:44px;height:44px;border-radius:22px;object-fit:cover"></span><span class="rc-t"><span class="rc-n">${esc(pl.title)}</span><span class="rc-m">${esc(pl.meta)}</span><span class="rc-l">${esc(pl.sub)}</span></span></a>`).join('')}</div>${tabs('Explore')}`;
 }
 async function planScreen(n) {
   await loadPlans(); const pl = PLANS.find(x => String(x.n) === String(n)); if (!pl) return plansScreen();
@@ -1147,7 +1147,7 @@ async function planScreen(n) {
       ${pl.stops.map(st => `<div style="display:flex;gap:10px;background:#fff;border-radius:14px;padding:10px 12px;box-shadow:0 1px 2px rgba(15,30,61,.08)"><span style="flex-shrink:0;min-width:52px;font-weight:800;font-size:13.5px;color:${st.meal ? '#A8551A' : 'var(--navy)'}">${esc(st.t)}</span><span style="display:flex;flex-direction:column;gap:5px;min-width:0"><b style="font-size:15px">${esc(st.h || st.t)}</b>${st.n ? `<span style="font-size:14px;line-height:1.4">${esc(st.n)}</span>` : ''}${(st.ids || []).length ? `<span style="display:flex;flex-wrap:wrap;gap:5px">${st.ids.map(chip).join('')}</span>` : ''}</span></div>`).join('')}
       ${(pl.foot || []).map(f => `<p class="note" style="margin:0">${esc(f)}</p>`).join('')}
       <p class="note" style="margin:0">Opening days and times change, so check anything ticketed or seasonal before you go.</p>
-    </div>${tabs('Walks')}`;
+    </div>${tabs('Explore')}`;
 }
 
 /* ---------- Beyond London: day trips ---------- */
@@ -1680,9 +1680,6 @@ function walks(all) {
     <div class="content">
       <div class="sec"><h2>Ready-made walks</h2><a href="#/walks/all">See all</a></div>
       ${walkRows(all)}
-      <div style="display:grid;grid-template-columns:1fr;gap:8px">
-        <a href="#/plans" style="display:flex;align-items:center;gap:8px;background:#FFF4E8;border-radius:14px;padding:12px;text-decoration:none">${svg('cal', 20, '#A8551A')}<span style="display:flex;flex-direction:column"><b class="disp" style="font-size:15px">Free day plans</b><span style="font-size:12.5px;color:var(--muted)">16 days out</span></span></a>
-      </div>
     </div>${tabs('Walks')}`;
   app.querySelectorAll('.chip').forEach(b => b.onclick = () => { const k = b.dataset.k; st.i.has(k) ? st.i.delete(k) : st.i.add(k); b.classList.toggle('on'); store.set('el_int', [...st.i]); });
   app.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { st.t = +b.dataset.t; store.set('el_time', st.t); app.querySelectorAll('[data-t]').forEach(x => x.classList.toggle('on', x === b)); });
