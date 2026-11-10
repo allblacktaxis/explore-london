@@ -16,6 +16,7 @@ public class AppTilesPlugin: CAPPlugin, CAPBridgedPlugin {
     private let queue = DispatchQueue(label: "uk.co.allblacktaxis.explorelondon.tiles")
     private var handle: FileHandle?
     private var size: UInt64 = 0
+    private var path = ""
 
     private func open() throws -> FileHandle {
         if let h = handle { return h }
@@ -24,6 +25,7 @@ public class AppTilesPlugin: CAPPlugin, CAPBridgedPlugin {
         }
         let attrs = try FileManager.default.attributesOfItem(atPath: url.path)
         size = (attrs[.size] as? NSNumber)?.uint64Value ?? 0
+        path = url.path
         let h = try FileHandle(forReadingFrom: url)
         handle = h
         return h
@@ -33,7 +35,8 @@ public class AppTilesPlugin: CAPPlugin, CAPBridgedPlugin {
         queue.async {
             do {
                 _ = try self.open()
-                call.resolve(["available": true, "size": self.size])
+                // path: the page reads the file directly through the app's own file server (faster than read())
+                call.resolve(["available": true, "size": Double(self.size), "path": self.path])
             } catch {
                 call.resolve(["available": false])
             }
@@ -51,7 +54,7 @@ public class AppTilesPlugin: CAPPlugin, CAPBridgedPlugin {
                 let data = try h.read(upToCount: length) ?? Data()
                 call.resolve(["data": data.base64EncodedString()])
             } catch {
-                call.reject("Could not read the map tiles", nil, error)
+                call.reject("Could not read the map tiles: \(error.localizedDescription)", nil, error)
             }
         }
     }

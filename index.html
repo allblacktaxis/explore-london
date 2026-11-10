@@ -236,8 +236,9 @@ if (NATIVE) {
   navigator.share = d => native('Share', 'share', d);
   setTimeout(async () => {
     try {
-      const latest = await fetch(SITE_URL + 'app-bundle/latest.json', {cache: 'no-store'}).then(r => r.json());
       const mine = await fetch('bundle.json').then(r => r.json()).catch(() => ({}));
+      window.BUNDLE_VER = mine.version;
+      const latest = await fetch(SITE_URL + 'app-bundle/latest.json', {cache: 'no-store'}).then(r => r.json());
       if (!latest.version || !latest.url || latest.version === mine.version) return;
       const {bundles = []} = await native('CapacitorUpdater', 'list');
       let b = bundles.find(x => x.version === latest.version && x.status !== 'error');
@@ -635,15 +636,26 @@ const TILES_BACKUP = null;
 let vecLibs = null, vecStyle = null, tilesOnBackup = false, emap = null, tilesUrl = TILES_MAIN;
 /* in the app the map tiles are built in: the page asks the app for pieces of the file (AppTiles plugin) */
 const APP_TILES = 'app-tiles';
+/* what happened with the map, shown at the bottom of About inside the app (so a tester can read it out) */
+let MAPNOTE = 'not opened yet';
 async function appTiles(proto) {
   try {
     /* if the app doesn't answer within 3 seconds, use the online map instead */
     const info = await Promise.race([native('AppTiles', 'info'), new Promise(ok => setTimeout(() => ok(null), 3000))]);
-    if (!info || !info.available) return false;
+    if (!info) { MAPNOTE = 'built-in map: no answer from the app'; return false; }
+    if (!info.available) { MAPNOTE = 'built-in map: not in this app'; return false; }
+    /* iPhone / iPad: the app's own file server can read parts of the file directly, which is much faster */
+    if (info.path && Capacitor.getPlatform && Capacitor.getPlatform() === 'ios' && Capacitor.convertFileSrc) {
+      tilesUrl = Capacitor.convertFileSrc(info.path); MAPNOTE = 'built-in map (direct)'; return true;
+    }
+    /* Android: the page asks the app for each piece of the file */
     const b64 = s => { if (Uint8Array.fromBase64) return Uint8Array.fromBase64(s); const t = atob(s), a = new Uint8Array(t.length); for (let i = 0; i < t.length; i++) a[i] = t.charCodeAt(i); return a; };
-    proto.add(new pmtiles.PMTiles({getKey: () => APP_TILES, getBytes: async (offset, length) => ({data: b64((await native('AppTiles', 'read', {offset, length})).data).buffer})}));
-    return true;
-  } catch (e) { return false; }
+    proto.add(new pmtiles.PMTiles({getKey: () => APP_TILES, getBytes: async (offset, length) => {
+      try { return {data: b64((await native('AppTiles', 'read', {offset, length})).data).buffer}; }
+      catch (e) { MAPNOTE += ' · read failed: ' + ((e && e.message) || e); throw e; }
+    }}));
+    tilesUrl = APP_TILES; MAPNOTE = 'built-in map (via app)'; return true;
+  } catch (e) { MAPNOTE = 'built-in map error: ' + ((e && e.message) || e); return false; }
 }
 const loadJS = src => new Promise((ok, no) => { const e = document.createElement('script'); e.src = src; e.onload = ok; e.onerror = no; document.head.appendChild(e); });
 function tileProtocol(proto) {
@@ -670,8 +682,8 @@ function loadVec() {
       const c = document.createElement('link'); c.rel = 'stylesheet'; c.href = 'lib/vec/maplibre-gl.css'; document.head.appendChild(c);
       await loadJS('lib/vec/maplibre-gl.js'); await loadJS('lib/vec/pmtiles.js');
       const proto = new pmtiles.Protocol();
-      if (NATIVE && await appTiles(proto)) { tilesUrl = APP_TILES; maplibregl.addProtocol('pmtiles', proto.tilev4); }
-      else maplibregl.addProtocol('pmtiles', tileProtocol(proto));
+      if (NATIVE && await appTiles(proto)) maplibregl.addProtocol('pmtiles', proto.tilev4);
+      else { if (NATIVE) MAPNOTE += ', so using the online map'; maplibregl.addProtocol('pmtiles', tileProtocol(proto)); }
       try {
         vecStyle = await fetch('styles/map-style-v3.json').then(r => { if (!r.ok) throw 0; return r.json(); });
         const base = location.href.replace(/[#?].*$/, '').replace(/[^/]*$/, '');
@@ -819,6 +831,7 @@ function makeMap(id, view, layers) {
     if (!box || !box.isConnected) return null;
     let ok = null; try { ok = sessionStorage.getItem('el_vec'); } catch {}
     const osm = !vecStyle || !!(ok && ok.startsWith('no:') && Date.now() - +ok.slice(3) < 120000);
+    if (osm) MAPNOTE += !vecStyle ? ' · OpenStreetMap (our map style did not load)' : ' · OpenStreetMap (our map failed in the last 2 minutes)';
     const pts = view.pts || [], opts = {container: box, style: osm ? osmStyle() : vecStyle, attributionControl: false, dragRotate: false, pitchWithRotate: false, touchPitch: false, maxPitch: 0};
     if (pts.length > 1) { const b = new maplibregl.LngLatBounds(); pts.forEach(q => b.extend(lngLat(q))); opts.bounds = b; opts.fitBoundsOptions = {padding: view.pad || 30, maxZoom: view.maxZoom || 18}; }
     else { opts.center = lngLat(pts[0] || view.center || here()); opts.zoom = pts.length ? view.maxZoom || 15 : view.zoom || 14; }
@@ -833,11 +846,12 @@ function makeMap(id, view, layers) {
     if (!osm) {
       /* our map didn't load (server down or not allowing this site)? switch to OpenStreetMap, and remember that for 2 minutes */
       let done = false;
-      const fallback = () => { if (done) return; done = true; clearTimeout(timer); try { sessionStorage.setItem('el_vec', 'no:' + Date.now()); } catch {} try { map.setStyle(osmStyle(), {diff: false}); } catch (e) {} };
-      const timer = setTimeout(fallback, TILES_BACKUP ? 25000 : 12000);
+      const fallback = why => { if (done) return; done = true; clearTimeout(timer); MAPNOTE += ' · switched to OpenStreetMap: ' + why; try { sessionStorage.setItem('el_vec', 'no:' + Date.now()); } catch {} try { map.setStyle(osmStyle(), {diff: false}); } catch (e) {} };
+      /* the built-in map (in the app) needs no internet, so give it longer before giving up */
+      const timer = setTimeout(() => fallback('took too long'), tilesUrl !== TILES_MAIN ? 30000 : TILES_BACKUP ? 25000 : 12000);
       /* only give up if the map tiles themselves fail (a missing label font is not a reason to switch maps) */
-      map.on('error', e => { const m = String((e && e.error && (e.error.message || e.error.status)) || ''); if (!done && (e.sourceId === 'openmaptiles' || /pmtiles|map-tiles/i.test(m))) fallback(); });
-      map.once('idle', () => { if (!done) { done = true; clearTimeout(timer); try { sessionStorage.setItem('el_vec', 'yes'); } catch {} } });
+      map.on('error', e => { const m = String((e && e.error && (e.error.message || e.error.status)) || ''); if (!done && (e.sourceId === 'openmaptiles' || /pmtiles|map-tiles/i.test(m))) fallback(m || 'map tiles error'); });
+      map.once('idle', () => { if (!done) { done = true; clearTimeout(timer); MAPNOTE += ' · loaded OK'; try { sessionStorage.setItem('el_vec', 'yes'); } catch {} } });
       map.once('remove', () => { done = true; clearTimeout(timer); });
     }
     emap = map;
@@ -1987,6 +2001,7 @@ function about() {
       <p style="margin:0"><b>Your privacy.</b> Saved places and settings stay on your phone. If you allow location, it is used on your phone to show what is near you and is not sent to us. A Transfers enquiry only reaches us when you send the WhatsApp message yourself.${CONFIG.umami ? ' We count visits anonymously (which screens are opened, which buttons are pressed) with Umami. No cookies, and nothing that identifies you.' : ''}</p>
       ${(() => { const b = store.get('el_badphoto', []); if (!b.length) return ''; const txt = 'Wrong photos: ' + b.map(id => { const q = P.find(x => x.id === id); return q ? q.name + ' (' + id + ')' : id; }).join(', '); return `<div class="story"><b class="disp">Photos you flagged (${b.length})</b><span style="font-size:14px">${esc(txt)}</span><button class="ghost" id="copybad">Copy the list to send to Claude</button></div>`; })()}
       <button class="ghost" id="reset">Clear my saved places and settings</button>
+      ${NATIVE ? `<p style="margin:0;font-size:12.5px;color:var(--muted)">App check · map: ${esc(MAPNOTE)} · website copy ${esc(window.BUNDLE_VER || '?')}</p>` : ''}
     </div>${tabs('Explore')}`;
   const cb = document.getElementById('copybad'); if (cb) cb.onclick = async () => { const b = store.get('el_badphoto', []); const txt = 'Wrong photos: ' + b.map(id => { const q = P.find(x => x.id === id); return q ? q.name + ' (' + id + ')' : id; }).join(', '); try { await navigator.clipboard.writeText(txt); toast('Copied'); } catch { toast('Couldn’t copy. Take a screenshot instead.'); } };
   const a2b = document.getElementById('a2about'); if (a2b) a2b.onclick = a2Sheet;
