@@ -165,6 +165,16 @@ nav.tabs a.on{color:#fff}nav.tabs a.on i{background:var(--orange)}
 .hit{display:inline-block;background:var(--orange);color:var(--navy);font-weight:700;border-radius:8px;padding:0 6px}
 .tgl{grid-column:1/-1;line-height:1;font-size:11px;font-weight:800;color:#0F1E3D;opacity:.65;text-transform:uppercase;letter-spacing:.06em;margin:2px 2px -4px}.tgl:first-child{margin-top:-4px}
 .hg{row-gap:7px}.hg .tile{min-height:0;padding:5px 3px 8px;gap:2px}.hg .tile .ic{width:36px;height:36px}.hg .tile .ic>*{max-width:25px;max-height:25px}.hg .tile span.l{font-size:12px}
+/* "add to home screen" sheet and strip */
+.a2-bg{position:fixed;inset:0;z-index:3000;background:rgba(15,30,61,.55);display:flex;align-items:flex-end;justify-content:center}
+.a2{background:#fff;color:var(--ink);width:100%;max-width:520px;border-radius:22px 22px 0 0;padding:20px 20px calc(18px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px;max-height:92vh;overflow:auto}
+.a2 h2{margin:0;font-size:21px;line-height:1.2}
+.a2 p{margin:0;font-size:15px;line-height:1.45;color:var(--muted)}
+.a2 ol{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.a2 li{display:flex;align-items:center;gap:12px;background:#FFF4E8;border-radius:14px;padding:10px 12px;font-size:15.5px;line-height:1.35}
+.a2 li .n{flex-shrink:0;width:28px;height:28px;border-radius:14px;background:var(--orange);color:var(--navy);font-weight:800;display:flex;align-items:center;justify-content:center}
+.a2 li svg{vertical-align:-5px}
+.a2 .k{display:inline-block;font-weight:800;font-size:19px;line-height:1;padding:0 3px}
 /* launch screen: shown when opened from the home screen (installed app) */
 #launch{display:none;position:fixed;inset:0;z-index:100000;background:#0F1E3D;transition:opacity .45s ease}
 #launch img{width:100%;height:100%;object-fit:cover;display:block}
@@ -295,6 +305,7 @@ const ICONS = {
   leaf:'<path d="M5 19c0-9 6-14 15-14 0 9-5 15-14 15"/><path d="M5 19l7-7"/>',
   dart:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>',
   back:'<path d="M15 6l-6 6 6 6"/>', heart:'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
   share:'<path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 13v6h14v-6"/>', clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
   near:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>', arrow:'<path d="M5 12h12M13 6l6 6-6 6"/>',
   check:'<path d="M5 12l5 5 9-10"/>', walk:'<circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h6a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h6"/>',
@@ -368,6 +379,60 @@ const store = {
 let saved = new Set(store.get('el_saved', []));
 let visited = new Set(store.get('el_visited', []));
 const persist = () => { store.set('el_saved', [...saved]); store.set('el_visited', [...visited]); };
+
+/* ---------- "add to home screen" help ----------
+   Until the app is in the App Store / Play Store, people open it from a QR code in the browser.
+   This tells them how to keep it on their home screen so they can find it again. Shown once after
+   the welcome screen, then as a small strip on the home screen until they add it or tap ×. */
+const A2 = (() => {
+  const ua = navigator.userAgent;
+  const ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const android = /Android/.test(ua);
+  const inApp = /FBAN|FBAV|FB_IAB|Instagram|Line\/|Snapchat|TikTok|musical_ly|Twitter|LinkedInApp|GSA\//.test(ua);
+  let deferred = null;
+  addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferred = e; });
+  addEventListener('appinstalled', () => { store.set('el_a2_off', 1); document.querySelectorAll('.a2-strip').forEach(x => x.remove()); });
+  return {
+    ios, android, inApp,
+    installed: () => !!navigator.standalone || matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches,
+    want() { return (ios || android) && !this.installed(); },
+    take() { const d = deferred; deferred = null; return d; },
+    has: () => !!deferred
+  };
+})();
+function a2Steps() {
+  const st = (n, t) => `<li><span class="n">${n}</span><span>${t}</span></li>`;
+  if (A2.inApp) return `<ol>${st(1, A2.ios ? 'Tap <b>⋯</b> or the compass button, then <b>Open in Safari</b>' : 'Tap <span class="k">⋮</span> at the top right, then <b>Open in Chrome</b> (or <b>Open in browser</b>)')}${st(2, 'Come back to this screen there and follow the steps')}</ol>`;
+  if (A2.ios) return `<ol>${st(1, `Tap the Share button ${svg('share', 22, '#2E6FD8', 2)}. In Safari it’s at the bottom of the screen. If you can’t see it, tap <b>⋯</b> first`)}${st(2, `Scroll down and tap <b>Add to Home Screen</b>`)}${st(3, 'Tap <b>Add</b> at the top right')}</ol>`;
+  return `<ol>${st(1, 'Tap the menu <span class="k">⋮</span> at the top right')}${st(2, 'Tap <b>Add to Home screen</b> or <b>Install app</b>')}${st(3, 'Tap <b>Install</b> or <b>Add</b>')}</ol>`;
+}
+function a2Sheet() {
+  if (document.querySelector('.a2-bg')) return;
+  STATS.ev && STATS.ev('Add to home screen help');
+  const bg = document.createElement('div'); bg.className = 'a2-bg';
+  bg.innerHTML = `<div class="a2" role="dialog" aria-modal="true" aria-labelledby="a2t">
+    <div class="row" style="gap:12px"><img src="icons/icon-192.png?v=4" alt="" style="width:52px;height:52px;border-radius:12px;flex-shrink:0"><h2 id="a2t" class="disp">Keep Explore London on your phone</h2></div>
+    <p>It isn’t in the ${A2.ios ? 'App Store' : 'Play Store'} yet, so add it to your home screen. It then opens like any other app, so you can find it again. It’s free, and you can delete it any time.</p>
+    ${A2.has() ? `<button class="bigbtn orange" id="a2go">${svg('plus', 20, '#0F1E3D', 2.4)} Add to home screen</button>` : a2Steps()}
+    ${A2.ios && !A2.inApp ? '<p style="font-size:13.5px">Do it now, before you save any places: places saved here in the browser don’t carry over to the home screen app.</p>' : ''}
+    <button class="ghost" id="a2x">${A2.has() ? 'Not now' : 'Got it'}</button></div>`;
+  document.body.appendChild(bg);
+  const close = () => bg.remove();
+  bg.onclick = e => { if (e.target === bg) close(); };
+  bg.querySelector('#a2x').onclick = close;
+  const go = bg.querySelector('#a2go');
+  if (go) go.onclick = async () => { const d = A2.take(); close(); if (!d) return; d.prompt(); try { const r = await d.userChoice; if (r.outcome === 'accepted') store.set('el_a2_off', 1); } catch {} };
+}
+function a2Strip() {
+  if (!A2.want() || store.get('el_a2_off', 0)) return '';
+  return `<div class="a2-strip" style="display:flex;align-items:center;gap:10px;background:var(--navy);color:#fff;border-radius:14px;padding:4px 4px 4px 12px">${svg('share', 18, '#F28C38', 2.2)}<button id="a2open" style="flex:1;background:none;border:0;color:#fff;text-align:left;font:inherit;font-size:14.5px;line-height:1.25;padding:6px 0;cursor:pointer"><b>Keep this app:</b> add it to your home screen</button><button id="a2off" aria-label="Hide this" style="flex-shrink:0;width:36px;height:36px;border:0;background:none;color:#C9D3E6;font-size:22px;line-height:1;cursor:pointer">×</button></div>`;
+}
+function a2Wire() {
+  const o = document.getElementById('a2open'), x = document.getElementById('a2off');
+  if (o) o.onclick = a2Sheet;
+  if (x) x.onclick = () => { store.set('el_a2_off', 1); x.closest('.a2-strip').remove(); };
+  if (A2.want() && !store.get('el_a2_shown', 0)) { store.set('el_a2_shown', 1); setTimeout(a2Sheet, 700); }
+}
 
 /* ---------- data ---------- */
 let P = [], WALKS = [], byId = {};
@@ -753,7 +818,7 @@ function welcome() {
       <h2>Hop in. We know the way.</h2>
       <p>Every London cabbie has passed the Knowledge. These are the places we’d take you.</p>
       <div style="flex:1"></div>
-      <a class="wel-go" href="#/" onclick="store.set('el_seen',1)">Start exploring</a>
+      <a class="wel-go" href="#/" onclick="store.set('el_seen',1);if(location.hash==='#/'){event.preventDefault();route()}">Start exploring</a>
       <span class="wel-free">Free · No sign-up needed</span>
     </div></div>`;
 }
@@ -1303,7 +1368,7 @@ function home() {
     <div class="content">
       <div id="results" style="display:none;flex-direction:column;gap:6px"></div>
       <div id="homebody" style="display:flex;flex-direction:column;gap:14px">
-        ${stayCard()}${otdStrip}
+        ${a2Strip()}${stayCard()}${otdStrip}
         <div class="tiles hg">${HOME_GROUPS.map(([g, ks]) => `<div class="tgl">${g}</div>` + ks.map(k => k === 'TUBE' ? `<a class="tile" href="#/around" style="--c:#C8262B"><span class="ic" style="background:#F9D6D6">${svg('train', 28, '#0F1E3D', 1.8)}</span><span class="l">Tube &amp; Trains</span></a>` : (c => `<a class="tile" href="#/cat/${encodeURIComponent(c.k)}" style="--c:${c.c}"><span class="ic" style="background:${c.t}">${catIcon(c.k, 28)}</span><span class="l">${c.s}</span></a>`)(CATS.find(c => c.k === k))).join('')).join('')}</div>
         <a class="bigbtn" href="#/map">${svg('near', 20, '#F28C38', 2.2)} Near me now</a>
         <a href="#/daytrips" style="display:flex;align-items:center;gap:10px;background:#FFF4E8;border-radius:14px;padding:9px 12px;color:var(--ink);text-decoration:none">${svg('train', 20, '#A8551A', 2)}<b class="disp" style="font-size:16px;white-space:nowrap">Day trips</b><span style="font-size:13px;color:var(--muted);flex-grow:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Windsor, Oxford, Bath + 6 more</span><span style="flex-shrink:0">${svg('chev', 18, '#A8551A', 2.4)}</span></a>
@@ -1317,6 +1382,7 @@ function home() {
         <p class="note" style="margin:0">${P.length} places, picked by London cabbies.</p>
       </div>
     </div>${tabs('Explore')}`;
+  a2Wire();
   const q = document.getElementById('q'), res = document.getElementById('results'), body = document.getElementById('homebody');
   const IDEAS = ['Sunday roast', 'Fish and chips', 'Rooftop bars', 'Free museums', 'Afternoon tea', 'Harry Potter'];
   const draw = () => {
@@ -1869,6 +1935,7 @@ function about() {
   app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<h1 style="margin:0;font-weight:800;font-size:22px">About Explore London</h1></div></div>
     <div class="content" style="font-size:15px;line-height:1.5">
       <p style="margin:0">Explore London is a cabbie's guide to the city, from All Black Taxis. Every place is picked by London cabbies who learned the city doing the Knowledge.</p>
+      ${A2.want() ? `<button class="ghost" id="a2about">${svg('share', 18)} How to add this app to your home screen</button>` : ''}
       <div class="story"><b class="disp">In this version</b><span>${P.length} places in ${CATS.length} categories · ${WALKS.length} ready-made walks · Make My Walk · My List · Airport transfers</span></div>
       <p style="margin:0"><b>Stations</b> from open TfL data, compiled by Oliver O’Brien (github.com/oobrien/vis). Line colours are TfL’s.</p>
       <p style="margin:0"><b>Photos</b> come from Wikimedia Commons under free licences, credited on each place. Places without a free photo show their category picture.</p>
@@ -1878,6 +1945,7 @@ function about() {
       <button class="ghost" id="reset">Clear my saved places and settings</button>
     </div>${tabs('Explore')}`;
   const cb = document.getElementById('copybad'); if (cb) cb.onclick = async () => { const b = store.get('el_badphoto', []); const txt = 'Wrong photos: ' + b.map(id => { const q = P.find(x => x.id === id); return q ? q.name + ' (' + id + ')' : id; }).join(', '); try { await navigator.clipboard.writeText(txt); toast('Copied'); } catch { toast('Couldn’t copy. Take a screenshot instead.'); } };
+  const a2b = document.getElementById('a2about'); if (a2b) a2b.onclick = a2Sheet;
   document.getElementById('reset').onclick = () => { try { localStorage.clear(); } catch {} saved = new Set(); visited = new Set(); toast('Cleared'); };
 }
 
