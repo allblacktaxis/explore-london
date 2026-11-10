@@ -7,7 +7,7 @@
 | Output | Used for |
 |---|---|
 | `icons/icon-192.png`, `icon-512.png`, `maskable-*.png`, `apple-touch-icon-180.png` | PWA / home-screen icon (with "Explore London") |
-| `favicon.ico`, `icons/favicon-16/32/48.png` | Website favicon (Big Ben clock, no text) |
+| `favicon.ico`, `icons/favicon-16/32/48.png` | Website favicon (the app icon's skyline, without the logo or title) |
 | `icons/splash/apple-splash-*.jpg` | iOS home-screen launch images (links in `index.html`) |
 | `icons/splash/launch-*.jpg` | In-app launch screen shown when opened as an installed app (Android shows this after its own icon splash) |
 | `branding/icon-1024.png`, `icon-maskable-1024.png` | Masters for the future App Store / Play Store icons |

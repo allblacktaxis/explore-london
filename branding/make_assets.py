@@ -101,11 +101,23 @@ def icon(S, maskable=False):
         lockup(img, S / 2, S * 0.795 - lockup_height(scale), scale)
     return img
 
-# ---------- favicon (no text) ----------
+# ---------- favicon: the app icon picture, without the logo and the title ----------
 def favicon(S):
-    # tight crop on Big Ben's clock face and spire against the sky
-    box = (553, 216, 637, 300)
-    return src.crop(box).resize((S, S), Image.LANCZOS)
+    B = 1024
+    img = Image.new('RGB', (B, B), NAVY)
+    sc = B / SW                                    # whole skyline, full width (as on the app icon)
+    pad = int(B * 0.20 / sc)                       # a little sky above Big Ben
+    full = padded(pad)
+    ih = int(full.height * sc)
+    im = full.resize((B, ih), Image.LANCZOS)
+    fade_h = int(B * 0.12)
+    mask = Image.new('L', im.size, 255)
+    mask.paste(vfade(B, fade_h, 255, 0), (0, ih - fade_h))
+    img.paste(im, (0, 0), mask)
+    # downsize in steps so the small sizes stay crisp
+    while img.width // 2 >= S:
+        img = img.resize((img.width // 2, img.height // 2), Image.LANCZOS)
+    return img.resize((S, S), Image.LANCZOS)
 
 # ---------- launch / splash ----------
 MAX_UPSCALE = 1.3   # the artwork is 1170px wide; enlarging it more than this looks soft
