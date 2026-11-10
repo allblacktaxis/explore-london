@@ -11,6 +11,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, 'branding/source-skyline.webp')
 FONT = os.path.join(ROOT, 'branding/Archivo-800.ttf')
+LOGO = Image.open(os.path.join(ROOT, 'branding/abt-logo.png')).convert('RGBA')  # All Black Taxis badge
 NAVY = (15, 30, 61); ORANGE = (242, 140, 56); WHITE = (255, 255, 255)
 _s = Image.open(SRC).convert('RGBA')
 SKYC = (93, 189, 246)
@@ -55,27 +56,43 @@ def lockup_width(scale):
     d = ImageDraw.Draw(Image.new('RGB', (1, 1)))
     f2 = font(scale); return sum(d.textlength(c, font=f2) for c in 'LONDON') + 0.06 * scale * 5
 
+# ---------- shared helpers ----------
+SKYTOP = (52, 150, 228)
+
+def padded(pad):
+    """The artwork with `pad` rows of sky added above it (room for the logo)."""
+    im = Image.new('RGB', (SW, SH + pad), SKYC)
+    im.paste(Image.new('RGB', (SW, pad), SKYTOP), (0, 0), vfade(SW, pad, 255, 0))
+    im.paste(src, (0, pad))
+    return im
+
+def put_logo(img, cx, top, width):
+    lg = LOGO.resize((int(width), int(width * LOGO.height / LOGO.width)), Image.LANCZOS)
+    img.paste(lg, (int(cx - lg.width / 2), int(top)), lg)
+    return top + lg.height
+
+def logo_h(width): return width * LOGO.height / LOGO.width
+
 # ---------- app icon ----------
 def icon(S, maskable=False):
+    """Logo top-centre, full skyline, EXPLORE LONDON on navy at the bottom."""
     img = Image.new('RGB', (S, S), NAVY)
-    # crop around Big Ben / Eye / Tower Bridge / taxi
-    ch = 700 if not maskable else 720
-    cw = ch * (1.0 if maskable else 1.12)
-    cx = 600
-    box = (int(cx - cw / 2), 0, int(cx + cw / 2), ch)
-    crop = src.crop(box)
-    ih = int(S * (0.80 if not maskable else 0.84))
-    crop = crop.resize((S, int(S * ch / cw)), Image.LANCZOS)
-    crop = crop.crop((0, 0, S, min(ih, crop.height)))
-    # fade bottom (river) into navy
-    fade_h = int(S * 0.20)
-    mask = Image.new('L', crop.size, 255)
-    mask.paste(vfade(S, fade_h, 255, 0), (0, crop.height - fade_h))
-    img.paste(crop, (0, 0), mask)
-    # darken band behind text for legibility
-    band_top = int(S * (0.66 if not maskable else 0.52))
+    lw = S * (0.60 if not maskable else 0.40)
+    ltop = S * (0.05 if not maskable else 0.15)
+    lbot = ltop + logo_h(lw)
+    sc = S / SW                                        # whole skyline, full width
+    pad = int(max(0, (lbot + S * 0.025) / sc - 40))    # Big Ben's tip sits just under the logo
+    full = padded(pad)
+    ih = int(full.height * sc)
+    im = full.resize((S, ih), Image.LANCZOS)
+    fade_h = int(S * 0.16)
+    mask = Image.new('L', im.size, 255)
+    mask.paste(vfade(S, fade_h, 255, 0), (0, ih - fade_h))
+    img.paste(im, (0, 0), mask)
+    band_top = int(S * (0.70 if not maskable else 0.56))
     shade = Image.new('RGB', (S, S - band_top), NAVY)
     img.paste(shade, (0, band_top), vfade(S, S - band_top, 0, 255).point(lambda a: min(255, int(a * 1.6))))
+    put_logo(img, S / 2, ltop, lw)
     if not maskable:
         scale = S * 0.165
         lockup(img, S / 2, S * 0.955 - lockup_height(scale), scale)
@@ -93,32 +110,61 @@ def favicon(S):
 # ---------- launch / splash ----------
 def splash(W, H):
     img = Image.new('RGB', (W, H), NAVY)
-    if W / H >= 1.2:   # landscape: cover, title on the river
-        sc = max(W / SW, H / SH)
-        im = src.resize((int(SW * sc) + 1, int(SH * sc) + 1), Image.LANCZOS)
-        ox = (im.width - W) // 2; oy = (im.height - H) // 2
-        img.paste(im.crop((ox, oy, ox + W, oy + H)))
-        band = int(H * 0.30)
-        img.paste(Image.new('RGB', (W, band), NAVY), (0, H - band), vfade(W, band, 0, 250))
-        scale = min(H * 0.068, W * 0.05)
-        lockup(img, W / 2, H - H * 0.045 - lockup_height(scale), scale)
-        return img
-    # portrait: sky above, skyline in the middle, river fading to navy with title
-    sc = W / SW * 1.12          # a touch of zoom so the skyline fills phone width
+    if W / H >= 1.2:
+        return splash_landscape(W, H)
+    # portrait: logo in the sky, skyline in the middle, river fading to navy with title
+    tall = H / W > 1.8                       # phones; iPads are squarer
+    sc = W / SW * (1.12 if tall else 1.0)    # a touch of zoom so the skyline fills phone width
     iw, ih = int(SW * sc), int(SH * sc)
     im = src.resize((iw, ih), Image.LANCZOS).crop(((iw - W) // 2, 0, (iw - W) // 2 + W, ih))
     scale = W * 0.15
     group = ih + H * 0.035 + lockup_height(scale)
     top = int((H - group) * 0.56)
-    # sky: stretch the image's top row upwards
     sky = Image.new('RGB', (W, top + 2), SKYC)
-    sky.paste(Image.new('RGB', (W, top + 2), (52, 150, 228)), (0, 0), vfade(W, top + 2, 255, 0))
+    sky.paste(Image.new('RGB', (W, top + 2), SKYTOP), (0, 0), vfade(W, top + 2, 255, 0))
     img.paste(sky, (0, 0))
     mask = Image.new('L', im.size, 255)
     fade_h = int((SH - WATER) * sc * 0.9)
     mask.paste(vfade(W, fade_h, 255, 0), (0, ih - fade_h))
     img.paste(im, (0, top), mask)
     lockup(img, W / 2, top + ih + H * 0.035, scale)
+    lw = W * (0.62 if tall else 0.48)
+    put_logo(img, W / 2, max(H * 0.05, (top + 30 * sc) / 2 - logo_h(lw) / 2), lw)
+    return img
+
+def splash_landscape(W, H):
+    """Logo top-centre, skyline below it, title on the river. Wide screens get soft sides."""
+    lw = min(W * 0.30, H * 0.48)
+    ltop = H * 0.05; lbot = ltop + logo_h(lw)
+    scale = min(H * 0.068, W * 0.05)
+    t_top = H - H * 0.045 - lockup_height(scale)
+    # Big Ben's tip (y=40) just below the logo, bridge piers (y=655) just above the title
+    sc = min(W / SW * 1.05, (t_top - H * 0.06 - (lbot + H * 0.03)) / (655 - 40))
+    pad = 400
+    full = padded(pad)
+    iw, ih = int(SW * sc), int(full.height * sc)
+    im = full.resize((iw, ih), Image.LANCZOS)
+    y0 = int(lbot + H * 0.03 - (pad + 40) * sc)
+    # background: blurred skyline, sky above, navy below
+    bg = full.resize((W, int(full.height * W / SW)), Image.LANCZOS).filter(ImageFilter.GaussianBlur(W / 60))
+    img = Image.new('RGB', (W, H), NAVY)
+    img.paste(bg, (0, int(lbot + H * 0.03 - (pad + 40) * W / SW)))
+    mask = Image.new('L', im.size, 255)
+    if iw < W:
+        edge = int(W * 0.05)
+        side = Image.new('L', (edge, 1))
+        for x in range(edge): side.putpixel((x, 0), int(255 * x / (edge - 1)))
+        side = side.resize((edge, ih))
+        mask.paste(side, (0, 0)); mask.paste(side.transpose(Image.FLIP_LEFT_RIGHT), (iw - edge, 0))
+    img.paste(im, ((W - iw) // 2, y0), mask)
+    b0 = int(y0 + (pad + 650) * sc)                 # river level under the bridge piers
+    band = H - b0
+    if band > 0:
+        ramp = int(max(1, t_top - H * 0.01 - b0))
+        m = Image.new('L', (W, band), 255); m.paste(vfade(W, ramp, 0, 255), (0, 0))
+        img.paste(Image.new('RGB', (W, band), NAVY), (0, b0), m)
+    put_logo(img, W / 2, ltop, lw)
+    lockup(img, W / 2, t_top, scale)
     return img
 
 # iOS launch screens: (CSS width, CSS height, pixel ratio, devices)
@@ -166,7 +212,7 @@ def main():
                 continue  # iPhone home-screen apps launch in portrait
             fn = f'apple-splash-{pw}x{ph}.jpg'
             splash(pw, ph).save(os.path.join(I, 'splash', fn), quality=84, optimize=True, progressive=True)
-            tags.append(f'<link rel="apple-touch-startup-image" href="icons/splash/{fn}" media="(device-width: {w}px) and (device-height: {h}px) and (-webkit-device-pixel-ratio: {r}) and (orientation: {orient})">')
+            tags.append(f'<link rel="apple-touch-startup-image" href="icons/splash/{fn}?v=3" media="(device-width: {w}px) and (device-height: {h}px) and (-webkit-device-pixel-ratio: {r}) and (orientation: {orient})">')
     open(os.path.join(B, 'apple-startup-links.html'), 'w').write('\n'.join(tags) + '\n')
     print(len(tags), 'iOS launch images')
 

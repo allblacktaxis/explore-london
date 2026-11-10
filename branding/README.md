@@ -1,11 +1,12 @@
 # Explore London – app artwork
 
-`source-skyline.webp` is the master artwork. `make_assets.py` builds everything from it:
+`source-skyline.webp` is the master artwork and `abt-logo.png` the All Black Taxis badge (placed top-centre on the icon and launch screens; not used on the favicon). `make_assets.py` builds everything from it:
 
     python3 branding/make_assets.py
 
 | Output | Used for |
 |---|---|
+| `img/abt-logo.png` | Logo in the app header (a 480px copy of `abt-logo.png`) |
 | `icons/icon-192.png`, `icon-512.png`, `maskable-*.png`, `apple-touch-icon-180.png` | PWA / home-screen icon (with "Explore London") |
 | `favicon.ico`, `icons/favicon-16/32/48.png` | Website favicon (Big Ben clock, no text) |
 | `icons/splash/apple-splash-*.jpg` | iOS home-screen launch images (links in `index.html`) |
