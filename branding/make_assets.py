@@ -6,7 +6,7 @@ from branding/source-skyline.webp.  Run from the repo root:
 Needs Pillow.  Writes into icons/ (PWA) and branding/ (masters for the
 future iOS / Android apps).
 """
-import sys, os
+import sys, os, re
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, 'branding/source-skyline.webp')
@@ -108,10 +108,13 @@ def favicon(S):
     return src.crop(box).resize((S, S), Image.LANCZOS)
 
 # ---------- launch / splash ----------
+MAX_UPSCALE = 1.3   # the artwork is 1170px wide; enlarging it more than this looks soft
+
 def splash(W, H):
     img = Image.new('RGB', (W, H), NAVY)
-    if W / H >= 1.2:
-        return splash_landscape(W, H)
+    tall = H / W > 1.8
+    if W >= H or W / SW * (1.12 if tall else 1.0) > MAX_UPSCALE:
+        return splash_card(W, H)          # iPads, desktops: keep the skyline sharp
     # portrait: logo in the sky, skyline in the middle, river fading to navy with title
     tall = H / W > 1.8                       # phones; iPads are squarer
     sc = W / SW * (1.12 if tall else 1.0)    # a touch of zoom so the skyline fills phone width
@@ -132,40 +135,28 @@ def splash(W, H):
     put_logo(img, W / 2, max(H * 0.05, (top + 30 * sc) / 2 - logo_h(lw) / 2), lw)
     return img
 
-def splash_landscape(W, H):
-    """Logo top-centre, skyline below it, title on the river. Wide screens get soft sides."""
-    lw = min(W * 0.30, H * 0.48)
-    ltop = H * 0.05; lbot = ltop + logo_h(lw)
-    scale = min(H * 0.068, W * 0.05)
-    t_top = H - H * 0.045 - lockup_height(scale)
-    # Big Ben's tip (y=40) just below the logo, bridge piers (y=655) just above the title
-    sc = min(W / SW * 1.05, (t_top - H * 0.06 - (lbot + H * 0.03)) / (655 - 40))
-    pad = 400
-    full = padded(pad)
-    iw, ih = int(SW * sc), int(full.height * sc)
-    im = full.resize((iw, ih), Image.LANCZOS)
-    y0 = int(lbot + H * 0.03 - (pad + 40) * sc)
-    # background: blurred skyline, sky above, navy below
-    bg = full.resize((W, int(full.height * W / SW)), Image.LANCZOS).filter(ImageFilter.GaussianBlur(W / 60))
+def splash_card(W, H):
+    """Large screens: logo, the skyline as a rounded picture at (near) its real size, title; all on navy."""
+    sc = min(MAX_UPSCALE, W * 0.88 / SW)
+    while True:
+        cw, ch = int(SW * sc), int(SH * sc)
+        lw = min(cw * 0.46, W * 0.5); lh = logo_h(lw)
+        scale = cw * 0.105; th = lockup_height(scale)
+        gap = max(H * 0.035, ch * 0.06)
+        group = lh + gap + ch + gap * 1.2 + th
+        if group <= H * 0.88 or sc < 0.3: break
+        sc *= 0.97
     img = Image.new('RGB', (W, H), NAVY)
-    img.paste(bg, (0, int(lbot + H * 0.03 - (pad + 40) * W / SW)))
-    mask = Image.new('L', im.size, 255)
-    if iw < W:
-        edge = int(W * 0.05)
-        side = Image.new('L', (edge, 1))
-        for x in range(edge): side.putpixel((x, 0), int(255 * x / (edge - 1)))
-        side = side.resize((edge, ih))
-        mask.paste(side, (0, 0)); mask.paste(side.transpose(Image.FLIP_LEFT_RIGHT), (iw - edge, 0))
-    img.paste(im, ((W - iw) // 2, y0), mask)
-    b0 = int(y0 + (pad + 650) * sc)                 # river level under the bridge piers
-    band = H - b0
-    if band > 0:
-        ramp = int(max(1, t_top - H * 0.01 - b0))
-        m = Image.new('L', (W, band), 255); m.paste(vfade(W, ramp, 0, 255), (0, 0))
-        img.paste(Image.new('RGB', (W, band), NAVY), (0, b0), m)
-    put_logo(img, W / 2, ltop, lw)
-    lockup(img, W / 2, t_top, scale)
+    y = (H - group) / 2
+    put_logo(img, W / 2, y, lw); y += lh + gap
+    pic = src.resize((cw, ch), Image.LANCZOS)
+    m = Image.new('L', (cw * 4, ch * 4), 0)
+    ImageDraw.Draw(m).rounded_rectangle((0, 0, cw * 4 - 1, ch * 4 - 1), radius=int(cw * 0.035 * 4), fill=255)
+    img.paste(pic, (int((W - cw) / 2), int(y)), m.resize((cw, ch), Image.LANCZOS)); y += ch + gap * 1.2
+    lockup(img, W / 2, y, scale)
     return img
+
+V = 4   # bump when the artwork changes so phones fetch the new files
 
 # iOS launch screens: (CSS width, CSS height, pixel ratio, devices)
 IOS = [
@@ -203,17 +194,24 @@ def main():
     splash(2732, 2048).save(os.path.join(B, 'splash-landscape-2732x2048.png'), optimize=True)
     # in-app launch screen
     splash(1290, 2796).save(os.path.join(I, 'splash', 'launch-portrait.jpg'), quality=86, optimize=True, progressive=True)
-    splash(2400, 1500).save(os.path.join(I, 'splash', 'launch-landscape.jpg'), quality=86, optimize=True, progressive=True)
+    splash(2880, 1800).save(os.path.join(I, 'splash', 'launch-landscape.jpg'), quality=86, optimize=True, progressive=True)
     # iOS startup images + the <link> tags for index.html
-    tags = []
+    tags, srcs = [], []
     for w, h, r, name in IOS:
         for orient, (pw, ph) in (('portrait', (w * r, h * r)), ('landscape', (h * r, w * r))):
             if orient == 'landscape' and w < 700:
                 continue  # iPhone home-screen apps launch in portrait
             fn = f'apple-splash-{pw}x{ph}.jpg'
             splash(pw, ph).save(os.path.join(I, 'splash', fn), quality=84, optimize=True, progressive=True)
-            tags.append(f'<link rel="apple-touch-startup-image" href="icons/splash/{fn}?v=3" media="(device-width: {w}px) and (device-height: {h}px) and (-webkit-device-pixel-ratio: {r}) and (orientation: {orient})">')
-    open(os.path.join(B, 'apple-startup-links.html'), 'w').write('\n'.join(tags) + '\n')
+            mq = f'(device-width: {w}px) and (device-height: {h}px) and (-webkit-device-pixel-ratio: {r}) and (orientation: {orient})'
+            tags.append(f'<link rel="apple-touch-startup-image" href="icons/splash/{fn}?v={V}" media="{mq}">')
+            srcs.append(f'<source media="{mq}" srcset="icons/splash/{fn}?v={V}">')
+    # the in-app launch screen shows the exact same picture as iOS, then falls back
+    srcs.append(f'<source media="(orientation: landscape)" srcset="icons/splash/launch-landscape.jpg?v={V}">')
+    html = os.path.join(ROOT, 'index.html'); t = open(html).read()
+    for name, body in (('launch-images', tags), ('launch-sources', srcs)):
+        t = re.sub(f'(<!-- {name}:start -->\\n).*?(<!-- {name}:end -->)', lambda m: m.group(1) + '\n'.join(body) + '\n' + m.group(2), t, flags=re.S)
+    open(html, 'w').write(t)
     print(len(tags), 'iOS launch images')
 
 if __name__ == '__main__':
