@@ -8,7 +8,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         // the build number goes up on every cloud build (GitHub run number); the version shown in the store is 2.0
-        versionCode (System.getenv("BUILD_NUMBER") ?: "1").toInteger()
+        versionCode Integer.parseInt(System.getenv("BUILD_NUMBER") ?: "1")
         versionName "2.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
