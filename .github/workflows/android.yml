@@ -1,0 +1,49 @@
+# Builds the Android app on GitHub (no computer needed).
+# Run it from the Actions tab: "Android app" -> "Run workflow".
+# The test app (APK) appears under "Artifacts" at the bottom of the finished run.
+name: Android app
+
+on:
+  workflow_dispatch:
+    inputs:
+      tiles_url:
+        description: Map tiles file to build into the app
+        default: https://maptiles.allblacktaxi.co.uk/map-tiles-v3.pmtiles
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: app
+    env:
+      BUILD_NUMBER: ${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      - name: Download the map tiles
+        run: |
+          mkdir -p www/tiles
+          curl -fL --retry 4 -o www/tiles/map.pmtiles "${{ inputs.tiles_url }}"
+          ls -l www/tiles/map.pmtiles
+          head -c 7 www/tiles/map.pmtiles | grep -q PMTiles || { echo "That is not a map tiles (PMTiles) file"; exit 1; }
+      - name: Copy the website into the app
+        run: python3 scripts/web_bundle.py --www www && npx cap sync android
+      - name: Build the test app (APK)
+        working-directory: app/android
+        run: ./gradlew --no-daemon assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: explore-london-android-test-${{ github.run_number }}
+          path: app/android/app/build/outputs/apk/debug/*.apk
+          retention-days: 30

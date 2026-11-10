@@ -1,0 +1,3 @@
+node_modules/
+# the copy of the website built into the app (made by scripts/web_bundle.py) and the map tiles
+www/

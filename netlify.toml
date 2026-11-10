@@ -1,0 +1,15 @@
+# Netlify settings for explorelondon.allblacktaxis.co.uk
+[build]
+  # 1. pack the website as an over-the-air update for the iPhone / Android apps (app-bundle/latest.json + zip).
+  #    If that ever fails, the website still goes live as normal.
+  # 2. leave the app's own code (app/ folder) off the website.
+  command = "(python3 app/scripts/web_bundle.py --zip app-bundle || echo 'App update bundle skipped'); rm -rf app"
+  # skip the Netlify build (and its credits) when only the app's own code or the cloud-build settings changed
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ':(exclude)app' ':(exclude).github'"
+
+# the apps check this for updates
+[[headers]]
+  for = "/app-bundle/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "no-cache"

@@ -1,0 +1,33 @@
+{
+  "appId": "uk.co.allblacktaxis.explorelondon",
+  "appName": "Explore London",
+  "webDir": "www",
+  "backgroundColor": "#0F1E3D",
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#0F1E3D"
+  },
+  "android": {
+    "backgroundColor": "#0F1E3D"
+  },
+  "plugins": {
+    "CapacitorUpdater": {
+      "autoUpdate": false,
+      "statsUrl": "",
+      "appReadyTimeout": 10000,
+      "resetWhenUpdate": true,
+      "autoDeleteFailed": true,
+      "autoDeletePrevious": true
+    },
+    "SplashScreen": {
+      "launchShowDuration": 800,
+      "launchAutoHide": true,
+      "backgroundColor": "#0F1E3D",
+      "showSpinner": false
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#0F1E3D"
+    }
+  }
+}

@@ -1,0 +1,78 @@
+# Builds the iPhone app on GitHub and sends it to TestFlight (no Mac needed).
+# Run it from the Actions tab: "iPhone app" -> "Run workflow".
+#
+# One-off setup (repository Settings -> Secrets and variables -> Actions -> New repository secret):
+#   APPLE_TEAM_ID            the 10-character Team ID (developer.apple.com -> Account -> Membership details)
+#   ASC_KEY_ID               App Store Connect API key ID     (App Store Connect -> Users and Access -> Integrations -> App Store Connect API)
+#   ASC_ISSUER_ID            the Issuer ID shown on that same page
+#   ASC_KEY_P8               the whole contents of the downloaded AuthKey_XXXX.p8 file
+name: iPhone app
+
+on:
+  workflow_dispatch:
+    inputs:
+      tiles_url:
+        description: Map tiles file to build into the app
+        default: https://maptiles.allblacktaxi.co.uk/map-tiles-v3.pmtiles
+
+jobs:
+  build:
+    runs-on: macos-26
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - run: npm ci
+      - name: Download the map tiles
+        run: |
+          mkdir -p www/tiles
+          curl -fL --retry 4 -o www/tiles/map.pmtiles "${{ inputs.tiles_url }}"
+          ls -l www/tiles/map.pmtiles
+          head -c 7 www/tiles/map.pmtiles | grep -q PMTiles || { echo "That is not a map tiles (PMTiles) file"; exit 1; }
+      - name: Copy the website into the app
+        run: python3 scripts/web_bundle.py --www www && npx cap sync ios
+      - name: Check the Apple keys are set up
+        env:
+          TEAM: ${{ secrets.APPLE_TEAM_ID }}
+          KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ISSUER: ${{ secrets.ASC_ISSUER_ID }}
+          P8: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          [ -n "$TEAM" ] && [ -n "$KEY_ID" ] && [ -n "$ISSUER" ] && [ -n "$P8" ] || { echo "The Apple keys (GitHub secrets) are not set up yet - see the top of .github/workflows/ios.yml"; exit 1; }
+          mkdir -p ~/.appstoreconnect/private_keys
+          printf '%s\n' "$P8" > ~/.appstoreconnect/private_keys/AuthKey_$KEY_ID.p8
+      - name: Build, sign and upload to TestFlight
+        working-directory: app/ios/App
+        env:
+          TEAM: ${{ secrets.APPLE_TEAM_ID }}
+          KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ISSUER: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          set -o pipefail
+          AUTH="-allowProvisioningUpdates -authenticationKeyPath $HOME/.appstoreconnect/private_keys/AuthKey_$KEY_ID.p8 -authenticationKeyID $KEY_ID -authenticationKeyIssuerID $ISSUER"
+          xcodebuild -version
+          xcodebuild archive -project App.xcodeproj -scheme App -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            DEVELOPMENT_TEAM="$TEAM" CODE_SIGN_STYLE=Automatic CURRENT_PROJECT_VERSION=${{ github.run_number }} \
+            $AUTH | tail -n 200
+          cat > "$RUNNER_TEMP/export.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>teamID</key><string>$TEAM</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+          </dict></plist>
+          PLIST
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/export.plist" -exportPath "$RUNNER_TEMP/export" $AUTH
+          echo "Uploaded build ${{ github.run_number }} (version 2.0). It appears in TestFlight after Apple has processed it (usually 10-30 minutes)."

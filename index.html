@@ -222,6 +222,31 @@ html.ios-app #launch{display:block}
 <img src="icons/splash/launch-portrait.jpg?v=4" alt="">
 </picture></div>
 <script>
+/* ---------- inside the iPhone / Android app ----------
+   The apps (app/ folder) carry their own copy of this website, with the map tiles built in.
+   Each time the app opens it checks for a newer copy of the website, downloads it quietly and uses it
+   once the app has been closed (or left in the background for 5 minutes). See app/README.md. */
+const NATIVE = !!(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform());
+const SITE_URL = 'https://explorelondon.allblacktaxis.co.uk/';
+const native = (plugin, method, opts) => Capacitor.nativePromise(plugin, method, opts || {});
+if (NATIVE) {
+  document.documentElement.classList.add('ios-app', 'native-app');
+  native('CapacitorUpdater', 'notifyAppReady').catch(() => {});
+  /* the phone's own share sheet */
+  navigator.share = d => native('Share', 'share', d);
+  setTimeout(async () => {
+    try {
+      const latest = await fetch(SITE_URL + 'app-bundle/latest.json', {cache: 'no-store'}).then(r => r.json());
+      const mine = await fetch('bundle.json').then(r => r.json()).catch(() => ({}));
+      if (!latest.version || !latest.url || latest.version === mine.version) return;
+      const {bundles = []} = await native('CapacitorUpdater', 'list');
+      let b = bundles.find(x => x.version === latest.version && x.status !== 'error');
+      if (!b) b = await native('CapacitorUpdater', 'download', {url: latest.url, version: latest.version});
+      await native('CapacitorUpdater', 'setMultiDelay', {conditionMode: 'or', delayConditions: [{kind: 'kill'}, {kind: 'background', value: '300000'}]});
+      await native('CapacitorUpdater', 'next', {id: b.id});
+    } catch (e) {}
+  }, 4000);
+}
 if (navigator.standalone) document.documentElement.classList.add('ios-app');
 window.hideLaunch = (() => { const t0 = Date.now(); let done = false; const go = () => { if (done) return; done = true;
   const el = document.getElementById('launch'); if (!el || getComputedStyle(el).display === 'none') return el && el.remove();
@@ -239,7 +264,7 @@ const CONFIG = {
 };
 /* ---------- visit counting (Umami, cookie-free) ---------- */
 const STATS = (() => {
-  const on = !!CONFIG.umami && /allblacktaxis\.co\.uk$/.test(location.hostname);
+  const on = !!CONFIG.umami && (NATIVE || /allblacktaxis\.co\.uk$/.test(location.hostname));
   const src = new URLSearchParams(location.search).get('src') || '';
   let ready = false, q = [];
   const send = f => { if (!on) return; if (ready && window.umami) { try { f(window.umami); } catch {} } else q.push(f); };
@@ -394,7 +419,7 @@ const A2 = (() => {
   addEventListener('appinstalled', () => { store.set('el_a2_off', 1); document.querySelectorAll('.a2-strip').forEach(x => x.remove()); });
   return {
     ios, android, inApp,
-    installed: () => !!navigator.standalone || matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches,
+    installed: () => NATIVE || !!navigator.standalone || matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches,
     want() { return (ios || android) && !this.installed(); },
     take() { const d = deferred; deferred = null; return d; },
     has: () => !!deferred
@@ -557,15 +582,20 @@ async function geocodeMissing() {
 
 let locErr = null;   /* 1 = permission denied, 2/3 = no fix or timeout */
 const IOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-const LOC_HELP = IOS ? 'To use your location on iPhone: Settings → Privacy & Security → Location Services → Safari Websites → While Using. Then in Safari tap aA → Website Settings → Location → Allow, and tap the arrow on the map.'
+const LOC_HELP = NATIVE ? 'To use your location: open your phone’s Settings, find Explore London, and allow Location. Make sure Location is switched on, then tap the arrow on the map.'
+  : IOS ? 'To use your location on iPhone: Settings → Privacy & Security → Location Services → Safari Websites → While Using. Then in Safari tap aA → Website Settings → Location → Allow, and tap the arrow on the map.'
   : 'To use your location: allow Location for this site in your browser (tap the icon left of the web address → Permissions → Location), make sure the phone’s location is on, then tap the arrow on the map.';
 function locate(cb) {
-  if (!navigator.geolocation) return cb && cb(false);
-  navigator.geolocation.getCurrentPosition(pos => {
+  const got = pos => {
     const {latitude: a, longitude: b} = pos.coords;
     if (a > 51.25 && a < 51.75 && b > -0.6 && b < 0.35) { me = [a, b, 'You']; meReal = true; }
     cb && cb(true);
-  }, e => { locErr = e && e.code; cb && cb(false); }, {enableHighAccuracy: true, timeout: 8000, maximumAge: 60000});
+  };
+  const opts = {enableHighAccuracy: true, timeout: 8000, maximumAge: 60000};
+  /* in the app: the phone's own location (asks "Allow Explore London to use your location?") */
+  if (NATIVE) return native('Geolocation', 'getCurrentPosition', opts).then(got, e => { locErr = /denied|permission/i.test((e && e.message) || '') ? 1 : 2; cb && cb(false); });
+  if (!navigator.geolocation) return cb && cb(false);
+  navigator.geolocation.getCurrentPosition(got, e => { locErr = e && e.code; cb && cb(false); }, opts);
 }
 
 /* ---------- small pieces ---------- */
@@ -602,10 +632,21 @@ const OSM_ATTR = '© <a href="https://www.openstreetmap.org/copyright" target="_
 const TILES_MAIN = 'https://maptiles.allblacktaxi.co.uk/map-tiles-v3.pmtiles';
 /* the backup copy on Netlify: set this to 'tiles/map-tiles-v3.pmtiles' once that file has been uploaded to the site */
 const TILES_BACKUP = null;
-let vecLibs = null, vecStyle = null, tilesOnBackup = false, emap = null;
+let vecLibs = null, vecStyle = null, tilesOnBackup = false, emap = null, tilesUrl = TILES_MAIN;
+/* in the app the map tiles are built in: the page asks the app for pieces of the file (AppTiles plugin) */
+const APP_TILES = 'app-tiles';
+async function appTiles(proto) {
+  try {
+    const info = await native('AppTiles', 'info');
+    if (!info || !info.available) return false;
+    const b64 = s => { if (Uint8Array.fromBase64) return Uint8Array.fromBase64(s); const t = atob(s), a = new Uint8Array(t.length); for (let i = 0; i < t.length; i++) a[i] = t.charCodeAt(i); return a; };
+    proto.add(new pmtiles.PMTiles({getKey: () => APP_TILES, getBytes: async (offset, length) => ({data: b64((await native('AppTiles', 'read', {offset, length})).data).buffer})}));
+    return true;
+  } catch (e) { return false; }
+}
 const loadJS = src => new Promise((ok, no) => { const e = document.createElement('script'); e.src = src; e.onload = ok; e.onerror = no; document.head.appendChild(e); });
-function tileProtocol() {
-  const proto = new pmtiles.Protocol(), main = 'pmtiles://' + TILES_MAIN;
+function tileProtocol(proto) {
+  const main = 'pmtiles://' + TILES_MAIN;
   if (!TILES_BACKUP) return proto.tilev4;
   const backup = 'pmtiles://' + new URL(TILES_BACKUP, location.href).href;
   /* try Cloudflare first (10 seconds per request); once it fails, use the backup copy for the rest of the visit */
@@ -627,12 +668,14 @@ function loadVec() {
     vecLibs = (async () => {
       const c = document.createElement('link'); c.rel = 'stylesheet'; c.href = 'lib/vec/maplibre-gl.css'; document.head.appendChild(c);
       await loadJS('lib/vec/maplibre-gl.js'); await loadJS('lib/vec/pmtiles.js');
-      maplibregl.addProtocol('pmtiles', tileProtocol());
+      const proto = new pmtiles.Protocol();
+      if (NATIVE && await appTiles(proto)) { tilesUrl = APP_TILES; maplibregl.addProtocol('pmtiles', proto.tilev4); }
+      else maplibregl.addProtocol('pmtiles', tileProtocol(proto));
       try {
         vecStyle = await fetch('styles/map-style-v3.json').then(r => { if (!r.ok) throw 0; return r.json(); });
         const base = location.href.replace(/[#?].*$/, '').replace(/[^/]*$/, '');
         vecStyle.sprite = base + 'styles/sprites/sprite'; vecStyle.glyphs = base + 'styles/fonts/{fontstack}/{range}.pbf';
-        vecStyle.sources.openmaptiles.url = 'pmtiles://' + TILES_MAIN;
+        vecStyle.sources.openmaptiles.url = 'pmtiles://' + tilesUrl;
       } catch (e) { vecStyle = null; }
       await pinImages();
     })();
@@ -1543,7 +1586,7 @@ function place(id) {
   const paint = () => { sv.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="${saved.has(p.id) ? '#E86A4F' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true">${ICONS.heart}</svg>`; };
   paint();
   sv.onclick = () => { saved.has(p.id) ? saved.delete(p.id) : saved.add(p.id); persist(); paint(); toast(saved.has(p.id) ? 'Saved to My List' : 'Removed from My List'); };
-  document.getElementById('share').onclick = async () => { const d = {title: p.name, text: `${p.name} – worth a visit, from Explore London`, url: location.href}; try { if (navigator.share) await navigator.share(d); else { await navigator.clipboard.writeText(location.href); toast('Link copied'); } } catch {} };
+  document.getElementById('share').onclick = async () => { const u = NATIVE ? SITE_URL + location.hash : location.href, d = {title: p.name, text: `${p.name} – worth a visit, from Explore London`, url: u}; try { if (navigator.share) await navigator.share(d); else { await navigator.clipboard.writeText(u); toast('Link copied'); } } catch {} };
   loadPhoto(p);
   gettingThere(p);
 }
