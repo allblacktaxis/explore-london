@@ -637,7 +637,8 @@ let vecLibs = null, vecStyle = null, tilesOnBackup = false, emap = null, tilesUr
 const APP_TILES = 'app-tiles';
 async function appTiles(proto) {
   try {
-    const info = await native('AppTiles', 'info');
+    /* if the app doesn't answer within 3 seconds, use the online map instead */
+    const info = await Promise.race([native('AppTiles', 'info'), new Promise(ok => setTimeout(() => ok(null), 3000))]);
     if (!info || !info.available) return false;
     const b64 = s => { if (Uint8Array.fromBase64) return Uint8Array.fromBase64(s); const t = atob(s), a = new Uint8Array(t.length); for (let i = 0; i < t.length; i++) a[i] = t.charCodeAt(i); return a; };
     proto.add(new pmtiles.PMTiles({getKey: () => APP_TILES, getBytes: async (offset, length) => ({data: b64((await native('AppTiles', 'read', {offset, length})).data).buffer})}));
