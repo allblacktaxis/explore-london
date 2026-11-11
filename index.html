@@ -247,7 +247,7 @@ if (NATIVE) {
       if (latest.version === mine.version) return say('up to date');
       const {bundles = []} = await native('CapacitorUpdater', 'list');
       let b = bundles.find(x => x.version === latest.version && x.status !== 'error');
-      if (!b) { say('downloading ' + latest.version); b = await native('CapacitorUpdater', 'download', {url: latest.url, version: latest.version}); }
+      if (!b) { say('downloading ' + latest.version); b = await native('CapacitorUpdater', 'download', {url: latest.url, version: latest.version, checksum: latest.checksum || ''}); }
       await native('CapacitorUpdater', 'setMultiDelay', {conditionMode: 'or', delayConditions: [{kind: 'kill'}, {kind: 'background', value: '300000'}]});
       await native('CapacitorUpdater', 'next', {id: b.id});
       say(latest.version + ' downloaded, used after the app is closed');

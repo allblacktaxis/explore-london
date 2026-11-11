@@ -96,8 +96,11 @@ def main():
             for rel in files:
                 z.write(os.path.join(ROOT, rel), rel)
             z.writestr('bundle.json', meta)
+        # the app's updater only installs a download whose SHA-256 fingerprint matches this
+        with open(os.path.join(out, name), 'rb') as fh:
+            checksum = hashlib.sha256(fh.read()).hexdigest()
         with open(os.path.join(out, 'latest.json'), 'w') as fh:
-            json.dump({'version': version, 'url': f'{SITE}/app-bundle/{name}'}, fh)
+            json.dump({'version': version, 'url': f'{SITE}/app-bundle/{name}', 'checksum': checksum}, fh)
         size = os.path.getsize(os.path.join(out, name)) / 1e6
         print(f'website {version}: {name} ({size:.1f} MB) and latest.json written to {out}')
 
