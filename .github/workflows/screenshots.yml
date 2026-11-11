@@ -1,0 +1,36 @@
+# Takes the App Store screenshots (iPhone 6.9" 1320x2868 and iPad 13" 2064x2752) with the real map.
+# Run it from the Actions tab: "App Store screenshots" -> "Run workflow".
+# The pictures appear under "Artifacts" at the bottom of the finished run.
+name: App Store screenshots
+
+on:
+  workflow_dispatch:
+    inputs:
+      tiles_url:
+        description: Map tiles file
+        default: https://maptiles.allblacktaxi.co.uk/map-tiles-v3.pmtiles
+
+jobs:
+  shots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install the browser
+        run: |
+          mkdir -p "$RUNNER_TEMP/pw" && cd "$RUNNER_TEMP/pw" && npm init -y >/dev/null && npm install playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Download the map tiles
+        run: curl -fL --retry 4 -o "$RUNNER_TEMP/map.pmtiles" "${{ inputs.tiles_url }}"
+      - name: Take the screenshots
+        run: |
+          python3 app/scripts/web_bundle.py --www "$RUNNER_TEMP/www"
+          NODE_PATH="$RUNNER_TEMP/pw/node_modules" node app/screenshots/take.js "$RUNNER_TEMP/www" "$RUNNER_TEMP/map.pmtiles" screenshots-out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: app-store-screenshots-${{ github.run_number }}
+          path: screenshots-out
+          retention-days: 30
