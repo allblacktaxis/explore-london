@@ -714,7 +714,10 @@ function loadVec() {
       else { if (NATIVE) MAPNOTE += ', so using the online map'; maplibregl.addProtocol('pmtiles', tileProtocol(proto)); }
       try {
         vecStyle = await fetch('styles/map-style-v3.json').then(r => { if (!r.ok) throw 0; return r.json(); });
-        const base = location.href.replace(/[#?].*$/, '').replace(/[^/]*$/, '');
+        /* the folder this page is in. Inside the app the address can be just "capacitor://localhost" with no slash at the end,
+           so add one before cutting off the file name (otherwise the map's icons and fonts were asked for at "capacitor://styles/...") */
+        let here = location.href.replace(/[#?].*$/, ''); if (!/:\/\/[^/]*\//.test(here)) here += '/';
+        const base = here.replace(/[^/]*$/, '');
         vecStyle.sprite = base + 'styles/sprites/sprite'; vecStyle.glyphs = base + 'styles/fonts/{fontstack}/{range}.pbf';
         vecStyle.sources.openmaptiles.url = 'pmtiles://' + tilesUrl;
       } catch (e) { vecStyle = null; }
