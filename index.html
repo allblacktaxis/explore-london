@@ -707,6 +707,9 @@ function loadVec() {
   }
   return vecLibs;
 }
+/* the map style names fonts with capitals ("Open Sans Bold") but the font folders are lower case ("open sans bold").
+   The website's host doesn't mind; iPhones and iPads do (inside the app every map piece with a label failed), so ask for lower case. */
+const fontUrl = (url, type) => type === 'Glyphs' ? {url: url.replace(/(\/fonts\/)([^/]+)/, (m, a, f) => a + f.toLowerCase())} : undefined;
 /* the plain OpenStreetMap map, used only if our own map can't be loaded */
 const osmStyle = () => ({version: 8, sources: {osm: {type: 'raster', tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'], tileSize: 256, maxzoom: 19}}, layers: [{id: 'osm', type: 'raster', source: 'osm'}]});
 /* our own pins: a white disc ringed in the category colour, with the app's own picture inside (restaurants show their cuisine), on a little pointer */
@@ -843,7 +846,7 @@ function makeMap(id, view, layers) {
     let ok = null; try { ok = sessionStorage.getItem('el_vec'); } catch {}
     const osm = !vecStyle || !!(ok && ok.startsWith('no:') && Date.now() - +ok.slice(3) < 120000);
     if (osm) MAPNOTE += !vecStyle ? ' · OpenStreetMap (our map style did not load)' : ' · OpenStreetMap (our map failed in the last 2 minutes)';
-    const pts = view.pts || [], opts = {container: box, style: osm ? osmStyle() : vecStyle, attributionControl: false, dragRotate: false, pitchWithRotate: false, touchPitch: false, maxPitch: 0};
+    const pts = view.pts || [], opts = {container: box, style: osm ? osmStyle() : vecStyle, transformRequest: fontUrl, attributionControl: false, dragRotate: false, pitchWithRotate: false, touchPitch: false, maxPitch: 0};
     if (pts.length > 1) { const b = new maplibregl.LngLatBounds(); pts.forEach(q => b.extend(lngLat(q))); opts.bounds = b; opts.fitBoundsOptions = {padding: view.pad || 30, maxZoom: view.maxZoom || 18}; }
     else { opts.center = lngLat(pts[0] || view.center || here()); opts.zoom = pts.length ? view.maxZoom || 15 : view.zoom || 14; }
     const mapT0 = Date.now(), map = new maplibregl.Map(opts);
