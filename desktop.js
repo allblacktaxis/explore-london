@@ -1,11 +1,11 @@
 /* ===== Explore London · desktop layout (7 Nov 2026) =====
    Add ONE line to index.html, just before </body> (after the app's own script):
      <script src="desktop.js"></script>
-   Phones and small tablets are not changed at all. On screens 1024px and wider the app gets:
+   Phones are not changed at all. On screens 744px and wider (iPads and tablets, also in portrait - 11 Nov 2026) the app gets:
    a left-hand menu instead of the bottom tab bar, wider pages, lists in columns,
    a full-height map, walks with the map beside the stops, and place pages in two columns. */
 (function () {
-  var DESK = '(min-width: 1024px)';
+  var DESK = '(min-width: 744px)';
   var css = `
 @media ${DESK} {
   :root{--el-side:248px;--el-wide:1180px;--el-toph:120px}
