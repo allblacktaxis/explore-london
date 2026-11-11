@@ -652,17 +652,9 @@ async function appTiles(proto) {
     if (!info) { MAPNOTE = 'built-in map: no answer from the app'; return false; }
     if (!info.available) { MAPNOTE = 'built-in map: not in this app'; return false; }
     MAPNOTE = 'built-in map';
-    /* iPhone / iPad: try reading the file directly through the app's own file server (fastest), with a tiny test read first */
-    if (info.path && Capacitor.getPlatform && Capacitor.getPlatform() === 'ios' && Capacitor.convertFileSrc) {
-      const url = Capacitor.convertFileSrc(info.path);
-      try {
-        const r = await fetch(url, {headers: {range: 'bytes=0-6'}});
-        const t = new TextDecoder().decode(await r.arrayBuffer());
-        if (r.status === 206 && t === 'PMTiles') { tilesUrl = url; MAPNOTE += ' (direct, test ' + ms() + ')'; return true; }
-        MAPNOTE += ' · direct: got ' + r.status + ' ' + t.length + ' bytes';
-      } catch (e) { MAPNOTE += ' · direct: ' + err(e); }
-    }
-    /* otherwise (and on Android) the page asks the app for each piece of the file */
+    /* (Reading the file straight from the app's file server passed a tiny test on iPad but failed for real map
+       reads - "Load failed" - so both iPhone/iPad and Android read the file through the app's own AppTiles plugin.) */
+    /* the page asks the app for each piece of the file */
     const b64 = s => { if (Uint8Array.fromBase64) return Uint8Array.fromBase64(s); const t = atob(s), a = new Uint8Array(t.length); for (let i = 0; i < t.length; i++) a[i] = t.charCodeAt(i); return a; };
     const read = async (offset, length) => b64((await native('AppTiles', 'read', {offset, length})).data);
     const t1 = Date.now(), head = await read(0, 7);
