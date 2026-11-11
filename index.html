@@ -656,6 +656,7 @@ let vecLibs = null, vecStyle = null, tilesOnBackup = false, emap = null, tilesUr
 const APP_TILES = 'app-tiles';
 /* what happened with the map, shown at the bottom of About inside the app (so a tester can read it out) */
 let MAPNOTE = 'not opened yet';
+const TILESTAT = {ok: 0, bad: 0};
 async function appTiles(proto) {
   const t0 = Date.now(), ms = () => (Date.now() - t0) + ' ms', err = e => (e && e.message) || String(e);
   try {
@@ -705,7 +706,11 @@ function loadVec() {
       const c = document.createElement('link'); c.rel = 'stylesheet'; c.href = 'lib/vec/maplibre-gl.css'; document.head.appendChild(c);
       await loadJS('lib/vec/maplibre-gl.js'); await loadJS('lib/vec/pmtiles.js');
       const proto = new pmtiles.Protocol();
-      if (NATIVE && await appTiles(proto)) maplibregl.addProtocol('pmtiles', proto.tilev4);
+      if (NATIVE && await appTiles(proto)) maplibregl.addProtocol('pmtiles', async (params, ac) => {
+        /* count map pieces for the About status line, and note the first one that fails */
+        try { const r = await proto.tilev4(params, ac); TILESTAT.ok++; return r; }
+        catch (e) { if (!TILESTAT.bad++) MAPNOTE += ' · piece failed: ' + params.url.replace('pmtiles://', '') + ' ' + ((e && e.message) || e); throw e; }
+      });
       else { if (NATIVE) MAPNOTE += ', so using the online map'; maplibregl.addProtocol('pmtiles', tileProtocol(proto)); }
       try {
         vecStyle = await fetch('styles/map-style-v3.json').then(r => { if (!r.ok) throw 0; return r.json(); });
@@ -721,6 +726,7 @@ function loadVec() {
 }
 /* the map style names fonts with capitals ("Open Sans Bold") but the font folders are lower case ("open sans bold").
    The website's host doesn't mind; iPhones and iPads do (inside the app every map piece with a label failed), so ask for lower case. */
+if (NATIVE) { const f0 = window.fetch; window.fetch = function (u, o) { return f0.apply(this, arguments).catch(e => { const x = typeof u === 'string' ? u : (u && u.url) || ''; if (!/app-bundle|umami/.test(x) && (window.FETCHFAIL = (window.FETCHFAIL || 0) + 1) <= 2) MAPNOTE += ' · request failed: ' + x.replace(/^capacitor:\/\/localhost/, '') + ' ' + ((e && e.message) || e); throw e; }); }; }
 const fontUrl = (url, type) => type === 'Glyphs' ? {url: url.replace(/(\/fonts\/)([^/]+)/, (m, a, f) => a + f.toLowerCase())} : undefined;
 /* the plain OpenStreetMap map, used only if our own map can't be loaded */
 const osmStyle = () => ({version: 8, sources: {osm: {type: 'raster', tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'], tileSize: 256, maxzoom: 19}}, layers: [{id: 'osm', type: 'raster', source: 'osm'}]});
@@ -876,7 +882,10 @@ function makeMap(id, view, layers) {
       /* the built-in map (in the app) needs no internet, so give it longer before giving up */
       const timer = setTimeout(() => fallback('took too long'), tilesUrl !== TILES_MAIN ? 30000 : TILES_BACKUP ? 25000 : 12000);
       /* only give up if the map tiles themselves fail (a missing label font is not a reason to switch maps) */
-      map.on('error', e => { const m = String((e && e.error && (e.error.message || e.error.status)) || ''); if (!done && (e.sourceId === 'openmaptiles' || /pmtiles|map-tiles/i.test(m))) fallback(m || 'map tiles error'); });
+      map.on('error', e => { const m = String((e && e.error && (e.error.message || e.error.status)) || ''); if (!done && (e.sourceId === 'openmaptiles' || /pmtiles|map-tiles/i.test(m))) {
+        const er = (e && e.error) || {}, t = e.tile && e.tile.tileID && e.tile.tileID.canonical;
+        fallback((m || 'map tiles error') + (er.url ? ' [' + er.url + ']' : '') + (t ? ' [tile ' + t.z + '/' + t.x + '/' + t.y + ']' : '') + ' [pieces ok ' + TILESTAT.ok + ', failed ' + TILESTAT.bad + ']');
+      } });
       map.once('idle', () => { if (!done) { done = true; clearTimeout(timer); MAPNOTE += ' · loaded OK in ' + ((Date.now() - mapT0) / 1000).toFixed(1) + ' s'; try { sessionStorage.setItem('el_vec', 'yes'); } catch {} } });
       map.once('remove', () => { done = true; clearTimeout(timer); });
     }
