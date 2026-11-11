@@ -1,4 +1,4 @@
-# Takes the App Store screenshots (iPhone 6.9" 1320x2868 and iPad 13" 2064x2752) with the real map.
+# Takes the App Store screenshots (iPhone 6.3" medium 1206x2622, iPhone 6.9" 1320x2868, iPad 13" 2064x2752) with the real map.
 # Run it from the Actions tab: "App Store screenshots" -> "Run workflow".
 # The pictures appear under "Artifacts" at the bottom of the finished run.
 name: App Store screenshots
