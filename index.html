@@ -109,8 +109,8 @@ button{font-family:inherit;cursor:pointer}
 .filters{display:flex;gap:8px;flex-wrap:wrap}.filters select{flex:1 1 0;min-width:0}.filters.four select{flex:1 1 calc(50% - 4px)}
 .filters select{flex:1;min-width:0;height:40px;border-radius:12px;border:1px solid var(--line);background:#fff;font:inherit;font-size:14px;font-weight:600;color:var(--ink);padding:0 10px}
 nav.tabs{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--navy);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:8px 2px calc(10px + env(safe-area-inset-bottom));z-index:1000}
-/* tablets held upright (e.g. iPad portrait): the phone layout, filling the whole width (11 Nov 2026). 1024px and wider: desktop.js */
-@media (min-width: 600px) and (max-width: 1023px){#app,nav.tabs{max-width:none}}
+/* tablets held upright (every iPad in portrait, even the 13"): the phone layout, filling the whole width (11 Nov 2026). Wide and landscape: desktop.js */
+@media (min-width: 600px) and (max-width: 1023px), (min-width: 1024px) and (orientation: portrait){#app,nav.tabs{max-width:none}}
 nav.tabs a{display:flex;flex-direction:column;align-items:center;gap:3px;min-height:58px;justify-content:center;text-decoration:none;font-size:14px;font-weight:700;color:#A9B6CE;white-space:nowrap}
 nav.tabs a i{width:26px;height:4px;border-radius:2px;background:transparent;margin-top:1px}
 nav.tabs a.on{color:#fff}nav.tabs a.on i{background:var(--orange)}
@@ -168,7 +168,7 @@ nav.tabs a.on{color:#fff}nav.tabs a.on i{background:var(--orange)}
 .tgl{grid-column:1/-1;line-height:1;font-size:11px;font-weight:800;color:#0F1E3D;opacity:.65;text-transform:uppercase;letter-spacing:.06em;margin:2px 2px -4px}.tgl:first-child{margin-top:-4px}
 .hg{row-gap:7px}.hg .tile{min-height:0;padding:5px 3px 8px;gap:2px}.hg .tile .ic{width:36px;height:36px}.hg .tile .ic>*{max-width:25px;max-height:25px}.hg .tile span.l{font-size:12px}
 /* tablets held upright: bigger home-screen category buttons (11 Nov 2026) */
-@media (min-width: 600px) and (max-width: 1023px){.hg{row-gap:12px;gap:12px}.hg .tile{padding:14px 6px 16px;gap:8px}.hg .tile .ic{width:72px;height:72px;border-radius:36px}.hg .tile .ic>*{width:44px!important;height:44px!important;max-width:44px;max-height:44px}.hg .tile span.l{font-size:16px}.tgl{font-size:13px}}
+@media (min-width: 600px) and (max-width: 1023px), (min-width: 1024px) and (orientation: portrait){.hg{row-gap:12px;gap:12px}.hg .tile{padding:14px 6px 16px;gap:8px}.hg .tile .ic{width:72px;height:72px;border-radius:36px}.hg .tile .ic>*{width:44px!important;height:44px!important;max-width:44px;max-height:44px}.hg .tile span.l{font-size:16px}.tgl{font-size:13px}}
 /* "add to home screen" sheet and strip */
 .a2-bg{position:fixed;inset:0;z-index:3000;background:rgba(15,30,61,.55);display:flex;align-items:flex-end;justify-content:center}
 .a2{background:#fff;color:var(--ink);width:100%;max-width:520px;border-radius:22px 22px 0 0;padding:20px 20px calc(18px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px;max-height:92vh;overflow:auto}
