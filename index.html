@@ -232,6 +232,18 @@ const native = (plugin, method, opts) => Capacitor.nativePromise(plugin, method,
 if (NATIVE) {
   document.documentElement.classList.add('ios-app', 'native-app');
   native('CapacitorUpdater', 'notifyAppReady').catch(() => {});
+  /* a newer copy of the website was downloaded last time? switch to it now, while the launch screen is showing
+     (once per launch, so it can never loop) */
+  (async () => {
+    try {
+      if (sessionStorage.getItem('el_upd_reload')) return;
+      const next = await native('CapacitorUpdater', 'getNextBundle'), cur = await native('CapacitorUpdater', 'current');
+      if (next && next.id && next.id !== 'builtin' && next.status !== 'error' && !(cur && cur.bundle && cur.bundle.id === next.id)) {
+        sessionStorage.setItem('el_upd_reload', '1');
+        await native('CapacitorUpdater', 'reload');
+      }
+    } catch (e) {}
+  })();
   /* the phone's own share sheet */
   navigator.share = d => native('Share', 'share', d);
   /* what the update check did, shown at the bottom of About inside the app */
