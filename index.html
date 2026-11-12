@@ -127,6 +127,13 @@ nav.tabs a.on{color:#fff}nav.tabs a.on i{background:var(--orange)}
 .map{height:calc(100dvh - 200px);min-height:380px;position:relative}
 #leaf{position:absolute;inset:0}
 .overlay{position:absolute;left:12px;right:12px;z-index:600}
+.sdrop{position:absolute;left:0;right:0;max-width:640px;top:calc(100% + 6px);z-index:700;background:#fff;color:var(--ink);border-radius:16px;box-shadow:0 6px 20px rgba(15,30,61,.25);max-height:min(60vh,440px);overflow-y:auto;padding:4px 0}
+.sdrop .sh{font-size:11.5px;font-weight:700;color:#A8551A;text-transform:uppercase;letter-spacing:.5px;padding:8px 14px 4px}
+.sdrop button{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;text-align:left;padding:7px 14px;min-height:48px;color:inherit}
+.sdrop button:hover,.sdrop button:focus{background:#F1F4F8;outline:0}
+.sdrop .rc-t{min-width:0}
+.sdrop .sm{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sdrop .none{padding:12px 14px;font-size:14px;color:var(--muted)}
 .card{background:#fff;border-radius:16px;box-shadow:0 2px 10px rgba(15,30,61,.16);padding:10px 12px;display:flex;flex-direction:column;gap:8px}
 .mins{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
 .mins button{height:42px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05}
@@ -546,18 +553,19 @@ function makeMatcher(raw) {
   if (!toks.length) toks = words;
   toks = [...new Set(toks.map(stem))];
   const score = p => {
-    const s = prepPlace(p); let sc = 0, got = 0; const hit = new Set();
+    const s = prepPlace(p); let sc = 0, got = 0; const hit = new Set(), inName = new Set();
     for (const t of toks) {
       const alts = ALT[t] || [t]; let best = 0;
       for (const a of alts) {
         const n = ' ' + a;
+        if (s.name.includes(n)) inName.add(t);
         const v = s.name.includes(n) ? 5 : s.meta.includes(n) ? 3 : s.area.includes(n) ? 2 : s.text.includes(n) ? 1 : 0;
         if (v > best) best = v;
       }
       if (best) { got++; sc += best; hit.add(t); }
     }
     if (toks.length > 1 && (s.name + s.meta + s.text).includes(' ' + q)) sc += 4;
-    return {sc, got, all: got === toks.length, hit};
+    return {sc, got, all: got === toks.length, hit, name: inName.size === toks.length};
   };
   return {q, toks, score};
 }
@@ -1715,8 +1723,8 @@ function mapScreen(focusId) {
   setTitle('Map');
   const GROUPS = [['All', null], ['Eat', '#E86A4F'], ['Drink', '#D99A1E'], ['See', '#2BB3A3'], ['Plaques', '#2E6FD8']];
   const st = {g: 'All', m: store.get('el_mins', 10)};
-  app.innerHTML = `<div class="top">
-      <div class="row"><label class="search">${svg('search', 18)}<span style="position:absolute;left:-9999px">Search the map</span><input id="mq" type="search" enterkeyhint="search" placeholder="Search the map" autocomplete="off"></label></div>
+  app.innerHTML = `<div class="top" style="z-index:800">
+      <div class="row" style="position:relative"><label class="search">${svg('search', 18)}<span style="position:absolute;left:-9999px">Search the map</span><input id="mq" type="search" enterkeyhint="search" placeholder="Search the map" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="mdrop"></label><div class="sdrop" id="mdrop" role="listbox" style="display:none"></div></div>
       <div class="hpills">${GROUPS.map(([g, c]) => `<button class="hpill${g === 'All' ? ' on' : ''}" data-g="${g}">${c ? `<span class="dot" style="background:${c}${g === 'Plaques' ? ';box-shadow:inset 0 0 0 2px #fff' : ''}"></span>` : ''}${g}</button>`).join('')}</div>
     </div>
     <div class="map"><div id="leaf"></div>
@@ -1746,15 +1754,13 @@ function mapScreen(focusId) {
   const draw = () => {
     const [a, b] = here(); const r = st.m * CONFIG.walkSpeed;
     ring = FC([circleFeature(a, b, r)]);
-    const qraw = (document.getElementById('mq').value || '').trim();
-    const mt = qraw.length >= 2 ? makeMatcher(qraw) : null, q = !!mt;
     const inc = {5: 0, 10: 0, 15: 0, 20: 0};
     /* far from anything in the app (e.g. outer London)? then show every pin at full strength, and offer the nearest ones */
     const near20 = P.filter(p => p.lat != null && dist(a, b, p.lat, p.lng) <= 20 * CONFIG.walkSpeed).length, far = !near20;
     const fb = document.getElementById('farbox');
     const nearest = far ? P.filter(p => p.lat != null && (st.g === 'All' || groupOf(p) === st.g)).map(p => [p, dist(a, b, p.lat, p.lng)]).sort((x, y) => x[1] - y[1]) : [];
     if (fb) {
-      if (far && !q && nearest.length && !st.farHide) {
+      if (far && nearest.length && !st.farHide) {
         const nn = nearest.slice(0, 3);
         fb.style.display = 'block';
         fb.innerHTML = `<div class="card" style="display:flex;flex-direction:column;gap:6px"><b style="font-size:14.5px">Nothing in the app within a 20-minute walk of you yet</b><span style="font-size:13px;color:var(--muted)">Nearest: ${nn.map(([p, d]) => esc(p.name) + ' (' + (d / 1609).toFixed(1) + ' miles)').join(', ')}</span><div class="row" style="gap:8px"><button class="ghost" id="fbnear" style="height:38px;flex:1">Show the nearest</button><button class="ghost" id="fbcen" style="height:38px;flex:1">Central London</button></div></div>`;
@@ -1768,11 +1774,10 @@ function mapScreen(focusId) {
     P.forEach(p => { try {
       if (p.lat == null) return;
       if (st.g !== 'All' && groupOf(p) !== st.g) return;
-      if (mt && !mt.score(p).all) return;
       const d = dist(a, b, p.lat, p.lng);
       [5, 10, 15, 20].forEach(m => { if (d <= m * CONFIG.walkSpeed) inc[m]++; });
       if (st.sel === p.id && PIN_ART[p.cats[0]]) return; /* the tapped pin is drawn on its own, bigger, on top */
-      feats.push(pinFeature(p, !(d <= r || q || far)));
+      feats.push(pinFeature(p, !(d <= r || far)));
     } catch (e) {} });
     pins = FC(feats);
     [5, 10, 15, 20].forEach(m => document.getElementById('c' + m).textContent = inc[m] + ' places');
@@ -1793,8 +1798,52 @@ function mapScreen(focusId) {
   window._mapRefresh = draw;
   app.querySelectorAll('.hpill').forEach(b => b.onclick = () => { st.g = b.dataset.g; app.querySelectorAll('.hpill').forEach(x => x.classList.toggle('on', x === b)); draw(); });
   app.querySelectorAll('.mins button').forEach(b => b.onclick = () => { st.m = +b.dataset.m; store.set('el_mins', st.m); app.querySelectorAll('.mins button').forEach(x => x.classList.toggle('on', x === b)); draw(); const [a, c] = here(); fitTo(map, circlePts(a, c, st.m * CONFIG.walkSpeed), 10); });
-  document.getElementById('mq').oninput = draw;
-  document.getElementById('mq').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); } });
+  /* search: a drop-down of matches (names first, then descriptions); the pins all stay on the map */
+  const mq = document.getElementById('mq'), drop = document.getElementById('mdrop');
+  const hideDrop = () => { drop.style.display = 'none'; mq.setAttribute('aria-expanded', 'false'); };
+  const fillDrop = () => {
+    const raw = mq.value.trim();
+    if (raw.length < 1) return hideDrop();
+    const mt = makeMatcher(raw); if (!mt.toks.length) return hideDrop();
+    const [a, b] = here(), near = p => p.lat == null ? 1e9 : dist(a, b, p.lat, p.lng);
+    /* a name match uses the words exactly as typed (so "roast" finds a place called Roast) */
+    const typed = sNorm(raw).split(' ').filter(w => w && !STOP.has(w)), tw = typed.length ? typed : sNorm(raw).split(' ').filter(Boolean);
+    const nk = p => ' ' + sNorm(p.name), q0 = ' ' + tw.join(' ');
+    const inName = p => { const n = nk(p); return tw.every(w => n.includes(' ' + w) || n.includes(' ' + stem(w))); };
+    const names = [], descs = [];
+    P.forEach(p => { if (p.lat == null) return; const r = mt.score(p); if (r.name || inName(p)) names.push([p, r]); else if (r.all) descs.push([p, r]); });
+    names.sort((x, y) => (nk(y[0]).startsWith(q0) - nk(x[0]).startsWith(q0)) || near(x[0]) - near(y[0]));
+    descs.sort((x, y) => y[1].sc - x[1].sc || near(x[0]) - near(y[0]));
+    const item = p => `<button type="button" role="option" data-id="${p.id}">${thumb(p, 36)}<span class="rc-t"><span class="rc-n">${esc(p.name)}</span><span class="sm">${esc(meta(p))}</span></span></button>`;
+    let h = '';
+    if (names.length) h += `<div class="sh">Places</div>` + names.slice(0, 8).map(([p]) => item(p)).join('');
+    if (descs.length) h += `<div class="sh">Mentioned in the description</div>` + descs.slice(0, 12).map(([p]) => item(p)).join('');
+    drop.innerHTML = h || `<div class="none">No places match “${esc(raw)}”</div>`;
+    drop.style.display = 'block'; mq.setAttribute('aria-expanded', 'true');
+  };
+  const pick = id => {
+    const p = byId[id]; if (!p) return;
+    mq.value = p.name; hideDrop(); mq.blur();
+    if (map) map.jumpTo({center: lngLat([p.lat, p.lng]), zoom: Math.max(map.getZoom(), 16)});
+    show(p);
+  };
+  mq.oninput = fillDrop;
+  mq.onfocus = () => { if (mq.value.trim()) fillDrop(); };
+  drop.addEventListener('pointerdown', e => e.preventDefault()); /* keep the keyboard open until a result is tapped */
+  drop.addEventListener('click', e => { const b = e.target.closest('button[data-id]'); if (b) pick(+b.dataset.id); });
+  mq.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); const f = drop.querySelector('button[data-id]'); if (f && drop.style.display !== 'none') pick(+f.dataset.id); else mq.blur(); }
+    else if (e.key === 'Escape') hideDrop();
+    else if (e.key === 'ArrowDown') { const f = drop.querySelector('button[data-id]'); if (f) { e.preventDefault(); f.focus(); } }
+  });
+  drop.addEventListener('keydown', e => {
+    const bs = [...drop.querySelectorAll('button[data-id]')], i = bs.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown' && i < bs.length - 1) { e.preventDefault(); bs[i + 1].focus(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); (i > 0 ? bs[i - 1] : mq).focus(); }
+    else if (e.key === 'Escape') { hideDrop(); mq.focus(); }
+  });
+  mq.addEventListener('blur', () => setTimeout(() => { if (!drop.contains(document.activeElement)) hideDrop(); }, 150));
+  mq.addEventListener('search', () => { if (!mq.value) hideDrop(); });
   document.getElementById('recentre').onclick = () => locate(ok => { if (!meReal && ok) toast('You look to be outside London, so the map starts at Leicester Square'); if (map) map.jumpTo({center: lngLat(here()), zoom: 15}); draw(); if (!ok && document.getElementById('lochelp')) document.getElementById('lochelp').click(); });
   draw();
   const fp = focusId && byId[focusId] && byId[focusId].lat != null ? byId[focusId] : null;
