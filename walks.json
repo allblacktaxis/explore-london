@@ -3,9 +3,9 @@
   "id": "hyde-park",
   "title": "Hyde Park & Kensington Gardens",
   "tag": "Royal Parks",
-  "meta": "About 2 hours · 4–5 km · 10 stops",
+  "meta": "About 2 hours · 4–5 km · 12 stops",
   "color": "#2F5A3A",
-  "intro": "From the Royal Albert Hall through Kensington Gardens to Hyde Park Corner: Peter Pan, the Serpentine and a palace.",
+  "intro": "From the Royal Albert Hall through Kensington Gardens to Hyde Park Corner: Peter Pan, the Serpentine and a palace. Also look out for Albert Gate on Knightsbridge, whose two stags came from the old Ranger's Lodge in Green Park, and Marble Arch at the park's north-east corner, moved here from Buckingham Palace in 1851.",
   "stops": [
    {
     "name": "Royal Albert Hall",
@@ -62,10 +62,24 @@
     "note": "Thought to come from 'Route du Roi', the King's Road. Lit with oil lamps in 1690, often called the first lit road in England."
    },
    {
+    "name": "Achilles statue",
+    "lat": 51.50535,
+    "lng": -0.15265,
+    "id": 1250,
+    "note": "Not really Achilles. It's London's tribute to Wellington, cast from French cannon captured in his victories and paid for by the women of England. When it was unveiled in 1822 it was London's first public nude statue, and a fig leaf was added after complaints."
+   },
+   {
+    "name": "Queen Elizabeth Gate & the Hyde Park Corner Screen",
+    "lat": 51.5039,
+    "lng": -0.1525,
+    "note": "Queen Elizabeth Gate was made for the Queen Mother's 90th birthday and unveiled by the Queen in 1993, with a red lion and a white unicorn in the middle; not everyone liked it, and critics called it a chocolate box. Next to it is the Screen, Decimus Burton's grand columned entrance to the park from 1825, with a frieze based on the Parthenon marbles."
+   },
+   {
     "name": "Apsley House & Wellington Arch",
     "lat": 51.5034,
     "lng": -0.1515,
-    "note": "Finish at 'Number 1, London': the first house you passed coming into town from the west."
+    "note": "Finish at 'Number 1, London': the first house you passed coming into town from the west.",
+    "id": 1249
    }
   ]
  },
@@ -73,21 +87,27 @@
   "id": "greenwich",
   "title": "Greenwich",
   "tag": "Day out",
-  "meta": "About 2½ hours · 3 km · arrive by river boat",
+  "meta": "About 2½ hours · 3 km · start at Island Gardens DLR, or arrive by river boat",
   "color": "#1F4E5F",
-  "intro": "Come by boat. Cutty Sark, the Painted Hall, the Prime Meridian and one of the best views in London.",
+  "intro": "Walk under the Thames through the 1902 foot tunnel, then the Cutty Sark, the Painted Hall, the Prime Meridian and one of the best views in London. Prefer to finish under the river? Do it in reverse and end at Island Gardens DLR.",
   "stops": [
+   {
+    "name": "Island Gardens",
+    "lat": 51.4874,
+    "lng": -0.0096,
+    "note": "Start on the Isle of Dogs (Island Gardens DLR) for the view across the river to Greenwich that Canaletto painted. Then walk under the Thames."
+   },
+   {
+    "name": "Greenwich Foot Tunnel",
+    "lat": 51.487,
+    "lng": -0.0099,
+    "note": "Opened in 1902 so dockers could walk to work on the Isle of Dogs. You come up right beside the Cutty Sark. Under the Thames: Brunel's Thames Tunnel at Rotherhithe was the first ever dug under a river, and the Brunel Museum tells its story."
+   },
    {
     "name": "Cutty Sark",
     "lat": 51.4828,
     "lng": -0.0096,
     "note": "The world's last surviving tea clipper. You can walk underneath her hull."
-   },
-   {
-    "name": "Greenwich Foot Tunnel",
-    "lat": 51.4836,
-    "lng": -0.0098,
-    "note": "Opened in 1902 so dockers could walk to work on the Isle of Dogs."
    },
    {
     "name": "Old Royal Naval College & Painted Hall",
@@ -477,7 +497,7 @@
   "tag": "Statues & monuments",
   "meta": "About 1½ hours · 12 stops",
   "color": "#0F1E3D",
-  "intro": "From Nelson down Whitehall, round the riverside memorials behind it and into Parliament Square: kings, generals, airmen and the women of the war, and the stories behind them.",
+  "intro": "From Nelson down Whitehall, round the riverside memorials behind it and into Parliament Square: kings, generals, airmen and the women of the war, and the stories behind them. And a few minutes' walk from Trafalgar Square, in Waterloo Place, stands Banksy's 2026 flag statue.",
   "stops": [
    {
     "name": "Nelson's Column, Trafalgar Square",
@@ -738,6 +758,66 @@
     "time": "11:00",
     "id": 357,
     "note": "11:00 · The Changing of the King's Life Guard, about 30 minutes. Horse Guards is still the official entrance to both palaces. At 11:37 the old guard rides back up The Mall and Constitution Hill to Hyde Park Barracks."
+   }
+  ]
+ },
+ {
+  "id": "banksy-city",
+  "title": "Banksy: City & Shoreditch",
+  "tag": "Street art",
+  "meta": "About 1 hour · 2 km · 3 stops",
+  "color": "#2E3A46",
+  "isNew": true,
+  "intro": "From a Banksy you can see in a museum to the ones still on London's walls, through the City and into Shoreditch. Banksy pieces can vanish overnight. Last checked 12 November 2026.",
+  "stops": [
+   {
+    "name": "London Museum, Smithfield",
+    "lat": 51.51788,
+    "lng": -0.10367,
+    "id": 396,
+    "note": "Piranhas, the police box Banksy turned into a fish tank on Ludgate Hill in 2024, is on show free inside. The museum opens here on 28 November 2026."
+   },
+   {
+    "name": "Barbican Basquiat pieces",
+    "lat": 51.52031,
+    "lng": -0.09469,
+    "note": "Two pieces from 2017 next to each other on the wall at Beech Street and Golden Lane, made for the Barbican's Basquiat exhibition: Basquiat's figure being stopped and searched by police, and a queue for a Ferris wheel made of his crowns. They're behind protective panels."
+   },
+   {
+    "name": "art'otel London Hoxton",
+    "lat": 51.52617,
+    "lng": -0.08326,
+    "note": "Two 2004 Banksys rescued from the Foundry pub that used to stand here, now set into the hotel above its entrance on Rivington Street: a giant rat with a knife and fork, and a TV being thrown out of a window. Free to see from the street."
+   }
+  ]
+ },
+ {
+  "id": "banksy-west-end",
+  "title": "Banksy: West End",
+  "tag": "Street art",
+  "meta": "About 1 hour · 3 km · 3 stops",
+  "color": "#2E3A46",
+  "isNew": true,
+  "intro": "Banksy from Marble Arch to St James's, ending with his newest piece in London. Banksy pieces can vanish overnight. Last checked 12 November 2026. Further afield: the elephants in Chelsea, the pelicans in Walthamstow, the rhino in Charlton and the Royal Family balcony on Stoke Newington Church Street. Check they're still there before you go.",
+  "stops": [
+   {
+    "name": "Moco Museum, Marble Arch",
+    "lat": 51.513525,
+    "lng": -0.159411,
+    "id": 57,
+    "note": "Gallery pieces by Banksy alongside Warhol and Basquiat. Paid entry."
+   },
+   {
+    "name": "Centre Point",
+    "lat": 51.5161,
+    "lng": -0.1302,
+    "note": "Two children lying on the pavement, one pointing up at the sky, stencilled at the foot of Centre Point in December 2025. Widely thought to be Banksy, though he only claimed its twin in Queen's Mews, Bayswater."
+   },
+   {
+    "name": "Waterloo Place, St James's",
+    "lat": 51.5072,
+    "lng": -0.1324,
+    "note": "Banksy's flag statue, a suited man striding off his plinth with a flag over his face, which appeared in April 2026 beside Edward VII, Florence Nightingale and the Crimean War Memorial. Westminster Council has spent tens of thousands of pounds protecting it."
    }
   ]
  }

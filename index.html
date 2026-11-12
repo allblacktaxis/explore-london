@@ -1101,7 +1101,7 @@ const ON_THIS_DAY = {
   '6-15':"1381: rebel leader Wat Tyler is killed at Smithfield during the Peasants' Revolt",
   '6-16':"1824: the RSPCA is founded at Old Slaughter's Coffee House on St Martin's Lane",
   '6-17':"2016: Tate Modern's new Switch House – the Blavatnik Building – opens",
-  '6-18':"1815: Wellington wins at Waterloo – and two years later to the day, Waterloo Bridge opens",
+  '6-18':"1815: Wellington wins at Waterloo – two years later to the day Waterloo Bridge opens, and in 1822 the Achilles statue, London's tribute to him and its first public nude, is unveiled in Hyde Park",
   '6-19':"1980: Covent Garden's old market building reopens as shops and cafés",
   '6-20':"1837: Victoria is woken at Kensington Palace and told she is Queen",
   '6-21':"1908: 'Women's Sunday' – a huge suffragette rally in Hyde Park",
@@ -1878,7 +1878,7 @@ function walkRows(all) {
   const hp = WALKS.filter(w => w.id.startsWith('hp-'));
   const items = all ? WALKS.map(w => ({href:'#/walk/' + w.id, title:w.title, meta:w.meta, line:w.intro, color:w.color, tag:w.tag, isNew:w.isNew}))
     : [WALKS.find(w => w.id === 'hyde-park'), {id:'hp', title:'Harry Potter in London', meta:'Film & TV · ' + hp.length + ' walks', intro:"King's Cross, Westminster and the City.", color:'#3B2F5C', tag:'Film & TV', isNew:true}, WALKS.find(w => w.id === 'greenwich'), WALKS.find(w => w.id === 'ted-lasso'), WALKS.find(w => w.id === 'music-trail'), WALKS.find(w => w.id === 'lgbtq-soho'), WALKS.find(w => w.id === 'changing-guard')].filter(Boolean)
-      .map(w => ({href: w.id === 'hp' ? '#/walks/all' : '#/walk/' + w.id, title:w.title, meta: w.id === 'hp' ? w.meta : w.tag + ' · ' + w.meta.replace(/^About /, '').split(' · ')[0] + (w.id === 'greenwich' ? ' · by river boat' : w.id === 'hyde-park' ? ' · 10 stops' : ''), line: w.id === 'changing-guard' ? 'Foot guards and mounted guard, with the times to be in each spot.' : w.intro, color:w.color, tag:w.tag, isNew:w.isNew}));
+      .map(w => ({href: w.id === 'hp' ? '#/walks/all' : '#/walk/' + w.id, title:w.title, meta: w.id === 'hp' ? w.meta : w.tag + ' · ' + w.meta.replace(/^About /, '').split(' · ')[0] + (w.id === 'greenwich' ? ' · through the foot tunnel' : w.id === 'hyde-park' ? ' · ' + w.stops.length + ' stops' : ''), line: w.id === 'changing-guard' ? 'Foot guards and mounted guard, with the times to be in each spot.' : w.intro, color:w.color, tag:w.tag, isNew:w.isNew}));
   return items.map(w => `<a class="row-card" href="${w.href}"><span class="thumb" style="background:${w.color}">${svg(WICON[w.tag] || 'walk', 24, '#F5D9A8')}</span><span class="rc-t"><span class="rc-n">${esc(w.title)}${w.isNew ? ' <span class="badge" style="background:var(--orange);font-size:10.5px;vertical-align:2px">NEW</span>' : ''}</span><span class="rc-m">${esc(w.meta)}</span><span class="rc-l">${esc(w.line)}</span></span></a>`).join('');
 }
 function walks(all) {
