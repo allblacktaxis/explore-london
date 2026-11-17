@@ -1675,7 +1675,7 @@ function category(k) {
   const cfg = COLL[k] || {pills: []}, pills = (PILLS[k] || []).filter(x => !x.show || x.show());
   const list = P.filter(p => p.cats.includes(k));
   let bset = null, b = cfg.banner;
-  if (b && b.test === 'oldest10') bset = new Set(list.filter(p => yearOf(p)).sort((x, y) => yearOf(x) - yearOf(y)).slice(0, 10).map(p => p.id));
+  if (b && b.test === 'oldest10') bset = new Set(list.filter(p => yearOf(p)).filter(p => yearOf(p) < 1800).sort((x, y) => yearOf(x) - yearOf(y)).map(p => p.id));   /* every pub from before 1800, not just a top 10 */
   else if (b && b.test) bset = new Set(list.filter(b.test).map(p => p.id));
   const oldest = k === 'Pubs' ? Math.min(...list.map(yearOf).filter(Boolean)) : null;
   const areas = [...new Set(list.map(p => p.area))].sort();

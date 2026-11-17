@@ -39,6 +39,7 @@ Tick items off (`- [x]`) when they're done, and add anything new Matt asks for.
 - [ ] Making money
 
 ## Done
+- [x] London's oldest pubs banner now shows every pub from before 1800 (25 today) instead of a top 10 – live 17 Nov
 - [x] London's oldest pubs fixed: list now uses a `year` in places.json when set (The Guinea 1423, Prospect of Whitby 1520, Town of Ramsgate 1545, Mayflower 1550, George Inn 1542, The Grapes 1583, Spaniards Inn 1585, Seven Stars 1602, The Flask 1663) and 5 famous old City pubs added (Hand & Shears 1532, Jamaica Wine House 1652, Olde Wine Shades 1663, Ye Olde Watling 1668, The Old Bell Tavern 1678). Dates are the earliest pub on the site, as most guides quote them – live 17 Nov
 - [x] Pubs batch 17 Nov: Bankside & Borough +10 (Anchor Bankside, Market Porter, Rake, Royal Oak, Southwark Tavern, Globe Tavern, Ship, Old Thameside Inn, Mudlark, Founders Arms); Shoreditch +5 (Pride of Spitalfields, Water Poet, Commercial Tavern, Golden Heart, Old Blue Last); Battersea +3 (Duke of Cambridge, Battersea Brewery Tap Room, Four Thieves). Approx pins: The Ship Borough, Battersea Brewery Tap Room
 - [x] Tidy-ups 17 Nov: exact addresses/pins for 14 places (Richmond, Kensington, Docklands); Light of India moved to its real address on Gloucester Road (Kensington); Tower House location corrected; Roti King Battersea address; Wandercrust (at the Pelton Arms) and Madre Pinzeria added in Greenwich; The Grapes now listed for fish & chips (fills Docklands gap); Latchmere looks open (refurbished Jan 2026)
