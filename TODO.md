@@ -17,6 +17,7 @@ Tick items off (`- [x]`) when they're done, and add anything new Matt asks for.
 - [ ] Stage 3: everything else, area by area (and translate each new place as it's added)
 
 ## Content
+- [ ] Photos – fix the photos on every place where the photo isn't correct (go through all places, Matt to confirm the wrong ones).
 - [ ] Restaurant batch, area by area (held list from the old chat is lost, so building fresh): done Battersea, Richmond & Kew, Greenwich, King's Cross, Kensington, Docklands (first pass) – Matt wants to talk more about Kensington
 - [ ] Fish & chips: King's Cross still has no chippy in its own area (nearest is North Sea Fish, Leigh Street, filed under Bloomsbury) – leave unless Matt wants it moved
 
