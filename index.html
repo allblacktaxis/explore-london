@@ -1646,6 +1646,7 @@ function place(id) {
         ${p.website ? `<a class="ghost" target="_blank" rel="noopener" href="${esc(p.website)}">Website</a>` : ''}
         ${p.lat != null && !p.website ? `<a class="ghost" href="#/map/${p.id}">Map</a>` : ''}
       </div>
+      ${(() => { const rw = WALKS.find(w => w.routes && w.stops.some(x => x.id === p.id)); return rw ? `<a class="bigbtn orange" style="height:46px" href="#/walk/${rw.id}">${svg('walk', 18, '#0F1E3D', 2.2)} See the ${esc(rw.title.split(':')[0])} route</a>` : ''; })()}
       <div id="gt"></div>
     </div>
     <div class="content" style="padding-top:10px">
