@@ -4,7 +4,7 @@ Tick items off (`- [x]`) when they're done, and add anything new Matt asks for.
 
 ## Time-sensitive
 - [ ] Re-check Christmas Day prices nearer the day: Le Pont de la Tour (no price yet), Gaucho (£125 not confirmed), The Alexandra (free lunch not yet announced for 2026), Claridge's / Kerridge's / Holly Bush / Red Lion & Sun / Mad Hatter / Prince Albert / Hand & Flower (price on booking)
-- [ ] New Year's Eve: Matt to paste the older list (20) from the other chat; merge with the new 20 found on 17 Nov, then Matt checks
+- [ ] Re-check New Year's Eve prices nearer the day, especially Oscar (£45 may be old), Kinz (not yet confirmed for NYE) and the Thames cruises
 - [ ] London Museum opens 28 Nov – switch it from "Coming soon"
 
 ## Still open from 9 Nov
@@ -38,6 +38,7 @@ Tick items off (`- [x]`) when they're done, and add anything new Matt asks for.
 - [ ] Making money
 
 ## Done
+- [x] New Year's Eve: 24 places tagged (7 already in the app, 17 new) – 17 Nov
 - [x] Christmas Day: 39 places tagged (17 already in the app, 22 new) – 17 Nov
 - [x] Seasonal pill: Christmas Day / New Year's Eve places all the time, plus Thanksgiving places up to 26 Nov (no longer matches "seasonal menu") – 17 Nov
 - [x] Top-left pill (Restaurants and Pubs) shows the nearest season: Thanksgiving up to 26 Nov, then Christmas & New Year – 17 Nov
