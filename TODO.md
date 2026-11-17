@@ -38,5 +38,5 @@ Tick items off (`- [x]`) when they're done, and add anything new Matt asks for.
 - [ ] Making money
 
 ## Done
-- [x] Seasonal pill: Thanksgiving places up to 26 Nov, then Christmas Day / New Year's Eve places (no longer matches "seasonal menu") – 17 Nov
+- [x] Seasonal pill: Christmas Day / New Year's Eve places all the time, plus Thanksgiving places up to 26 Nov (no longer matches "seasonal menu") – 17 Nov
 - [x] Thanksgiving pill hides itself after 28 Nov each year – 17 Nov
