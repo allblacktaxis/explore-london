@@ -12,7 +12,7 @@ Tick items off (`- [x]`) when they're done, and add anything new Matt asks for.
 - [ ] www address: needs Matt to say what he meant and who looks after the allblacktaxis.co.uk address – can't be done from the app's files (DNS + Netlify domain settings)
 
 ## Translation (agreed 17 Nov: option C – everything, in stages; Spanish, French, German, Italian, Chinese; row of 6 small flags under "Explore London" on Home, UK flag to switch back; auto-pick phone language)
-- [x] Stage 1: flags + the app's own words (641 phrases × 5 languages, lang/*.json) – built 17 Nov, waiting to go live with the Home redesign. Search still English-only (box says so); WhatsApp/suggest messages stay English
+- [x] Stage 1: flags + the app's own words (641 phrases × 5 languages, lang/*.json) – live 17 Nov. Search still English-only (box says so); WhatsApp/suggest messages stay English
 - [ ] Stage 2: most-visited places, walks and Cabbie's Stories
 - [ ] Stage 3: everything else, area by area (and translate each new place as it's added)
 
