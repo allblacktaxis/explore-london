@@ -169,6 +169,15 @@ nav.tabs a.on{color:#fff}nav.tabs a.on i{background:var(--orange)}
 .me{width:18px;height:18px;border-radius:50%;background:var(--plaque);border:3px solid #fff;box-shadow:0 0 0 8px rgba(46,111,216,.2)}
 .stop{display:flex;gap:10px;background:#fff;border-radius:12px;padding:10px;box-shadow:0 1px 2px rgba(15,30,61,.08)}
 .note{font-size:13px;color:var(--muted);line-height:1.4}
+.sg label{display:flex;flex-direction:column;gap:6px;font-weight:700;font-size:15px}
+.sg input[type=text],.sg textarea{border:1px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;font-size:16px;font-weight:400;color:var(--ink);background:#fff;width:100%;box-sizing:border-box}
+.sg textarea{min-height:84px;resize:vertical}
+.sg .chips{display:flex;flex-wrap:wrap;gap:6px}
+.sg .chip{border:1px solid var(--line);background:#fff;border-radius:18px;padding:7px 12px;font:inherit;font-size:14px;font-weight:600;color:var(--ink)}
+.sg .chip.on{background:#FFF4E8;border-color:#F28C38}
+.suggestlink{display:flex;align-items:center;gap:10px;background:#FFF4E8;border-radius:14px;padding:10px 12px;color:var(--ink);text-decoration:none}
+.stoppop{position:fixed;inset:0;background:rgba(15,30,61,.55);z-index:2500;display:flex;align-items:flex-end;justify-content:center}
+.sp-card{background:#fff;border-radius:20px 20px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom));max-height:85vh;overflow:auto;width:100%;max-width:560px;display:flex;flex-direction:column;gap:10px}
 .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:20px;font-size:14px;z-index:2000;max-width:90%}
 .maplibregl-map{font-family:inherit}.maplibregl-marker .num{cursor:default}
 .hit{display:inline-block;background:var(--orange);color:var(--navy);font-weight:700;border-radius:8px;padding:0 6px}
@@ -196,6 +205,8 @@ html.ios-app #launch{display:block}
 </style>
 </head>
 <body>
+<!-- "Suggest a place": this hidden copy lets Netlify find the form; the real one is drawn by suggest() -->
+<form name="suggest" data-netlify="true" netlify-honeypot="bot-field" hidden><input name="bot-field"><input name="place"><input name="where"><input name="good_for"><textarea name="comment"></textarea><input name="first_name"><input name="ok_to_quote"><input name="from_page"></form>
 <div id="launch" aria-hidden="true"><picture>
 <!-- launch-sources:start -->
 <source media="(device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" srcset="icons/splash/apple-splash-1320x2868.jpg?v=4">
@@ -1492,6 +1503,7 @@ function home() {
         <div class="sec"><h2>Walks &amp; Guides</h2><a href="#/walks">See all</a></div>
         <div class="hscroll">${walkCards}</div>
         ${(() => { const L = neverList(); const x = L[8] || L[0]; if (!x) return ''; const [q, hook] = x; return `<a href="#/place/${q.id}" style="display:flex;align-items:center;gap:12px;background:#E6F2FF;border-radius:16px;padding:10px 12px;color:var(--ink);text-decoration:none">${thumb(q, 40)}<span style="display:flex;flex-direction:column;gap:1px;flex-grow:1;min-width:0"><span style="font-size:12px;font-weight:700;color:#2E6FD8;text-transform:uppercase;letter-spacing:.5px">Did you know?</span><span style="font-size:15px;font-weight:600;line-height:1.25">${esc(hook)}</span><span style="font-size:13px;color:#2E6FD8;font-weight:700">${esc(q.name.replace(/, Fortnum & Mason$/, ''))}</span></span>${svg('chev', 18)}</a>`; })()}
+        ${suggestLink()}
         <p class="note" style="margin:0">${P.length} places, picked by London cabbies.</p>
       </div>
     </div>${tabs('Explore')}`;
@@ -1595,6 +1607,7 @@ function category(k) {
       <div class="filters${k === 'Restaurants' ? ' four' : ''}">${k === 'Restaurants' ? `<select id="cuisine" aria-label="Cuisine"><option value="">Cuisine</option>${cuisines.map(a => `<option>${esc(a)}</option>`).join('')}</select><select id="price" aria-label="Price"><option value="0">Price</option>${[1, 2, 3, 4].map(i => `<option value="${i}">${PRICE[i]} ${PRICE_TXT[i].replace(' a head', '')}</option>`).join('')}</select>` : ''}<select id="area" aria-label="Area"><option value="">Area</option>${areas.map(a => `<option>${esc(a)}</option>`).join('')}</select>
       <select id="sort" aria-label="Sort"><option value="near">Nearest</option>${STAY ? `<option value="stay">Nearest to ${esc(STAY.label.length > 18 ? 'my stay' : STAY.label)}</option>` : ''}<option value="az">A to Z</option>${k === 'Pubs' || k === 'Shopping' ? '<option value="old">Oldest first</option>' : ''}</select></div>
       <div id="list" style="display:flex;flex-direction:column;gap:6px"></div>
+      ${k === 'Blue Plaques' ? '' : suggestLink(k)}
     </div>${tabs('Explore')}`;
   const draw = () => {
     const pl = st.pill != null ? pills[st.pill] : null;
@@ -1641,6 +1654,7 @@ function place(id) {
       <span style="font-size:14px;color:var(--muted)">${esc(shortAddr(p))}${p.lat != null ? ' · ' + walkTime(p) : ''}${p.approx ? ' (approx. pin)' : ''}</span>
       ${tags.length || p.cuisine ? `<div class="tags">${(p.cuisine ? p.cuisine.split(',').map(x => x.trim()).filter(Boolean).slice(0, 2) : []).concat(tags).slice(0, 4).map((t, i) => `<span class="tag" style="background:${BG[i % 5]}">${esc(t)}</span>`).join('')}</div>` : ''}
       <p style="margin:0;font-size:15.5px;line-height:1.5;white-space:pre-line">${esc(p.why)}</p>
+      ${p.comment ? `<div style="background:#FFF4E8;border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:3px"><span class="kicker">⭐ Explore London customer comment</span><span style="font-size:15px;line-height:1.45">“${esc(p.comment.text)}”${p.comment.name ? ` – ${esc(p.comment.name)}` : ''}</span></div>` : ''}
       <div class="row" style="gap:8px">
         ${p.lat != null ? `<a class="bigbtn" style="height:46px;flex:1" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=walking">${svg('arrow', 18, '#F28C38', 2.2)} Walk there</a>` : ''}
         ${p.website ? `<a class="ghost" target="_blank" rel="noopener" href="${esc(p.website)}">Website</a>` : ''}
@@ -1925,6 +1939,48 @@ function buildWalk() {
 }
 /* two-route walks (Changing the Guard): number badges coloured by route – red foot guards, gold mounted guard, navy for both */
 function numSty(s) { return s.route === 'foot' ? 'background:#C8102E;color:#fff' : s.route === 'mounted' ? 'background:#F9B10F;color:#0F1E3D' : 'background:#0F1E3D;color:#fff'; }
+/* walk alerts: when you reach a stop the phone buzzes and the stop's Cabbie's Story pops up */
+const ARRIVE_M = 35;
+let walkWatch = null;
+function stopStory(s) {
+  const p = s.id ? byId[s.id] : P.find(q => q.story && q.lat != null && dist(s.lat, s.lng, q.lat, q.lng) < 6);
+  return p && p.story ? p.story : '';
+}
+function buzz() {
+  try { if (NATIVE && Capacitor.Plugins && Capacitor.Plugins.Haptics) return native('Haptics', 'vibrate', {duration: 500}).catch(() => {}); } catch {}
+  try { navigator.vibrate && navigator.vibrate([250, 120, 250]); } catch {}
+}
+function stopWalkAlerts() { if (walkWatch) { walkWatch.stop(); walkWatch = null; } }
+function startWalkAlerts(w, onFail) {
+  stopWalkAlerts();
+  const seen = new Set();
+  const check = pos => { const {latitude: a, longitude: b} = pos.coords; w.stops.forEach((s, i) => { if (!seen.has(i) && dist(a, b, s.lat, s.lng) <= ARRIVE_M) { seen.add(i); buzz(); stopPop(w, i); } }); };
+  const opts = {enableHighAccuracy: true, timeout: 15000, maximumAge: 5000};
+  if (NATIVE) {
+    let fails = 0;
+    const poll = () => native('Geolocation', 'getCurrentPosition', opts).then(p => { fails = 0; check(p); }, e => { if (/denied|permission/i.test((e && e.message) || '') || ++fails > 3) onFail(); });
+    const t = setInterval(poll, 8000); poll();
+    walkWatch = {stop: () => clearInterval(t)};
+  } else if (navigator.geolocation) {
+    const h = navigator.geolocation.watchPosition(check, e => { if (e && e.code === 1) onFail(); }, opts);
+    walkWatch = {stop: () => navigator.geolocation.clearWatch(h)};
+  } else return false;
+  return true;
+}
+function stopPop(w, i) {
+  const s = w.stops[i], story = stopStory(s);
+  const old = document.getElementById('stoppop'); if (old) old.remove();
+  const d = document.createElement('div'); d.id = 'stoppop'; d.className = 'stoppop';
+  d.innerHTML = `<div class="sp-card" role="dialog" aria-label="${esc(s.name)}">
+    <span class="kicker">You’ve reached stop ${i + 1} of ${w.stops.length}</span>
+    <b class="disp" style="font-size:21px;line-height:1.15">${esc(s.name)}</b>
+    ${s.note ? `<p style="margin:0;font-size:15px;line-height:1.45">${esc(s.note)}</p>` : ''}
+    ${story ? `<div class="story" style="gap:8px"><span class="row" style="gap:10px"><img src="img/matt.jpg" alt="" style="width:40px;height:40px;border-radius:20px;object-fit:cover;background:var(--orange)"><span style="display:flex;flex-direction:column"><b class="disp" style="font-size:15px">The Cabbie's Story</b><span style="font-size:12.5px;color:#6B5440">from the cabbies</span></span></span><p style="margin:0;font-size:14.5px;line-height:1.4">${esc(story)}</p></div>` : ''}
+    <button class="bigbtn" id="spok" style="height:46px">${i + 1 < w.stops.length ? 'On to stop ' + (i + 2) : 'Finish the walk'}</button></div>`;
+  d.onclick = e => { if (e.target === d || e.target.id === 'spok') d.remove(); };
+  document.body.appendChild(d);
+}
+addEventListener('hashchange', () => { stopWalkAlerts(); const sp = document.getElementById('stoppop'); if (sp) sp.remove(); });
 function walkScreen(id) {
   let w = id === 'mine' ? buildWalk() : WALKS.find(x => x.id === id);
   if (!w && id && id.startsWith('plan-') && PLANS) { const pl = PLANS.find(x => 'plan-' + x.n === id); if (pl) { const st = pl.stops.filter(x => !x.meal).map(x => (x.ids || []).map(i => byId[i]).find(q => q && q.lat != null)).filter(Boolean); w = {id, title: pl.title + ': the route', meta: st.length + ' stops', intro: pl.sub + '. Meal stops are left out of the map.', color: '#0F1E3D', stops: st.filter((q, i, A) => A.indexOf(q) === i).map(q => ({name: q.name, lat: q.lat, lng: q.lng, note: q.line, id: q.id}))}; } }
@@ -1937,11 +1993,22 @@ function walkScreen(id) {
     <div style="height:300px;position:relative"><div id="leaf"></div></div>
     <div class="content">
       <p style="margin:0;font-size:15px;line-height:1.45">${esc(w.intro)}</p>
+      ${w.stops.length ? `<button class="bigbtn orange" id="alerts" style="height:46px">${svg('walk', 18, '#0F1E3D', 2.2)} <span id="alertlbl">Start walk: buzz me at each stop</span></button><span class="note" id="alertnote" style="display:none"></span>` : ''}
       ${w.legend ? `<div class="row" style="gap:14px;flex-wrap:wrap">${w.legend.map(([l, c]) => `<span style="display:flex;align-items:center;gap:6px;font-size:14px;font-weight:700"><i style="width:22px;height:5px;border-radius:3px;background:${c}"></i>${esc(l)} route</span>`).join('')}</div>` : ''}
       ${w.routes ? '' : w.stops.length ? `<div class="row" style="gap:8px"><a class="bigbtn" style="flex:1;height:46px" target="_blank" rel="noopener" href="${gm}">${svg('walk', 18, '#F28C38', 2.2)} Open in Google Maps</a>${id === 'mine' ? '<a class="ghost" href="#/mywalk" onclick="setTimeout(()=>route(),0)">Rebuild</a>' : ''}</div>` : `<div class="empty">No matching places close enough. Try more interests or more time.</div>`}
       ${w.stops.map((s, i) => `<div class="stop"><span class="num" style="flex-shrink:0${s.route ? ';' + numSty(s) : ''}">${i + 1}</span><span style="display:flex;flex-direction:column;gap:2px"><b class="disp" style="font-size:15px">${s.id ? `<a href="#/place/${s.id}" style="text-decoration:none">${esc(s.name)}</a>` : esc(s.name)}</b><span style="font-size:14px;line-height:1.4">${esc(s.note)}</span></span></div>`).join('')}
       <p class="note">${w.routes ? 'Routes are a guide to where the guards go. Timings are for a weekday ceremony day.' : 'Route lines are drawn straight between stops. Google Maps gives the real walking route.'}</p>
     </div>${tabs('Walks')}`;
+  const ab = document.getElementById('alerts');
+  if (ab) ab.onclick = () => {
+    const lbl = document.getElementById('alertlbl'), nt = document.getElementById('alertnote');
+    if (walkWatch) { stopWalkAlerts(); lbl.textContent = 'Start walk: buzz me at each stop'; nt.style.display = 'none'; return; }
+    const ok = startWalkAlerts(w, () => { stopWalkAlerts(); lbl.textContent = 'Start walk: buzz me at each stop'; nt.style.display = 'none'; toast('We couldn’t get your location'); setTimeout(() => alert(LOC_HELP), 300); });
+    if (!ok) return toast('Your phone can’t share its location here');
+    lbl.textContent = 'Stop walk alerts';
+    nt.textContent = 'Keep this screen open as you walk. When you reach a stop, your phone buzzes and the Cabbie’s Story pops up.' + (IOS && !NATIVE ? ' (iPhones don’t let websites buzz, so the story just pops up.)' : '');
+    nt.style.display = '';
+  };
   /* route lines are map layers; the start dot and the numbered stops are a few page elements on top */
   const pts = w.stops.map(s => [s.lat, s.lng]);
   if (w.start) pts.unshift(w.start);
@@ -2033,6 +2100,45 @@ function transfers(toId) {
   };
   app.querySelectorAll('.dest').forEach(b => b.onclick = () => { pick = b.dataset.n; paint(); });
   paint();
+}
+
+/* ---------- suggest a place: goes to Netlify Forms, which emails it on ---------- */
+function suggestLink(k) {
+  return `<a class="suggestlink" href="#/suggest${k ? '/' + encodeURIComponent(k) : ''}">${svg('plus', 20, '#A8551A', 2.2)}<span style="display:flex;flex-direction:column;gap:1px"><b class="disp" style="font-size:15.5px">Know somewhere we’ve missed?</b><span style="font-size:13px;color:var(--muted)">Suggest a place for Explore London</span></span></a>`;
+}
+function suggest(from) {
+  setTitle('Suggest a place');
+  const GOOD = ['Great food', 'Good value', 'Excellent service', 'Friendly staff', 'Great atmosphere', 'Hidden gem', 'Great for families', 'Good for groups'];
+  const picked = new Set();
+  app.innerHTML = `<div class="top"><div class="row" style="gap:12px">${backBtn(from ? '#/cat/' + encodeURIComponent(from) : '#/')}<h1 style="margin:0;font-weight:800;font-size:22px;line-height:1.1">Suggest a place</h1></div>
+      <p style="margin:0;font-size:14.5px;line-height:1.4;color:#C9D3E6">Found a restaurant, pub or place you loved that isn’t on Explore London? Tell us. If we add it, we may show your comment on its page.</p></div>
+    <form class="content sg" id="sg" autocomplete="off">
+      <label>What’s the place called?<input type="text" name="place" required maxlength="120" placeholder="e.g. Rita’s Café"></label>
+      <label>Where is it?<input type="text" name="where" maxlength="160" placeholder="Area or street, e.g. Bermondsey, near the station"></label>
+      <div style="display:flex;flex-direction:column;gap:6px"><b style="font-size:15px">What’s it good for? <span style="font-weight:400;color:var(--muted)">Tick any</span></b>
+        <div class="chips">${GOOD.map(g => `<button type="button" class="chip" data-g="${g}">${g}</button>`).join('')}</div></div>
+      <label>Tell us in a sentence<textarea name="comment" maxlength="600" placeholder="e.g. Best bacon sandwich I’ve ever had"></textarea></label>
+      <label>Your first name <span style="font-weight:400;color:var(--muted)">(optional)</span><input type="text" name="first_name" maxlength="40"></label>
+      <label style="flex-direction:row;align-items:flex-start;gap:10px;font-weight:600;font-size:14.5px"><input type="checkbox" name="ok_to_quote" style="width:22px;height:22px;flex-shrink:0;margin:0"> Happy for Explore London to quote my comment</label>
+      <input type="text" name="bot-field" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+      <button class="bigbtn orange" type="submit" id="sgsend">Send suggestion</button>
+      <p class="note" style="margin:0">Suggestions go to the Explore London team. We read every one.</p>
+    </form>${tabs('Explore')}`;
+  app.querySelectorAll('.chip').forEach(b => b.onclick = () => { const g = b.dataset.g; picked.has(g) ? picked.delete(g) : picked.add(g); b.classList.toggle('on', picked.has(g)); });
+  const f = document.getElementById('sg');
+  f.onsubmit = async e => {
+    e.preventDefault();
+    const fd = new FormData(f);
+    if (!String(fd.get('place') || '').trim()) return toast('Please tell us the name of the place');
+    const body = new URLSearchParams({'form-name': 'suggest', 'bot-field': fd.get('bot-field') || '', place: fd.get('place'), where: fd.get('where') || '', good_for: [...picked].join(', '), comment: fd.get('comment') || '', first_name: fd.get('first_name') || '', ok_to_quote: fd.get('ok_to_quote') ? 'Yes' : 'No', from_page: from || 'Home'});
+    const btn = document.getElementById('sgsend'); btn.disabled = true; btn.textContent = 'Sending…';
+    try {
+      /* in the phone apps the page isn't on our web address, so post to the website itself */
+      const r = await fetch(NATIVE ? SITE_URL : '/', {method: 'POST', mode: NATIVE ? 'no-cors' : 'same-origin', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: body.toString()});
+      if (!NATIVE && !r.ok) throw new Error(r.status);
+      app.querySelector('.content').outerHTML = `<div class="content"><div class="story" style="align-items:center;text-align:center;padding:22px 16px;gap:8px"><b class="disp" style="font-size:20px">Thank you!</b><span style="font-size:15px;line-height:1.45">We’ll take a look at <b>${esc(fd.get('place'))}</b>. If it makes it into Explore London, you’ll find it in the app.</span></div><a class="bigbtn" href="${from ? '#/cat/' + encodeURIComponent(from) : '#/'}">Back to exploring</a></div>`;
+    } catch (err) { btn.disabled = false; btn.textContent = 'Send suggestion'; toast('Sorry, that didn’t send. Please check your connection and try again.'); }
+  };
 }
 
 /* ---------- getting around: Tube & Trains ---------- */
@@ -2179,6 +2285,7 @@ function route() {
   if (a === 'never') return never();
   if (a === 'about') return about(b);
   if (a === 'otd') return otdScreen(b);
+  if (a === 'suggest') return suggest(b);
   home();
 }
 addEventListener('hashchange', route);
