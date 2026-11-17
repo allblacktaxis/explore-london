@@ -172,6 +172,7 @@ nav.tabs a.on{color:#fff}nav.tabs a.on i{background:var(--orange)}
 .sg label{display:flex;flex-direction:column;gap:6px;font-weight:700;font-size:15px}
 .sg input[type=text],.sg textarea{border:1px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;font-size:16px;font-weight:400;color:var(--ink);background:#fff;width:100%;box-sizing:border-box}
 .sg textarea{min-height:84px;resize:vertical}
+.sg.idea .sgp{display:none!important}
 .sg .chips{display:flex;flex-wrap:wrap;gap:6px}
 .sg .chip{border:1px solid var(--line);background:#fff;border-radius:18px;padding:7px 12px;font:inherit;font-size:14px;font-weight:600;color:var(--ink)}
 .sg .chip.on{background:#FFF4E8;border-color:#F28C38}
@@ -181,10 +182,34 @@ nav.tabs a.on{color:#fff}nav.tabs a.on i{background:var(--orange)}
 .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:20px;font-size:14px;z-index:2000;max-width:90%}
 .maplibregl-map{font-family:inherit}.maplibregl-marker .num{cursor:default}
 .hit{display:inline-block;background:var(--orange);color:var(--navy);font-weight:700;border-radius:8px;padding:0 6px}
-.tgl{grid-column:1/-1;line-height:1;font-size:11px;font-weight:800;color:#0F1E3D;opacity:.65;text-transform:uppercase;letter-spacing:.06em;margin:2px 2px -4px}.tgl:first-child{margin-top:-4px}
-.hg{row-gap:7px}.hg .tile{min-height:0;padding:5px 3px 8px;gap:2px}.hg .tile .ic{width:36px;height:36px}.hg .tile .ic>*{max-width:25px;max-height:25px}.hg .tile span.l{font-size:12px}
-/* tablets held upright: bigger home-screen category buttons (11 Nov 2026) */
-@media (min-width: 600px) and (max-width: 1023px), (min-width: 1024px) and (orientation: portrait){.hg{row-gap:12px;gap:12px}.hg .tile{padding:14px 6px 16px;gap:8px}.hg .tile .ic{width:72px;height:72px;border-radius:36px}.hg .tile .ic>*{width:44px!important;height:44px!important;max-width:44px;max-height:44px}.hg .tile span.l{font-size:16px}.tgl{font-size:13px}}
+/* Home (redesign agreed 17 Nov): quick buttons, 4 group buttons that open in place, "Plan your day" cards */
+.hquick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.qbtn{display:flex;justify-content:center;align-items:center;gap:8px;min-height:50px;border-radius:25px;padding:4px 12px;box-sizing:border-box;background:var(--navy);color:#fff;font-family:'Archivo',sans-serif;font-weight:700;font-size:15.5px;line-height:1.1;text-align:center;text-decoration:none;min-width:0}
+.qbtn svg{flex-shrink:0}.qbtn span{min-width:0;overflow-wrap:anywhere}
+.qbtn.red{background:#C8262B}
+.hh{margin:2px 0 -4px;font-size:18px;font-weight:800}
+.hgl{display:flex;flex-direction:column;gap:8px}
+.hgb{display:flex;align-items:center;gap:12px;width:100%;box-sizing:border-box;padding:10px 12px 12px;border-radius:16px;border:1px solid #D2D9E3;background:linear-gradient(#fff,#F1F4F8);color:var(--ink);font:inherit;text-align:left;cursor:pointer;box-shadow:inset 0 -4px 0 var(--c,#C9D1DE),0 6px 12px rgba(15,30,61,.12),0 1px 3px rgba(15,30,61,.1);transition:transform .08s}
+.hgb:active{transform:translateY(2px)}
+.hgb .ic{width:46px;height:46px;border-radius:23px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.hgb .tx{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.hgb .tx b{font-size:16.5px;line-height:1.15;overflow-wrap:anywhere;hyphens:auto}
+.hgb .tx span{font-size:13px;line-height:1.25;color:var(--muted);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.hgb .chv{flex-shrink:0;display:flex;transition:transform .2s}
+.hgb[aria-expanded=true] .chv{transform:rotate(90deg)}
+.hgo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:2px 2px 6px}
+.hgo[hidden]{display:none}
+.hot{display:flex;align-items:center;gap:8px;min-height:52px;padding:6px 8px 9px;box-sizing:border-box;border-radius:14px;border:1px solid #D2D9E3;background:#fff;color:var(--ink);text-decoration:none;min-width:0;box-shadow:inset 0 -4px 0 var(--c,#C9D1DE),0 3px 8px rgba(15,30,61,.1)}
+.hot:active{transform:translateY(2px)}
+.hot .ic{width:38px;height:38px;border-radius:19px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.hot .l{font-size:14px;font-weight:700;line-height:1.15;min-width:0;overflow-wrap:anywhere;hyphens:auto}
+.hplan{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.pcard{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-height:118px;padding:12px;box-sizing:border-box;border-radius:16px;color:var(--ink);text-decoration:none;min-width:0;box-shadow:0 1px 3px rgba(15,30,61,.1)}
+.pcard .pi{width:40px;height:40px;border-radius:20px;background:#fff;display:flex;align-items:center;justify-content:center;margin-bottom:4px}
+.pcard b{font-size:16px;line-height:1.15;overflow-wrap:anywhere;hyphens:auto}
+.pcard span:last-child{font-size:13px;line-height:1.3;color:var(--muted);overflow-wrap:anywhere}
+@media (prefers-reduced-motion:reduce){.hgb,.hgb .chv{transition:none}}
+@media (min-width: 600px){.hgo{grid-template-columns:repeat(4,minmax(0,1fr))}.hplan{grid-template-columns:repeat(4,minmax(0,1fr))}}
 /* "add to home screen" sheet and strip */
 .a2-bg{position:fixed;inset:0;z-index:3000;background:rgba(15,30,61,.55);display:flex;align-items:flex-end;justify-content:center}
 .a2{background:#fff;color:var(--ink);width:100%;max-width:520px;border-radius:22px 22px 0 0;padding:20px 20px calc(18px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px;max-height:92vh;overflow:auto}
@@ -202,11 +227,25 @@ nav.tabs a.on{color:#fff}nav.tabs a.on i{background:var(--orange)}
 #launch.out{opacity:0;pointer-events:none}
 @media (display-mode: standalone),(display-mode: fullscreen){#launch{display:block}}
 html.ios-app #launch{display:block}
+/* languages: the flag row on Home, and room for longer words (16 Nov 2026) */
+.flags{display:flex;gap:2px;margin:-4px 0 -4px -7px}
+.flag{width:40px;height:32px;border:0;background:none;padding:0;display:flex;align-items:center;justify-content:center;border-radius:8px}
+.flag span{display:block;width:26px;height:18px;border-radius:3px;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.35);opacity:.75;transition:opacity .15s}
+.flag svg{display:block;width:26px;height:18px}
+.flag.on span{opacity:1;box-shadow:0 0 0 2px var(--navy),0 0 0 4px var(--orange)}
+.flag:focus-visible{outline:2px solid #fff;outline-offset:1px}
+nav.tabs a .tl{max-width:100%;overflow:hidden;text-overflow:ellipsis;padding:0 1px}
+html:not([lang=en]) nav.tabs a{font-size:12.5px}
+.cpill>span:last-child{min-width:0;overflow-wrap:anywhere;hyphens:auto}
+html:not([lang=en]) .cpill>span:last-child{font-size:12px}
+html:not([lang=en]) .qbtn{font-size:14px}html:not([lang=en]) .hgb .tx b{font-size:15.5px}html:not([lang=en]) .hot .l{font-size:13px}
+html[lang|=zh] body{font-family:'Source Sans 3',system-ui,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans CJK SC','Noto Sans SC',sans-serif}
+html[lang|=zh] h1,html[lang|=zh] h2,html[lang|=zh] h3,html[lang|=zh] .disp{font-family:'Archivo','PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans CJK SC','Noto Sans SC',sans-serif}
 </style>
 </head>
 <body>
 <!-- "Suggest a place": this hidden copy lets Netlify find the form; the real one is drawn by suggest() -->
-<form name="suggest" data-netlify="true" netlify-honeypot="bot-field" hidden><input name="bot-field"><input name="place"><input name="where"><input name="good_for"><textarea name="comment"></textarea><input name="first_name"><input name="ok_to_quote"><input name="from_page"></form>
+<form name="suggest" data-netlify="true" netlify-honeypot="bot-field" hidden><input name="bot-field"><input name="type"><input name="place"><input name="where"><input name="good_for"><textarea name="comment"></textarea><input name="first_name"><input name="ok_to_quote"><input name="from_page"></form>
 <div id="launch" aria-hidden="true"><picture>
 <!-- launch-sources:start -->
 <source media="(device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" srcset="icons/splash/apple-splash-1320x2868.jpg?v=4">
@@ -327,12 +366,15 @@ addEventListener('click', e => {
   if (el.classList.contains('cpill')) return STATS.ev('Category pill', {pill: label, screen: at});
   if (el.tagName === 'BUTTON') return STATS.ev('Button', {button: label || 'icon', screen: at});
 }, true);
+/* Home "Things to do in London": 4 group buttons that open in place (agreed 17 Nov). Tube & Trains is now a quick button at the top. */
 const HOME_GROUPS = [
-  ['Eat, drink &amp; watch the sport', ['Restaurants', 'Pubs', 'Bars & Nightlife', 'Sport']],
   ['History &amp; sights', ['Landmarks', 'Museums & Galleries', 'History & Curiosities', 'Blue Plaques']],
-  ['Shops &amp; treats', ['Markets & Food Halls', 'Food Shops', 'Shopping', 'Spas & Wellness']],
-  ['Out &amp; about', ['Theatre & Shows', 'Parks & Gardens', 'Games & Activities', 'TUBE']]
+  ['Eat, drink &amp; watch the sport', ['Restaurants', 'Pubs', 'Bars & Nightlife', 'Sport']],
+  ['Out &amp; about', ['Theatre & Shows', 'Parks & Gardens', 'Games & Activities']],
+  ['Shops &amp; treats', ['Markets & Food Halls', 'Food Shops', 'Shopping', 'Spas & Wellness']]
 ];
+/* which group is open on Home (kept while you go back and forth; -1 = none) */
+let homeOpen = (() => { try { const v = sessionStorage.getItem('el_hopen'); return v == null ? -1 : +v; } catch { return -1; } })();
 const CATS = [
   {k:'Restaurants', s:'Restaurants', c:'#E86A4F', t:'#FCDCD3', g:'Eat', i:'fork'},
   {k:'Pubs', s:'Pubs', c:'#D99A1E', t:'#FDEBC2', g:'Drink', i:'pint'},
@@ -440,7 +482,7 @@ const COLL = {
 const PILLS = {}; Object.entries(COLL).forEach(([k, c]) => PILLS[k] = c.pills.map(([label, icon, bg, test, empty, show]) => ({label, icon: icon && (icon.includes('/') ? icon : D(icon)), bg, test, empty, show})));
 /* which collection a place shows under on a category page (first match wins) */
 function collOf(p, k) { return (PILLS[k] || []).find(c => c.test(p)) || null; }
-function shortLabel(l) { return {'Hotel bars':'Hotel bar','Secret bars':'Secret bar','Weekend markets':'Weekend market','Famous streets':'Famous street','Heritage shops':'Heritage shop','Big stores':'Department store','Hotel spas':'Hotel spa','Stadium tours':'Stadium tour','Beer gardens':'Beer garden','Musicals':'Musical','Plays':'Play','Escape rooms':'Escape room','Saunas':'Sauna','Food halls':'Food hall'}[l] || l; }
+function shortLabel(l) { return t({'Hotel bars':'Hotel bar','Secret bars':'Secret bar','Weekend markets':'Weekend market','Famous streets':'Famous street','Heritage shops':'Heritage shop','Big stores':'Department store','Hotel spas':'Hotel spa','Stadium tours':'Stadium tour','Beer gardens':'Beer garden','Musicals':'Musical','Plays':'Play','Escape rooms':'Escape room','Saunas':'Sauna','Food halls':'Food hall'}[l] || l); }
 
 /* ---------- storage (wrapped: some browsers block it) ---------- */
 const store = {
@@ -450,6 +492,37 @@ const store = {
 let saved = new Set(store.get('el_saved', []));
 let visited = new Set(store.get('el_visited', []));
 const persist = () => { store.set('el_saved', [...saved]); store.set('el_visited', [...visited]); };
+
+/* ---------- languages (stage 1: the app's own words; place descriptions stay in English for now) ----------
+   t(english) gives those words in the chosen language (from lang/xx.json, keyed by the exact English),
+   or the English itself if there's no translation. Placeholders: t('{n} places', {n: 12}).
+   The choice is kept on the phone (el_lang). The first time, the phone's own language is used if we have it. */
+const LANGS = [['en', 'English'], ['es', 'Español'], ['fr', 'Français'], ['de', 'Deutsch'], ['it', 'Italiano'], ['zh', '中文']];
+let LANG = store.get('el_lang', null), TR = {}, langReq = 0;
+if (!LANGS.some(l => l[0] === LANG)) { const n = String(navigator.language || 'en').slice(0, 2).toLowerCase(); LANG = LANGS.some(l => l[0] === n) ? n : 'en'; }
+function t(s, v) { let r = (TR && TR[s]) || s; if (v && typeof v === 'object') r = String(r).replace(/\{(\w+)\}/g, (m, k) => k in v ? v[k] : m); return r; }
+const LOCALE = () => ({en: 'en-GB', zh: 'zh-CN'})[LANG] || LANG;
+/* load a language's words (English needs none). If the file can't be loaded, the app quietly stays in English. */
+async function loadLang(l) {
+  const my = ++langReq; let tr = {};
+  if (l !== 'en') { try { tr = await fetch('lang/' + l + '.json').then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }); } catch (e) { tr = null; } }
+  if (my !== langReq) return;
+  TR = tr || {};
+  document.documentElement.lang = tr ? (l === 'zh' ? 'zh-Hans' : l) : 'en';
+}
+async function setLang(l) { if (!LANGS.some(x => x[0] === l)) return; LANG = l; store.set('el_lang', l); STATS.ev('Language', {lang: l}); await loadLang(l); route(); }
+/* the six flags on Home, drawn here (emoji flags don't show on Windows) */
+const FLAG = {
+  en: '<rect width="30" height="20" fill="#012169"/><path d="M0 0l30 20M30 0L0 20" stroke="#fff" stroke-width="4"/><path d="M0 0l30 20M30 0L0 20" stroke="#C8102E" stroke-width="1.6"/><path d="M15 0v20M0 10h30" stroke="#fff" stroke-width="6.5"/><path d="M15 0v20M0 10h30" stroke="#C8102E" stroke-width="3.8"/>',
+  es: '<rect width="30" height="20" fill="#AA151B"/><rect y="5" width="30" height="10" fill="#F1BF00"/>',
+  fr: '<rect width="30" height="20" fill="#fff"/><rect width="10" height="20" fill="#002654"/><rect x="20" width="10" height="20" fill="#CE1126"/>',
+  de: '<rect width="30" height="20" fill="#FFCE00"/><rect width="30" height="13.34" fill="#DD0000"/><rect width="30" height="6.67" fill="#000"/>',
+  it: '<rect width="30" height="20" fill="#fff"/><rect width="10" height="20" fill="#009246"/><rect x="20" width="10" height="20" fill="#CE2B37"/>',
+  zh: '<rect width="30" height="20" fill="#EE1C25"/>' + [[5, 5, 3], [10, 2, 1], [12, 4, 1], [12, 7, 1], [10, 9, 1]].map(([x, y, r]) => `<polygon fill="#FFDE00" points="${Array.from({length: 10}, (_, i) => { const a = Math.PI * i / 5 - Math.PI / 2, d = i % 2 ? r * .382 : r; return (x + d * Math.cos(a)).toFixed(2) + ',' + (y + d * Math.sin(a)).toFixed(2); }).join(' ')}"/>`).join('')
+};
+function flagRow() {
+  return `<div class="flags" role="group" aria-label="${esc(t('Language'))}">${LANGS.map(([l, n]) => `<button class="flag${l === LANG ? ' on' : ''}" data-lang="${l}" lang="${l === 'zh' ? 'zh-Hans' : l}" aria-label="${n}" aria-pressed="${l === LANG}" title="${n}"><span><svg viewBox="0 0 30 20" width="26" height="18" preserveAspectRatio="none" aria-hidden="true">${FLAG[l]}</svg></span></button>`).join('')}</div>`;
+}
 
 /* ---------- "add to home screen" help ----------
    Until the app is in the App Store / Play Store, people open it from a QR code in the browser.
@@ -472,21 +545,21 @@ const A2 = (() => {
   };
 })();
 function a2Steps() {
-  const st = (n, t) => `<li><span class="n">${n}</span><span>${t}</span></li>`;
-  if (A2.inApp) return `<ol>${st(1, A2.ios ? 'Tap <b>⋯</b> or the compass button, then <b>Open in Safari</b>' : 'Tap <span class="k">⋮</span> at the top right, then <b>Open in Chrome</b> (or <b>Open in browser</b>)')}${st(2, 'Come back to this screen there and follow the steps')}</ol>`;
-  if (A2.ios) return `<ol>${st(1, `Tap the Share button ${svg('share', 22, '#2E6FD8', 2)}. In Safari it’s at the bottom of the screen. If you can’t see it, tap <b>⋯</b> first`)}${st(2, `Scroll down and tap <b>Add to Home Screen</b>`)}${st(3, 'Tap <b>Add</b> at the top right')}</ol>`;
-  return `<ol>${st(1, 'Tap the menu <span class="k">⋮</span> at the top right')}${st(2, 'Tap <b>Add to Home screen</b> or <b>Install app</b>')}${st(3, 'Tap <b>Install</b> or <b>Add</b>')}</ol>`;
+  const st = (n, x) => `<li><span class="n">${n}</span><span>${x}</span></li>`;
+  if (A2.inApp) return `<ol>${st(1, A2.ios ? t('Tap <b>⋯</b> or the compass button, then <b>Open in Safari</b>') : t('Tap <span class="k">⋮</span> at the top right, then <b>Open in Chrome</b> (or <b>Open in browser</b>)'))}${st(2, t('Come back to this screen there and follow the steps'))}</ol>`;
+  if (A2.ios) return `<ol>${st(1, t('Tap the Share button {icon}. In Safari it’s at the bottom of the screen. If you can’t see it, tap <b>⋯</b> first', {icon: svg('share', 22, '#2E6FD8', 2)}))}${st(2, t('Scroll down and tap <b>Add to Home Screen</b>'))}${st(3, t('Tap <b>Add</b> at the top right'))}</ol>`;
+  return `<ol>${st(1, t('Tap the menu <span class="k">⋮</span> at the top right'))}${st(2, t('Tap <b>Add to Home screen</b> or <b>Install app</b>'))}${st(3, t('Tap <b>Install</b> or <b>Add</b>'))}</ol>`;
 }
 function a2Sheet() {
   if (document.querySelector('.a2-bg')) return;
   STATS.ev && STATS.ev('Add to home screen help');
   const bg = document.createElement('div'); bg.className = 'a2-bg';
   bg.innerHTML = `<div class="a2" role="dialog" aria-modal="true" aria-labelledby="a2t">
-    <div class="row" style="gap:12px"><img src="icons/icon-192.png?v=4" alt="" style="width:52px;height:52px;border-radius:12px;flex-shrink:0"><h2 id="a2t" class="disp">Keep Explore London on your phone</h2></div>
-    <p>It isn’t in the ${A2.ios ? 'App Store' : 'Play Store'} yet, so add it to your home screen. It then opens like any other app, so you can find it again. It’s free, and you can delete it any time.</p>
-    ${A2.has() ? `<button class="bigbtn orange" id="a2go">${svg('plus', 20, '#0F1E3D', 2.4)} Add to home screen</button>` : a2Steps()}
-    ${A2.ios && !A2.inApp ? '<p style="font-size:13.5px">Do it now, before you save any places: places saved here in the browser don’t carry over to the home screen app.</p>' : ''}
-    <button class="ghost" id="a2x">${A2.has() ? 'Not now' : 'Got it'}</button></div>`;
+    <div class="row" style="gap:12px"><img src="icons/icon-192.png?v=4" alt="" style="width:52px;height:52px;border-radius:12px;flex-shrink:0"><h2 id="a2t" class="disp">${t('Keep Explore London on your phone')}</h2></div>
+    <p>${t('It isn’t in the {store} yet, so add it to your home screen. It then opens like any other app, so you can find it again. It’s free, and you can delete it any time.', {store: A2.ios ? 'App Store' : 'Play Store'})}</p>
+    ${A2.has() ? `<button class="bigbtn orange" id="a2go">${svg('plus', 20, '#0F1E3D', 2.4)} ${t('Add to home screen')}</button>` : a2Steps()}
+    ${A2.ios && !A2.inApp ? `<p style="font-size:13.5px">${t('Do it now, before you save any places: places saved here in the browser don’t carry over to the home screen app.')}</p>` : ''}
+    <button class="ghost" id="a2x">${A2.has() ? t('Not now') : t('Got it')}</button></div>`;
   document.body.appendChild(bg);
   const close = () => bg.remove();
   bg.onclick = e => { if (e.target === bg) close(); };
@@ -496,7 +569,7 @@ function a2Sheet() {
 }
 function a2Strip() {
   if (!A2.want() || store.get('el_a2_off', 0)) return '';
-  return `<div class="a2-strip" style="display:flex;align-items:center;gap:10px;background:var(--navy);color:#fff;border-radius:14px;padding:4px 4px 4px 12px">${svg('share', 18, '#F28C38', 2.2)}<button id="a2open" style="flex:1;background:none;border:0;color:#fff;text-align:left;font:inherit;font-size:14.5px;line-height:1.25;padding:6px 0;cursor:pointer"><b>Keep this app:</b> add it to your home screen</button><button id="a2off" aria-label="Hide this" style="flex-shrink:0;width:36px;height:36px;border:0;background:none;color:#C9D3E6;font-size:22px;line-height:1;cursor:pointer">×</button></div>`;
+  return `<div class="a2-strip" style="display:flex;align-items:center;gap:10px;background:var(--navy);color:#fff;border-radius:14px;padding:4px 4px 4px 12px">${svg('share', 18, '#F28C38', 2.2)}<button id="a2open" style="flex:1;background:none;border:0;color:#fff;text-align:left;font:inherit;font-size:14.5px;line-height:1.25;padding:6px 0;cursor:pointer">${t('<b>Keep this app:</b> add it to your home screen')}</button><button id="a2off" aria-label="${esc(t('Hide this'))}" style="flex-shrink:0;width:36px;height:36px;border:0;background:none;color:#C9D3E6;font-size:22px;line-height:1;cursor:pointer">×</button></div>`;
 }
 function a2Wire() {
   const o = document.getElementById('a2open'), x = document.getElementById('a2off');
@@ -514,7 +587,8 @@ const mins = m => Math.max(1, Math.round(m / CONFIG.walkSpeed));
 /* where the person is staying (hotel, Airbnb or home), set on the "Where are you staying?" screen. Used when the phone's location isn't on. */
 let STAY = store.get('el_stay', null), FROM = null;
 const here = () => FROM || (meReal ? me : STAY ? [STAY.lat, STAY.lng, STAY.label] : (me || CONFIG.demoStart));
-function walkTime(p) { if (p.lat == null) return ''; const m = mins(dist(here()[0], here()[1], p.lat, p.lng)); return m > 60 ? `${Math.round(m/6)/10} hr walk` : `${m} min walk`; }
+/* short = without the word "walk" (for lists) */
+function walkTime(p, short) { if (p.lat == null) return ''; const m = mins(dist(here()[0], here()[1], p.lat, p.lng)); return m > 60 ? t(short ? '{n} hr' : '{n} hr walk', {n: Math.round(m/6)/10}) : t(short ? '{n} min' : '{n} min walk', {n: m}); }
 
 async function load() {
   const [a, b] = await Promise.all([fetch('places.json').then(r => r.json()), fetch('walks.json').then(r => r.json())]);
@@ -597,7 +671,7 @@ function searchPlaces(raw, limit = 40) {
   const tokSet = new Set(m.toks), feats = [];
   const wide = new Set(m.toks.flatMap(t => (ALT[t] || [t]).map(x => stem(sNorm(x)))));
   Object.values(PILLS).flat().forEach(pl => { const lt = phraseFix(sNorm(pl.label)).split(' ').filter(w => w && !STOP.has(w)).map(stem); if (lt.length && lt.every(t => tokSet.has(t)) && !feats.some(f => f.label === pl.label)) feats.push(pl); });
-  const badgeFor = p => { for (const f of feats) { try { if (f.test(p)) return shortLabel(f.label); } catch {} } const c = (p.cuisine || '').split(',').concat(p.tags || []).map(x => x.trim()).filter(Boolean).find(c => { const ct = sNorm(c).split(' ').filter(w => !STOP.has(w)).map(stem); return ct.length && ct.some(t => wide.has(t)); }); return c ? c.replace(/^Rooftops$/, 'Rooftop').replace(/^Never knew$/, 'Curious London') : ''; };
+  const badgeFor = p => { for (const f of feats) { try { if (f.test(p)) return shortLabel(f.label); } catch {} } const c = (p.cuisine || '').split(',').concat(p.tags || []).map(x => x.trim()).filter(Boolean).find(c => { const ct = sNorm(c).split(' ').filter(w => !STOP.has(w)).map(stem); return ct.length && ct.some(t => wide.has(t)); }); return c ? t(c.replace(/^Rooftops$/, 'Rooftop').replace(/^Never knew$/, 'Curious London')) : ''; };
   /* places that are what was asked for (a butcher for "butcher") come before names that merely contain the word (the Pig and Butcher pub) */
   const bOf = new Map(list.map(([p]) => [p, badgeFor(p) ? 1 : 0]));
   list.sort((a, b) => b[1].got - a[1].got || bOf.get(b[0]) - bOf.get(a[0]) || b[1].sc - a[1].sc || near(a[0]) - near(b[0]));
@@ -650,25 +724,25 @@ function thumb(p, size = 52, cat) {
   if (typeof catTile === 'function') return catTile(p, cat, size);
   if ((cat === 'Blue Plaques') || (!cat && p.cats[0] === 'Blue Plaques')) return `<span class="thumb plaque" style="width:${size}px;height:${size}px"></span>`;
   const c = CAT[cat] || CAT[p.cats[0]] || CATS[0];
-  const free = p.tags.includes('Free to visit') ? '<span class="free">FREE</span>' : '';
+  const free = p.tags.includes('Free to visit') ? `<span class="free">${t('FREE')}</span>` : '';
   return `<span class="thumb" style="width:${size}px;height:${size}px;background:${c.t}">${catIcon(c.k, Math.round(size*.55))}${free}</span>`;
 }
 function meta(p) {
   const c = CAT[p.cats[0]] || CATS[0];
-  const bits = [p.price ? PRICE[p.price] : '', p.cuisine ? p.cuisine.split(',')[0] : (p.tags.find(t => !/free|must|top 10|rainy|blue plaque/i.test(t)) || c.s), (p.area || '').replace(/ & .*/, '')].filter(Boolean);
-  const w = walkTime(p); if (w) bits.push(w.replace(' walk', ''));
+  const bits = [p.price ? PRICE[p.price] : '', t(p.cuisine ? p.cuisine.split(',')[0].trim() : (p.tags.find(x => !/free|must|top 10|rainy|blue plaque/i.test(x)) || c.s)), (p.area || '').replace(/ & .*/, '')].filter(Boolean);
+  const w = walkTime(p, true); if (w) bits.push(w);
   return bits.filter(Boolean).join(' · ');
 }
 function row(p, cat, badge) {
-  const m = badge ? [p.area.replace(/ & .*/, ''), walkTime(p).replace(' walk', '')].filter(Boolean).join(' · ') : meta(p);
+  const m = badge ? [p.area.replace(/ & .*/, ''), walkTime(p, true)].filter(Boolean).join(' · ') : meta(p);
   return `<a class="row-card" href="#/place/${p.id}">${thumb(p, 52, cat)}<span class="rc-t"><span class="rc-n">${esc(p.name)}</span><span class="rc-m">${badge ? `<span class="hit">${esc(badge)}</span> · ` : ''}${esc(m)}</span><span class="rc-l">${esc(p.line)}</span></span></a>`;
 }
 function tabs(on) {
-  const t = [['Explore','#/','home2'],['Map','#/map','pin'],['Walks','#/walks','walk'],['My List','#/list','heart'],['Transfers','#/transfers','cab']];
-  return `<nav class="tabs" aria-label="Main">${t.map(([l, h, ic]) => `<a href="${h}" class="${l === on ? 'on' : ''}" ${l === on ? 'aria-current="page"' : ''}>${svg(ic, 26, 'currentColor', 2)}${l}<i></i></a>`).join('')}</nav>`;
+  const tb = [['Explore','#/','home2'],['Map','#/map','pin'],['Walks','#/walks','walk'],['My List','#/list','heart'],['Transfers','#/transfers','cab']];
+  return `<nav class="tabs" aria-label="${esc(t('Main'))}">${tb.map(([l, h, ic]) => `<a href="${h}" class="${l === on ? 'on' : ''}" ${l === on ? 'aria-current="page"' : ''}>${svg(ic, 26, 'currentColor', 2)}<span class="tl">${esc(t(l))}</span><i></i></a>`).join('')}</nav>`;
 }
-function toast(msg) { const d = document.createElement('div'); d.className = 'toast'; d.textContent = msg; document.body.appendChild(d); setTimeout(() => d.remove(), 2600); }
-function backBtn(h = 'javascript:history.back()') { return `<a class="iconbtn" href="${h}" aria-label="Back">${svg('back', 20)}</a>`; }
+function toast(msg) { const d = document.createElement('div'); d.className = 'toast'; d.textContent = t(msg); document.body.appendChild(d); setTimeout(() => d.remove(), 2600); }
+function backBtn(h = 'javascript:history.back()') { return `<a class="iconbtn" href="${h}" aria-label="${esc(t('Back'))}">${svg('back', 20)}</a>`; }
 const app = document.getElementById('app');
 /* ---------- base map: our own All Black Taxis map (the same map tiles and style as the Taxi Knowledge app), drawn by MapLibre ----------
    Map tiles: map-tiles-v3 on Cloudflare (maptiles.allblacktaxi.co.uk). The style, labels and map symbols are hosted on this site.
@@ -804,7 +878,7 @@ function pinIcon(p, big, sel) {
   const w = sel ? 40 : big ? 36 : 30, h = Math.round(w * 32 / 24);
   const pic = sel && k === 'Restaurants' ? pinPic(p) : null;
   const inner = pic ? '' : a.art;
-  return `<div class="${sel ? 'pinsel' : ''}"><div class="tpin" style="width:${w}px;height:${h}px"><svg viewBox="0 0 24 32" width="${w}" height="${h}"><path d="${PIN_SHAPE}" fill="${a.fill}" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/>${inner}</svg>${pic ? `<img class="wpic" src="${pic}" alt="" style="width:${w * .58}px;height:${w * .58}px;left:${w * .21}px;top:${w * .2}px">` : ''}${p.story ? `<span class="cabb" title="Cabbie's Story">${svg('cab', 10, '#0F1E3D', 2.4)}</span>` : ''}</div></div>`;
+  return `<div class="${sel ? 'pinsel' : ''}"><div class="tpin" style="width:${w}px;height:${h}px"><svg viewBox="0 0 24 32" width="${w}" height="${h}"><path d="${PIN_SHAPE}" fill="${a.fill}" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/>${inner}</svg>${pic ? `<img class="wpic" src="${pic}" alt="" style="width:${w * .58}px;height:${w * .58}px;left:${w * .21}px;top:${w * .2}px">` : ''}${p.story ? `<span class="cabb" title="${esc(t('The Cabbie’s Story'))}">${svg('cab', 10, '#0F1E3D', 2.4)}</span>` : ''}</div></div>`;
 }
 /* ---------- map pins as pictures: each category's pin is drawn once (with and without the Cabbie's Story badge), then MapLibre places them ---------- */
 const PIN_W = 30, PIN_H = 40, PIN_PAD = 6, PIN_IMG = {};
@@ -925,7 +999,7 @@ function makeMap(id, view, layers) {
   });
 }
 
-function setTitle(t) { document.title = t ? `${t} · Explore London` : 'Explore London – a cabbie\'s guide'; }
+function setTitle(x) { document.title = x ? `${x} · Explore London` : t('Explore London – a cabbie’s guide'); }
 
 /* ---------- screens ---------- */
 function welcome() {
@@ -934,16 +1008,16 @@ function welcome() {
     <div class="wel-top">
       <img class="wel-badge" src="img/welcome/abt-badge.png" alt="All Black Taxis">
       <h1>EXPLORE LONDON</h1>
-      <p>YOUR GUIDE TO LONDON ALL IN ONE APP</p>
+      <p>${t('YOUR GUIDE TO LONDON ALL IN ONE APP')}</p>
     </div>
-    <img class="wel-sky" src="img/welcome/skyline.webp" alt="The London skyline over the Thames and Tower Bridge">
+    <img class="wel-sky" src="img/welcome/skyline.webp" alt="${esc(t('The London skyline over the Thames and Tower Bridge'))}">
     <div class="wel-band">
-      <img class="wel-cab" src="img/welcome/cab.webp" alt="Cartoon of a London cabbie driving a black cab">
-      <h2>Hop in. We know the way.</h2>
-      <p>Every London cabbie has passed the Knowledge. These are the places we’d take you.</p>
+      <img class="wel-cab" src="img/welcome/cab.webp" alt="${esc(t('Cartoon of a London cabbie driving a black cab'))}">
+      <h2>${t('Hop in. We know the way.')}</h2>
+      <p>${t('Every London cabbie has passed the Knowledge. These are the places we’d take you.')}</p>
       <div style="flex:1"></div>
-      <a class="wel-go" href="#/" onclick="store.set('el_seen',1);if(location.hash==='#/'){event.preventDefault();route()}">Start exploring</a>
-      <span class="wel-free">Free · No sign-up needed</span>
+      <a class="wel-go" href="#/" onclick="store.set('el_seen',1);if(location.hash==='#/'){event.preventDefault();route()}">${t('Start exploring')}</a>
+      <span class="wel-free">${t('Free · No sign-up needed')}</span>
     </div></div>`;
 }
 
@@ -1320,8 +1394,8 @@ const ON_THIS_DAY_PLACE = {'1-4':349, '1-5':348, '1-8':449, '1-9':353, '1-10':77
 let PLANS = null;
 async function loadPlans() { if (!PLANS) { try { PLANS = await fetch('plans.json').then(r => r.json()); } catch { PLANS = []; } } return PLANS; }
 async function plansScreen() {
-  setTitle('Free day plans'); await loadPlans();
-  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px">I’ve got a free day</h1><span style="font-size:14px;color:#C9D3E6">Day plans from the cabbies, hour by hour</span></div></div></div>
+  setTitle(t('Free day plans')); await loadPlans();
+  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px">${t('I’ve got a free day')}</h1><span style="font-size:14px;color:#C9D3E6">${t('Day plans from the cabbies, hour by hour')}</span></div></div></div>
     <div class="content">${PLANS.map(pl => `<a class="row-card" href="#/plan/${pl.n}"><span class="thumb" style="background:#FFF4E8;overflow:hidden"><img src="img/cab-small.webp" alt="" style="width:46px;height:auto;display:block"></span><span class="rc-t"><span class="rc-n">${esc(pl.title)}</span><span class="rc-m">${esc(pl.meta)}</span><span class="rc-l">${esc(pl.sub)}</span></span></a>`).join('')}</div>${tabs('Explore')}`;
 }
 async function planScreen(n) {
@@ -1330,12 +1404,12 @@ async function planScreen(n) {
   const chip = id => { const q = byId[id]; return q ? `<a href="#/place/${q.id}" style="display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #E1E6EE;border-radius:10px;padding:3px 8px 3px 3px;text-decoration:none;color:var(--ink);font-size:13px;font-weight:600">${catTile(q, q.cats[0], 24).replace('class="thumb', 'class="thumb sm')}${esc(q.name)}</a>` : ''; };
   app.innerHTML = `<div class="top"><div class="row">${backBtn('#/plans')}<div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:21px;line-height:1.15">${esc(pl.title)}</h1><span style="font-size:14px;color:#C9D3E6">${esc(pl.sub)}</span></div></div></div>
     <div class="content">
-      ${pl.quote ? `<div class="story" style="flex-direction:row;gap:10px;align-items:flex-start"><img src="img/cab-small.webp" alt="" style="width:56px;height:auto;flex-shrink:0;align-self:center"><span style="display:flex;flex-direction:column;gap:3px"><b class="k">A cabbie’s tip</b><span style="font-size:14.5px;line-height:1.4">“${esc(pl.quote)}”</span></span></div>` : ''}
+      ${pl.quote ? `<div class="story" style="flex-direction:row;gap:10px;align-items:flex-start"><img src="img/cab-small.webp" alt="" style="width:56px;height:auto;flex-shrink:0;align-self:center"><span style="display:flex;flex-direction:column;gap:3px"><b class="k">${t('A cabbie’s tip')}</b><span style="font-size:14.5px;line-height:1.4">“${esc(pl.quote)}”</span></span></div>` : ''}
       <div class="row" style="gap:8px;flex-wrap:wrap"><span class="tag" style="background:#E6DBF4">${esc(pl.meta)}</span></div>
-      <a class="ghost" href="#/walk/plan-${pl.n}">${svg('walk', 18)} See the route on a map</a>
+      <a class="ghost" href="#/walk/plan-${pl.n}">${svg('walk', 18)} ${t('See the route on a map')}</a>
       ${pl.stops.map(st => `<div style="display:flex;gap:10px;background:#fff;border-radius:14px;padding:10px 12px;box-shadow:0 1px 2px rgba(15,30,61,.08)"><span style="flex-shrink:0;min-width:52px;font-weight:800;font-size:13.5px;color:${st.meal ? '#A8551A' : 'var(--navy)'}">${esc(st.t)}</span><span style="display:flex;flex-direction:column;gap:5px;min-width:0"><b style="font-size:15px">${esc(st.h || st.t)}</b>${st.n ? `<span style="font-size:14px;line-height:1.4">${esc(st.n)}</span>` : ''}${(st.ids || []).length ? `<span style="display:flex;flex-wrap:wrap;gap:5px">${st.ids.map(chip).join('')}</span>` : ''}</span></div>`).join('')}
       ${(pl.foot || []).map(f => `<p class="note" style="margin:0">${esc(f)}</p>`).join('')}
-      <p class="note" style="margin:0">Opening days and times change, so check anything ticketed or seasonal before you go.</p>
+      <p class="note" style="margin:0">${t('Opening days and times change, so check anything ticketed or seasonal before you go.')}</p>
     </div>${tabs('Explore')}`;
 }
 
@@ -1343,28 +1417,28 @@ async function planScreen(n) {
 let TRIPS = null;
 async function loadTrips() { if (!TRIPS) { try { TRIPS = await fetch('trips.json').then(r => r.json()); } catch { TRIPS = []; } } return TRIPS; }
 async function dayTrips() {
-  setTitle('Day trips');
+  setTitle(t('Day trips'));
   await loadTrips();
-  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px">Day trips</h1><span style="font-size:14px;color:#C9D3E6">Beyond London, by train or by black cab</span></div></div></div>
-    <div class="content">${TRIPS.map(t => `<a class="row-card" href="#/trip/${t.id}"><span class="thumb" style="background:${t.color}">${svg('train', 24, '#F5D9A8')}</span><span class="rc-t"><span class="rc-n">${esc(t.title)}</span><span class="rc-m">${esc(t.sub)}</span><span class="rc-l">${esc(t.train.split('.')[0])}</span></span></a>`).join('')}
-      <a class="bigbtn orange" href="#/transfers">${svg('cab', 20, '#0F1E3D', 2.2)} Book a day trip by black cab</a></div>${tabs('Explore')}`;
+  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px">${t('Day trips')}</h1><span style="font-size:14px;color:#C9D3E6">${t('Beyond London, by train or by black cab')}</span></div></div></div>
+    <div class="content">${TRIPS.map(tp => `<a class="row-card" href="#/trip/${tp.id}"><span class="thumb" style="background:${tp.color}">${svg('train', 24, '#F5D9A8')}</span><span class="rc-t"><span class="rc-n">${esc(tp.title)}</span><span class="rc-m">${esc(tp.sub)}</span><span class="rc-l">${esc(tp.train.split('.')[0])}</span></span></a>`).join('')}
+      <a class="bigbtn orange" href="#/transfers">${svg('cab', 20, '#0F1E3D', 2.2)} ${t('Book a day trip by black cab')}</a></div>${tabs('Explore')}`;
 }
 async function tripScreen(id) {
-  await loadTrips(); const t = TRIPS.find(x => x.id === id); if (!t) return dayTrips();
-  setTitle(t.title);
-  app.innerHTML = `<div class="top" style="background:${t.color}"><div class="row">${backBtn('#/daytrips')}<div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:24px">${esc(t.title)}</h1><span style="font-size:14px;color:#E6E9F0">${esc(t.sub)}</span></div></div></div>
+  await loadTrips(); const tp = TRIPS.find(x => x.id === id); if (!tp) return dayTrips();
+  setTitle(tp.title);
+  app.innerHTML = `<div class="top" style="background:${tp.color}"><div class="row">${backBtn('#/daytrips')}<div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:24px">${esc(tp.title)}</h1><span style="font-size:14px;color:#E6E9F0">${esc(tp.sub)}</span></div></div></div>
     <div class="content">
-      <p style="margin:0;font-size:15.5px;line-height:1.5">${esc(t.intro)}</p>
+      <p style="margin:0;font-size:15.5px;line-height:1.5">${esc(tp.intro)}</p>
       <div style="background:#fff;border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 1px 3px rgba(15,30,61,.08)">
-        <h2 style="margin:0;font-size:17px;font-weight:800">Getting there</h2>
-        <div style="display:flex;gap:10px;font-size:14.5px;line-height:1.4">${svg('train', 20, '#0F1E3D', 1.9)}<span><b>By train · </b>${esc(t.train)}</span></div>
-        <div style="display:flex;gap:10px;font-size:14.5px;line-height:1.4">${svg('cab', 20, '#A8551A', 1.9)}<span><b>By black cab · </b>${esc(t.cab)}</span></div>
-        <a class="bigbtn orange" href="#/transfers/trip-${t.id}">${svg('cab', 20, '#0F1E3D', 2.2)} Book a cab for this trip</a>
+        <h2 style="margin:0;font-size:17px;font-weight:800">${t('Getting there')}</h2>
+        <div style="display:flex;gap:10px;font-size:14.5px;line-height:1.4">${svg('train', 20, '#0F1E3D', 1.9)}<span><b>${t('By train')} · </b>${esc(tp.train)}</span></div>
+        <div style="display:flex;gap:10px;font-size:14.5px;line-height:1.4">${svg('cab', 20, '#A8551A', 1.9)}<span><b>${t('By black cab')} · </b>${esc(tp.cab)}</span></div>
+        <a class="bigbtn orange" href="#/transfers/trip-${tp.id}">${svg('cab', 20, '#0F1E3D', 2.2)} ${t('Book a cab for this trip')}</a>
       </div>
-      <div class="sec"><h2>The walk</h2><a href="#/walk/trip-${t.id}">See it on a map</a></div>
-      ${t.stops.map((s, i) => `<div class="stop"><span class="num" style="flex-shrink:0">${i + 1}</span><span style="display:flex;flex-direction:column;gap:2px"><b class="disp" style="font-size:15px">${esc(s.name)}</b><span style="font-size:14px;line-height:1.4">${esc(s.note)}</span></span></div>`).join('')}
-      ${[['pubs', 'Pubs'], ['eat', 'Eat'], ['river', 'On the river'], ['more', 'More to do']].filter(([k]) => t[k] && t[k].length).map(([k, h]) => `<div class="story" style="gap:10px"><b class="k">${h}</b>${t[k].map(x => `<span style="display:flex;flex-direction:column;gap:1px"><a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(x.name + ' ' + (t.mapsArea || t.title))}" style="font-weight:700;font-size:14.5px;color:inherit;text-decoration:underline;text-decoration-color:rgba(168,85,26,.45);text-underline-offset:2px">${esc(x.name)}</a>${x.where ? `<span style="font-size:12.5px;color:#7A6A5A">${esc(x.where)}</span>` : ''}<span style="font-size:14px;line-height:1.4">${esc(x.note)}</span></span>`).join('')}</div>`).join('')}
-      <div class="story" style="gap:6px"><b class="k">Cabbie's tips</b>${t.tips.map(x => `<span style="font-size:14px;line-height:1.4">· ${esc(x)}</span>`).join('')}</div>
+      <div class="sec"><h2>${t('The walk')}</h2><a href="#/walk/trip-${tp.id}">${t('See it on a map')}</a></div>
+      ${tp.stops.map((s, i) => `<div class="stop"><span class="num" style="flex-shrink:0">${i + 1}</span><span style="display:flex;flex-direction:column;gap:2px"><b class="disp" style="font-size:15px">${esc(s.name)}</b><span style="font-size:14px;line-height:1.4">${esc(s.note)}</span></span></div>`).join('')}
+      ${[['pubs', 'Pubs'], ['eat', 'Eat'], ['river', 'On the river'], ['more', 'More to do']].filter(([k]) => tp[k] && tp[k].length).map(([k, h]) => `<div class="story" style="gap:10px"><b class="k">${t(h)}</b>${tp[k].map(x => `<span style="display:flex;flex-direction:column;gap:1px"><a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(x.name + ' ' + (tp.mapsArea || tp.title))}" style="font-weight:700;font-size:14.5px;color:inherit;text-decoration:underline;text-decoration-color:rgba(168,85,26,.45);text-underline-offset:2px">${esc(x.name)}</a>${x.where ? `<span style="font-size:12.5px;color:#7A6A5A">${esc(x.where)}</span>` : ''}<span style="font-size:14px;line-height:1.4">${esc(x.note)}</span></span>`).join('')}</div>`).join('')}
+      <div class="story" style="gap:6px"><b class="k">${t('Cabbie’s tips')}</b>${tp.tips.map(x => `<span style="font-size:14px;line-height:1.4">· ${esc(x)}</span>`).join('')}</div>
     </div>${tabs('Explore')}`;
 }
 
@@ -1375,33 +1449,33 @@ const STAY_GROUPS = {
 };
 const nearStay = (k, n = 5, max = 2500) => STAY ? P.filter(p => p.lat != null && p.cats.includes(k) && !p.cats.includes('Blue Plaques')).map(p => [p, dist(STAY.lat, STAY.lng, p.lat, p.lng)]).filter(x => x[1] <= max).sort((a, b) => a[1] - b[1]).slice(0, n) : [];
 function stayCard() {
-  if (!STAY) return `<a href="#/stay" style="display:flex;align-items:center;gap:12px;background:#fff;border-radius:14px;padding:9px 12px;text-decoration:none;color:var(--ink);box-shadow:0 1px 3px rgba(15,30,61,.1);border-left:5px solid var(--orange)">${svg('home2', 22, '#0F1E3D', 1.9)}<span style="flex:1;font-size:15px;line-height:1.2"><b>Where are you staying?</b> <span style="color:var(--muted);font-size:13.5px">See what’s near you</span></span>${svg('chev', 16)}</a>`;
+  if (!STAY) return `<a href="#/stay" style="display:flex;align-items:center;gap:12px;background:#fff;border-radius:14px;padding:9px 12px;text-decoration:none;color:var(--ink);box-shadow:0 1px 3px rgba(15,30,61,.1);border-left:5px solid var(--orange)">${svg('home2', 22, '#0F1E3D', 1.9)}<span style="flex:1;font-size:15px;line-height:1.2"><b>${t('Where are you staying?')}</b> <span style="color:var(--muted);font-size:13.5px">${t('See what’s near you')}</span></span>${svg('chev', 16)}</a>`;
   const picks = STAY_GROUPS[STAY.who || 'visit'].map(([k, l]) => { const x = nearStay(k, 1)[0]; return x && [x[0], l, x[1]]; }).filter(Boolean);
-  return `<div style="display:flex;flex-direction:column;gap:8px"><div class="sec"><h2>Near ${esc(STAY.label)}</h2><a href="#/nearstay">See all</a></div>
-    <div class="hscroll">${picks.map(([p, l, d]) => `<a class="ncard" href="#/place/${p.id}">${thumb(p, 56)}<span style="font-size:12px;font-weight:700;color:#A8551A;text-transform:uppercase;letter-spacing:.4px">${esc(l)}</span><b>${esc(p.name)}</b><span>${mins(d)} min walk</span></a>`).join('') || '<span class="note">Nothing in the app close by yet.</span>'}<a class="ncard more" href="#/stay"><b>Change</b>${svg('home2', 22, '#fff')}</a></div></div>`;
+  return `<div style="display:flex;flex-direction:column;gap:8px"><div class="sec"><h2>${esc(t('Near {place}', {place: t(STAY.label)}))}</h2><a href="#/nearstay">${t('See all')}</a></div>
+    <div class="hscroll">${picks.map(([p, l, d]) => `<a class="ncard" href="#/place/${p.id}">${thumb(p, 56)}<span style="font-size:12px;font-weight:700;color:#A8551A;text-transform:uppercase;letter-spacing:.4px">${esc(t(l))}</span><b>${esc(p.name)}</b><span>${t('{n} min walk', {n: mins(d)})}</span></a>`).join('') || `<span class="note">${t('Nothing in the app close by yet.')}</span>`}<a class="ncard more" href="#/stay"><b>${t('Change')}</b>${svg('home2', 22, '#fff')}</a></div></div>`;
 }
 function stayScreen() {
-  setTitle('Where are you staying?');
+  setTitle(t('Where are you staying?'));
   let who = (STAY && STAY.who) || 'visit';
   const AREAS = Object.entries(P.reduce((m, p) => { if (p.lat != null && p.area && !/London|Beyond/.test(p.area)) (m[p.area] = m[p.area] || []).push(p); return m; }, {})).filter(([, ps]) => ps.length >= 5).map(([a, ps]) => [a, ps.reduce((s, p) => s + p.lat, 0) / ps.length, ps.reduce((s, p) => s + p.lng, 0) / ps.length]).sort((a, b) => a[0].localeCompare(b[0]));
-  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px">Where are you staying?</h1><span style="font-size:14px;color:#C9D3E6">We’ll show what’s close by</span></div></div></div>
+  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px">${t('Where are you staying?')}</h1><span style="font-size:14px;color:#C9D3E6">${t('We’ll show what’s close by')}</span></div></div></div>
     <div class="content">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${[['visit', 'I’m visiting', 'hotel or Airbnb'], ['live', 'I live here', 'or I’ve just moved']].map(([v, t, sub]) => `<button class="who" data-v="${v}" style="display:flex;flex-direction:column;align-items:flex-start;gap:2px;border-radius:14px;padding:10px 12px;border:2px solid #E1E6EE;background:#fff;color:var(--ink);text-align:left"><b style="font-size:15.5px">${t}</b><span style="font-size:12.5px;color:var(--muted)">${sub}</span></button>`).join('')}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${[['visit', t('I’m visiting'), t('hotel or Airbnb')], ['live', t('I live here'), t('or I’ve just moved')]].map(([v, ti, sub]) => `<button class="who" data-v="${v}" style="display:flex;flex-direction:column;align-items:flex-start;gap:2px;border-radius:14px;padding:10px 12px;border:2px solid #E1E6EE;background:#fff;color:var(--ink);text-align:left"><b style="font-size:15.5px">${ti}</b><span style="font-size:12.5px;color:var(--muted)">${sub}</span></button>`).join('')}</div>
       <div style="background:#fff;border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 1px 3px rgba(15,30,61,.08)">
-        <label style="display:flex;flex-direction:column;gap:6px"><b style="font-size:15px">Postcode</b><input id="pc" placeholder="e.g. WC2N 5DU" autocomplete="postal-code" style="height:46px;border-radius:12px;border:1px solid #C9D1DE;padding:0 12px;font-size:17px;text-transform:uppercase" value="${esc(STAY && STAY.pc || '')}"></label>
-        <button class="bigbtn" id="savepc">Show what’s near</button>
-        <div style="text-align:center;font-size:13px;color:var(--muted)">or</div>
-        <button class="ghost" id="usegps">${svg('locate', 18)} Use where I am now</button>
-        <select id="areapick" style="height:46px;border-radius:12px;border:1px solid #C9D1DE;padding:0 10px;font-size:15px;background:#fff"><option value="">Pick an area instead</option>${AREAS.map(([a]) => `<option>${esc(a)}</option>`).join('')}</select>
+        <label style="display:flex;flex-direction:column;gap:6px"><b style="font-size:15px">${t('Postcode')}</b><input id="pc" placeholder="${esc(t('e.g. WC2N 5DU'))}" autocomplete="postal-code" style="height:46px;border-radius:12px;border:1px solid #C9D1DE;padding:0 12px;font-size:17px;text-transform:uppercase" value="${esc(STAY && STAY.pc || '')}"></label>
+        <button class="bigbtn" id="savepc">${t('Show what’s near')}</button>
+        <div style="text-align:center;font-size:13px;color:var(--muted)">${t('or')}</div>
+        <button class="ghost" id="usegps">${svg('locate', 18)} ${t('Use where I am now')}</button>
+        <select id="areapick" style="height:46px;border-radius:12px;border:1px solid #C9D1DE;padding:0 10px;font-size:15px;background:#fff"><option value="">${t('Pick an area instead')}</option>${AREAS.map(([a]) => `<option>${esc(a)}</option>`).join('')}</select>
         <span id="stmsg" style="font-size:13.5px;color:#C8262B"></span>
       </div>
-      <p class="note" style="margin:0">This stays on your phone only. We don’t send it anywhere, apart from looking up the postcode with the free postcodes.io service.</p>
-      ${STAY ? '<button class="ghost" id="clearstay">Forget where I’m staying</button>' : ''}
+      <p class="note" style="margin:0">${t('This stays on your phone only. We don’t send it anywhere, apart from looking up the postcode with the free postcodes.io service.')}</p>
+      ${STAY ? `<button class="ghost" id="clearstay">${t('Forget where I’m staying')}</button>` : ''}
     </div>${tabs('Explore')}`;
   const paint = () => app.querySelectorAll('.who').forEach(b => { const on = b.dataset.v === who; b.style.borderColor = on ? '#F28C38' : '#E1E6EE'; b.style.background = on ? '#FFF4E8' : '#fff'; });
   app.querySelectorAll('.who').forEach(b => b.onclick = () => { who = b.dataset.v; paint(); if (STAY) { STAY.who = who; store.set('el_stay', STAY); } });
   paint();
-  const msg = t => document.getElementById('stmsg').textContent = t;
+  const msg = x => document.getElementById('stmsg').textContent = t(x);
   const done = (lat, lng, label, pc) => {
     if (!(lat > 51.25 && lat < 51.75 && lng > -0.6 && lng < 0.35)) return msg('That’s outside London. Try a London postcode or pick an area.');
     STAY = {lat, lng, label, who, pc: pc || ''}; store.set('el_stay', STAY); location.hash = '#/nearstay';
@@ -1425,14 +1499,14 @@ function stayScreen() {
 }
 function nearStayScreen() {
   if (!STAY) return stayScreen();
-  setTitle('Near ' + STAY.label);
+  setTitle(t('Near {place}', {place: t(STAY.label)}));
   const groups = STAY_GROUPS[STAY.who || 'visit'].map(([k, l]) => [k, l, nearStay(k, 5)]).filter(g => g[2].length);
   FROM = [STAY.lat, STAY.lng];
-  const html = groups.map(([k, l, xs]) => `<div class="sec" style="margin-top:4px"><h2>${esc(l)}</h2><a href="#/cat/${encodeURIComponent(k)}">More</a></div><div style="display:flex;flex-direction:column;gap:6px">${xs.map(([p]) => row(p, k)).join('')}</div>`).join('');
+  const html = groups.map(([k, l, xs]) => `<div class="sec" style="margin-top:4px"><h2>${esc(t(l))}</h2><a href="#/cat/${encodeURIComponent(k)}">${t('More')}</a></div><div style="display:flex;flex-direction:column;gap:6px">${xs.map(([p]) => row(p, k)).join('')}</div>`).join('');
   FROM = null;
-  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<div style="display:flex;flex-direction:column;flex:1"><h1 style="margin:0;font-weight:800;font-size:22px">Near ${esc(STAY.label)}</h1><span style="font-size:14px;color:#C9D3E6">${STAY.who === 'live' ? 'Your new local favourites' : 'Close to where you’re staying'} · walking times from there</span></div><a class="iconbtn" href="#/stay" aria-label="Change">${svg('home2', 20)}</a></div></div>
-    <div class="content">${STAY.who === 'live' ? `<div class="story" style="flex-direction:row;gap:10px"><span style="color:#A8551A;flex-shrink:0">${svg('cab', 20, '#A8551A')}</span><span style="font-size:13.5px;line-height:1.4"><b class="k">New to the area? · </b>Start with the butcher, the fishmonger and the local pub. Ask for the landlord’s name: it’s the quickest way to feel at home.</span></div>` : ''}
-      ${html || '<div class="empty">We don’t have much near there yet. Try a nearby area, or tell us your favourites.</div>'}
+  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<div style="display:flex;flex-direction:column;flex:1"><h1 style="margin:0;font-weight:800;font-size:22px">${esc(t('Near {place}', {place: t(STAY.label)}))}</h1><span style="font-size:14px;color:#C9D3E6">${STAY.who === 'live' ? t('Your new local favourites') : t('Close to where you’re staying')} · ${t('walking times from there')}</span></div><a class="iconbtn" href="#/stay" aria-label="${esc(t('Change'))}">${svg('home2', 20)}</a></div></div>
+    <div class="content">${STAY.who === 'live' ? `<div class="story" style="flex-direction:row;gap:10px"><span style="color:#A8551A;flex-shrink:0">${svg('cab', 20, '#A8551A')}</span><span style="font-size:13.5px;line-height:1.4"><b class="k">${t('New to the area?')} · </b>${t('Start with the butcher, the fishmonger and the local pub. Ask for the landlord’s name: it’s the quickest way to feel at home.')}</span></div>` : ''}
+      ${html || `<div class="empty">${t('We don’t have much near there yet. Try a nearby area, or tell us your favourites.')}</div>`}
     </div>${tabs('Explore')}`;
 }
 
@@ -1472,42 +1546,56 @@ function neverList() {
   return L;
 }
 function never() {
-  setTitle('Curious London');
-  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px">Curious London</h1><span style="font-size:14px;color:#C9D3E6">Odd, hidden and surprising – picked by cabbies. New picks on Home every day.</span></div></div></div>
-    <div class="content"><div style="display:flex;flex-direction:column;gap:6px">${neverList().map(([p, hook]) => row(p, undefined, hook)).join('')}</div></div>${tabs('Explore')}`;
+  setTitle(t('Curious London'));
+  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px">${t('Curious London')}</h1><span style="font-size:14px;color:#C9D3E6">${t('Odd, hidden and surprising – picked by cabbies. New picks on Home every day.')}</span></div></div></div>
+    <div class="content"><div style="display:flex;flex-direction:column;gap:6px">${neverList().map(([p, hook]) => row(p, undefined, t(hook))).join('')}</div></div>${tabs('Explore')}`;
 }
 
 function home() {
   setTitle();
   const strip = [
-    {href:'#/walks', title:'Harry Potter in London', meta:'3 walks', tag:'New shop 4 Nov', tb:'#F28C38', bg:'#3B2F5C'},
-    ...['ted-lasso','greenwich','hyde-park','music-trail'].map(id => WALKS.find(w => w.id === id)).filter(Boolean).map(w => ({href:'#/walk/' + w.id, title:w.title, meta:w.meta.split('·')[0].replace(/^About /, ''), tag:w.tag, tb:{'Day out':'#F5D9A8','Royal Parks':'#CDE8C5'}[w.tag] || '#F5D9A8', bg:w.color}))];
+    {href:'#/walks', title:t('Harry Potter in London'), meta:t('{n} walks', {n: 3}), tag:t('New shop 4 Nov'), tb:'#F28C38', bg:'#3B2F5C'},
+    ...['ted-lasso','greenwich','hyde-park','music-trail'].map(id => WALKS.find(w => w.id === id)).filter(Boolean).map(w => ({href:'#/walk/' + w.id, title:w.title, meta:w.meta.split('·')[0].replace(/^About /, ''), tag:t(w.tag), tb:{'Day out':'#F5D9A8','Royal Parks':'#CDE8C5'}[w.tag] || '#F5D9A8', bg:w.color}))];
   const walkCards = strip.map(w => `<a class="wcard" href="${w.href}"><div class="b" style="background:${w.bg}"><span class="badge" style="background:${w.tb}">${esc(w.tag)}</span></div><div class="t"><span class="disp" style="font-weight:700;font-size:15px;line-height:1.2">${esc(w.title)}</span><span style="font-size:13px;color:var(--muted)">${esc(w.meta)}</span></div></a>`).join('');
   const d = new Date(), dk = (d.getMonth() + 1) + '-' + d.getDate(), otd = ON_THIS_DAY[dk];
-  const otdStrip = !otd ? '' : `<a href="#/otd" style="display:flex;align-items:center;gap:10px;background:#FFF4E8;border-radius:14px;padding:8px 12px;color:var(--ink);text-decoration:none;margin-top:-6px"><span style="font-size:11px;font-weight:800;color:#A8551A;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap">On this day</span><span style="font-size:14px;font-weight:600;line-height:1.2;flex:1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${esc(otd)}</span>${svg('chev', 16)}</a>`;
+  const otdStrip = !otd ? '' : `<a href="#/otd" style="display:flex;align-items:center;gap:10px;background:#FFF4E8;border-radius:14px;padding:8px 12px;color:var(--ink);text-decoration:none"><span style="font-size:11px;font-weight:800;color:#A8551A;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap">${t('On this day')}</span><span style="font-size:14px;font-weight:600;line-height:1.2;flex:1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${esc(otd)}</span>${svg('chev', 16)}</a>`;
   app.innerHTML = `<div class="top">
-      <div class="row" style="justify-content:space-between"><span class="row"><img src="icons/icon-192.png?v=4" alt="" style="width:40px;height:40px;border-radius:10px;display:block"><span class="disp" style="font-weight:800;font-size:19px;white-space:nowrap">Explore London</span></span><a class="iconbtn" href="#/about" aria-label="Menu">${svg('menu', 22)}</a></div>
-      <label class="search">${svg('search', 20)}<span style="position:absolute;left:-9999px">Search</span><input id="q" type="search" enterkeyhint="search" placeholder='Try "Sunday roast" or "Harry Potter"' autocomplete="off"></label>
+      <div class="row" style="justify-content:space-between"><span class="row"><img src="icons/icon-192.png?v=4" alt="" style="width:40px;height:40px;border-radius:10px;display:block"><span class="disp" style="font-weight:800;font-size:19px;white-space:nowrap">Explore London</span></span><a class="iconbtn" href="#/about" aria-label="${esc(t('Menu'))}">${svg('menu', 22)}</a></div>
+      ${flagRow()}
+      <label class="search">${svg('search', 20)}<span style="position:absolute;left:-9999px">${t('Search')}</span><input id="q" type="search" enterkeyhint="search" placeholder="${esc(t('Try “Sunday roast” or “Harry Potter”'))}" autocomplete="off"></label>
     </div>
     <div class="content">
       <div id="results" style="display:none;flex-direction:column;gap:6px"></div>
       <div id="homebody" style="display:flex;flex-direction:column;gap:14px">
-        ${a2Strip()}${stayCard()}${otdStrip}
-        <div class="tiles hg">${HOME_GROUPS.map(([g, ks]) => `<div class="tgl">${g}</div>` + ks.map(k => k === 'TUBE' ? `<a class="tile" href="#/around" style="--c:#C8262B"><span class="ic" style="background:#F9D6D6">${svg('train', 28, '#0F1E3D', 1.8)}</span><span class="l">Tube &amp; Trains</span></a>` : (c => `<a class="tile" href="#/cat/${encodeURIComponent(c.k)}" style="--c:${c.c}"><span class="ic" style="background:${c.t}">${catIcon(c.k, 28)}</span><span class="l">${c.s}</span></a>`)(CATS.find(c => c.k === k))).join('')).join('')}</div>
-        <a class="bigbtn" href="#/map">${svg('near', 20, '#F28C38', 2.2)} Near me now</a>
-        <a href="#/daytrips" style="display:flex;align-items:center;gap:10px;background:#FFF4E8;border-radius:14px;padding:9px 12px;color:var(--ink);text-decoration:none">${svg('train', 20, '#A8551A', 2)}<b class="disp" style="font-size:16px;white-space:nowrap">Day trips</b><span style="font-size:13px;color:var(--muted);flex-grow:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Windsor, Oxford, Bath + 6 more</span><span style="flex-shrink:0">${svg('chev', 18, '#A8551A', 2.4)}</span></a>
-        <a href="#/plans" style="display:flex;align-items:center;gap:10px;background:#FFF4E8;border-radius:14px;padding:9px 12px;color:var(--ink);text-decoration:none">${svg('cal', 20, '#A8551A', 2)}<b class="disp" style="font-size:16px;white-space:nowrap">Free day plans</b><span style="font-size:13px;color:var(--muted);flex-grow:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">16 days out, hour by hour</span><span style="flex-shrink:0">${svg('chev', 18, '#A8551A', 2.4)}</span></a>
-        <div class="sec"><h2>Curious London</h2><a href="#/never">See all</a></div>
-        <span style="font-size:13px;color:var(--muted);margin-top:-8px">Odd, hidden and surprising · new picks every day</span>
-        <div class="hscroll">${neverList().slice(0, 8).map(([p, hook]) => `<a class="ncard" href="#/place/${p.id}">${thumb(p, 64)}<b>${esc(p.name.replace(/, Fortnum & Mason$/, ''))}</b><span>${esc(hook)}</span></a>`).join('')}<a class="ncard more" href="#/never"><b>See all ${neverList().length}</b>${svg('arrow', 22)}</a></div>
-        <div class="sec"><h2>Walks &amp; Guides</h2><a href="#/walks">See all</a></div>
+        ${a2Strip()}${stayCard()}
+        <div class="hquick"><a class="qbtn" href="#/map">${svg('near', 20, '#F28C38', 2.2)}<span>${t('Near me now')}</span></a><a class="qbtn red" href="#/around">${svg('train', 20, '#fff', 2)}<span>${t('Tube &amp; Trains')}</span></a></div>
+        <h2 class="hh">${t('Things to do in London')}</h2>
+        <div class="hgl">${HOME_GROUPS.map(([g, ks], i) => { const c0 = CAT[ks[0]], on = i === homeOpen; return `<div class="hgrp">
+          <button type="button" class="hgb" data-hg="${i}" aria-expanded="${on}" aria-controls="hgo${i}" style="--c:${c0.c}"><span class="ic" style="background:${c0.t}">${catIcon(c0.k, 30)}</span><span class="tx"><b class="disp">${t(g)}</b><span>${ks.map(k => esc(t(CAT[k].s))).join(' · ')}</span></span><span class="chv">${svg('chev', 20, '#0F1E3D', 2.4)}</span></button>
+          <div class="hgo" id="hgo${i}"${on ? '' : ' hidden'}>${ks.map(k => CAT[k]).map(c => `<a class="hot" href="#/cat/${encodeURIComponent(c.k)}" style="--c:${c.c}"><span class="ic" style="background:${c.t}">${catIcon(c.k, 26)}</span><span class="l">${esc(t(c.s))}</span></a>`).join('')}</div></div>`; }).join('')}</div>
+        <h2 class="hh">${t('Plan your day')}</h2>
+        <div class="hplan">${[
+          ['#/plans', 'cal', '#FFF4E8', '#A8551A', t('Free day plans'), t('16 days out, hour by hour')],
+          ['#/walks', 'walk', '#DDF0E2', '#2F7A4A', t('Walks &amp; Guides'), t('Walk London with a cabbie’s stories')],
+          ['#/daytrips', 'train', '#E6F2FF', '#2E6FD8', t('Day trips'), t('Windsor, Oxford, Bath + 6 more')],
+          ['#/never', 'search', '#EEE6F8', '#7A4FB0', t('Curious London'), t('Odd, hidden and surprising')]
+        ].map(([h, ic, bg, col, ti, sub]) => `<a class="pcard" href="${h}" style="background:${bg}"><span class="pi">${svg(ic, 22, col, 2)}</span><b class="disp">${ti}</b><span>${sub}</span></a>`).join('')}</div>
+        ${otdStrip}
+        <div class="sec"><h2>${t('Walks &amp; Guides')}</h2><a href="#/walks">${t('See all')}</a></div>
         <div class="hscroll">${walkCards}</div>
-        ${(() => { const L = neverList(); const x = L[8] || L[0]; if (!x) return ''; const [q, hook] = x; return `<a href="#/place/${q.id}" style="display:flex;align-items:center;gap:12px;background:#E6F2FF;border-radius:16px;padding:10px 12px;color:var(--ink);text-decoration:none">${thumb(q, 40)}<span style="display:flex;flex-direction:column;gap:1px;flex-grow:1;min-width:0"><span style="font-size:12px;font-weight:700;color:#2E6FD8;text-transform:uppercase;letter-spacing:.5px">Did you know?</span><span style="font-size:15px;font-weight:600;line-height:1.25">${esc(hook)}</span><span style="font-size:13px;color:#2E6FD8;font-weight:700">${esc(q.name.replace(/, Fortnum & Mason$/, ''))}</span></span>${svg('chev', 18)}</a>`; })()}
+        ${(() => { const L = neverList(); const x = L[8] || L[0]; if (!x) return ''; const [q, hook] = x; return `<a href="#/place/${q.id}" style="display:flex;align-items:center;gap:12px;background:#E6F2FF;border-radius:16px;padding:10px 12px;color:var(--ink);text-decoration:none">${thumb(q, 40)}<span style="display:flex;flex-direction:column;gap:1px;flex-grow:1;min-width:0"><span style="font-size:12px;font-weight:700;color:#2E6FD8;text-transform:uppercase;letter-spacing:.5px">${t('Did you know?')}</span><span style="font-size:15px;font-weight:600;line-height:1.25">${esc(t(hook))}</span><span style="font-size:13px;color:#2E6FD8;font-weight:700">${esc(q.name.replace(/, Fortnum & Mason$/, ''))}</span></span>${svg('chev', 18)}</a>`; })()}
         ${suggestLink()}
-        <p class="note" style="margin:0">${P.length} places, picked by London cabbies.</p>
+        <p class="note" style="margin:0">${t('{n} places, picked by London cabbies.', {n: P.length})}</p>
       </div>
     </div>${tabs('Explore')}`;
   a2Wire();
+  /* the 4 groups: one open at a time, tap again to close */
+  app.querySelectorAll('.hgb').forEach(b => b.onclick = () => {
+    const i = +b.dataset.hg; homeOpen = homeOpen === i ? -1 : i;
+    try { sessionStorage.setItem('el_hopen', homeOpen); } catch {}
+    app.querySelectorAll('.hgb').forEach(x => { const on = +x.dataset.hg === homeOpen; x.setAttribute('aria-expanded', on); document.getElementById('hgo' + x.dataset.hg).hidden = !on; });
+  });
+  app.querySelectorAll('.flag').forEach(b => b.onclick = () => { if (b.dataset.lang !== LANG) setLang(b.dataset.lang); });
   const q = document.getElementById('q'), res = document.getElementById('results'), body = document.getElementById('homebody');
   const IDEAS = ['Sunday roast', 'Fish and chips', 'Rooftop bars', 'Free museums', 'Afternoon tea', 'Harry Potter'];
   const draw = () => {
@@ -1519,11 +1607,11 @@ function home() {
     try {
       const {hits, total, exact, missing, badgeFor} = searchPlaces(s);
       out = hits.length
-        ? `<span class="lbl">${exact ? (total > hits.length ? `Top ${hits.length} of ${total} results` : `${hits.length} result${hits.length === 1 ? '' : 's'}`) : (missing.length ? `Nothing in the app for “${esc(missing.join(' '))}” yet. Closest results` : 'No exact match. Closest results')}</span>` + hits.map(p => row(p, undefined, badgeFor(p))).join('')
-        : `<div class="empty">Nothing found for “${esc(s)}”. Try a cuisine, an area or a name, or one of these:<div class="chips" style="justify-content:center;margin-top:10px">${IDEAS.map(t => `<button class="chip" data-q="${esc(t)}">${esc(t)}</button>`).join('')}</div></div>`;
+        ? `<span class="lbl">${exact ? (total > hits.length ? t('Top {n} of {total} results', {n: hits.length, total}) : hits.length === 1 ? t('1 result') : t('{n} results', {n: hits.length})) : (missing.length ? t('Nothing in the app for “{q}” yet. Closest results', {q: esc(missing.join(' '))}) : t('No exact match. Closest results'))}</span>` + hits.map(p => row(p, undefined, badgeFor(p))).join('')
+        : `<div class="empty">${t('Nothing found for “{q}”. Try a cuisine, an area or a name, or one of these:', {q: esc(s)})}<div class="chips" style="justify-content:center;margin-top:10px">${IDEAS.map(x => `<button class="chip" data-q="${esc(x)}">${esc(x)}</button>`).join('')}</div></div>`;
     } catch (e) {
       console.error(e);
-      out = `<div class="empty">Sorry, the search hit a problem. Please try again.</div>`;
+      out = `<div class="empty">${t('Sorry, the search hit a problem. Please try again.')}</div>`;
     }
     res.innerHTML = out;
     res.querySelectorAll('[data-q]').forEach(b => b.onclick = () => { q.value = b.dataset.q; draw(); });
@@ -1560,21 +1648,21 @@ function catTile(p, k, size = 52) {
   if (k === 'Blue Plaques' || (!k && p.cats[0] === 'Blue Plaques')) return `<span class="thumb plaque" style="width:${size}px;height:${size}px"></span>`;
   k = k || (CAT[p.cats[0]] ? p.cats[0] : CATS[0].k);
   const c = CAT[k], col = collOf(p, k), y = COLL[k] && COLL[k].year ? yearOf(p) : null;
-  if (y && y < 1950) return `<span class="thumb" style="width:${size}px;height:${size}px;background:${c.t};flex-direction:column;line-height:1"><span style="font-size:9px;font-weight:700;color:#6B5440;letter-spacing:.5px">SINCE</span><span class="disp" style="font-weight:800;font-size:16px">${y}</span></span>`;
+  if (y && y < 1950) return `<span class="thumb" style="width:${size}px;height:${size}px;background:${c.t};flex-direction:column;line-height:1"><span style="font-size:9px;font-weight:700;color:#6B5440;letter-spacing:.5px">${t('SINCE')}</span><span class="disp" style="font-weight:800;font-size:16px">${y}</span></span>`;
   if (k === 'Pubs') return `<span class="thumb" style="width:${size}px;height:${size}px;background:${c.t}">${catIcon(k, Math.round(size*.55))}</span>`;
   if (k === 'Restaurants') { const t = restTile(p, size); if (t) return t; }
   const bg = col ? col.bg : c.t, ic = col && col.icon ? `<img src="${col.icon}" alt="" style="width:${Math.round(size*.54)}px;height:${Math.round(size*.54)}px;object-fit:contain">` : catIcon(k, Math.round(size*.55));
-  const fr = k === 'Museums & Galleries' && p.tags.includes('Free to visit') ? '<span class="free">FREE</span>' : '';
+  const fr = k === 'Museums & Galleries' && p.tags.includes('Free to visit') ? `<span class="free">${t('FREE')}</span>` : '';
   return `<span class="thumb" style="width:${size}px;height:${size}px;background:${bg}">${ic}${fr}</span>`;
 }
 /* rough price per person, food plus a drink: £ under £20 · ££ £20–45 · £££ £45–90 · ££££ over £90 */
-const PRICE = ['', '£', '££', '£££', '££££'], PRICE_TXT = ['', 'under £20 a head', '£20–45 a head', '£45–90 a head', 'over £90 a head'];
+const PRICE = ['', '£', '££', '£££', '££££'], PRICE_TXT = ['', 'under £20 a head', '£20–45 a head', '£45–90 a head', 'over £90 a head'], PRICE_SHORT = ['', 'under £20', '£20–45', '£45–90', 'over £90'];
 function catMeta(p, k) {
   const col = collOf(p, k);
-  let first = k === 'Restaurants' ? (/michelin/i.test(TXT(p)) ? 'Michelin ' + (/3 stars|three/i.test(TXT(p)) ? '★★★' : /2 stars|two/i.test(TXT(p)) ? '★★' : '★') : (col ? shortLabel(col.label) : (p.cuisine || '').split(',')[0].trim())) : col ? shortLabel(col.label) : (p.tags.find(t => !/free|must|top 10|rainy|blue plaque/i.test(t)) || CAT[k].s);
-  if (k === 'Pubs' && (tagIs(p, 'Historic pub') || (!col && yearOf(p)))) first = 'Historic';
+  let first = k === 'Restaurants' ? (/michelin/i.test(TXT(p)) ? 'Michelin ' + (/3 stars|three/i.test(TXT(p)) ? '★★★' : /2 stars|two/i.test(TXT(p)) ? '★★' : '★') : (col ? shortLabel(col.label) : t((p.cuisine || '').split(',')[0].trim()))) : col ? shortLabel(col.label) : t(p.tags.find(x => !/free|must|top 10|rainy|blue plaque/i.test(x)) || CAT[k].s);
+  if (k === 'Pubs' && (tagIs(p, 'Historic pub') || (!col && yearOf(p)))) first = t('Historic');
   const bits = [k === 'Restaurants' && p.price ? PRICE[p.price] : '', first, p.area.replace(/ & .*/, '')];
-  const w = walkTime(p); if (w) bits.push(w.replace(' walk', ''));
+  const w = walkTime(p, true); if (w) bits.push(w);
   return bits.filter(Boolean).join(' · ');
 }
 function catRow(p, k) {
@@ -1582,8 +1670,8 @@ function catRow(p, k) {
 }
 function category(k) {
   const c = CAT[k]; if (!c) return home();
-  setTitle(c.s);
-  const cfg = COLL[k] || {pills: []}, pills = (PILLS[k] || []).filter(t => !t.show || t.show());
+  setTitle(t(c.s));
+  const cfg = COLL[k] || {pills: []}, pills = (PILLS[k] || []).filter(x => !x.show || x.show());
   const list = P.filter(p => p.cats.includes(k));
   let bset = null, b = cfg.banner;
   if (b && b.test === 'oldest10') bset = new Set(list.filter(p => yearOf(p)).sort((x, y) => yearOf(x) - yearOf(y)).slice(0, 10).map(p => p.id));
@@ -1594,18 +1682,18 @@ function category(k) {
   const st = {pill: null, banner: false, area: '', cuisine: '', price: 0, sort: 'near'};
   const banHTML = b ? `<a href="#" id="banner" style="display:flex;align-items:center;gap:10px;background:var(--orange);color:var(--navy);border-radius:14px;padding:8px 12px;text-decoration:none">
       ${b.badge ? `<span style="width:32px;height:32px;border-radius:16px;background:#0F1E3D;color:#F5B83D;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Archivo';font-weight:800;font-size:${b.badge === 'oldest' ? 11 : 14}px">${b.badge === 'oldest' ? oldest : b.badge}</span>` : `<span style="width:32px;height:32px;border-radius:16px;background:${b.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0"><img src="${b.icon}" alt="" style="width:22px;height:22px"></span>`}
-      <span class="disp" style="font-weight:800;font-size:16px;flex-grow:1">${esc(b.label)} <span style="font-family:'Source Sans 3';font-weight:600;font-size:14px">· ${b.sub ? esc(b.sub) : (bset ? bset.size : '')}</span></span>
-      <span id="banchev">${svg('chev', 16, 'currentColor', 2.4)}</span></a>` : (k === 'Blue Plaques' ? `<div style="background:var(--orange);color:var(--navy);border-radius:14px;padding:10px 12px;font-size:14px;line-height:1.35"><b class="disp">What's a blue plaque?</b> Round blue signs on houses mark where famous people lived or worked. Look up as you go: it may be someone you know. Most are private homes, so enjoy them from the street.</div>` : '');
+      <span class="disp" style="font-weight:800;font-size:16px;flex-grow:1">${esc(t(b.label))} <span style="font-family:'Source Sans 3';font-weight:600;font-size:14px">· ${b.sub ? esc(t(b.sub)) : (bset ? bset.size : '')}</span></span>
+      <span id="banchev">${svg('chev', 16, 'currentColor', 2.4)}</span></a>` : (k === 'Blue Plaques' ? `<div style="background:var(--orange);color:var(--navy);border-radius:14px;padding:10px 12px;font-size:14px;line-height:1.35"><b class="disp">${t('What’s a blue plaque?')}</b> ${t('Round blue signs on houses mark where famous people lived or worked. Look up as you go: it may be someone you know. Most are private homes, so enjoy them from the street.')}</div>` : '');
   app.innerHTML = `<div class="top" style="padding:10px 16px 12px">
       <div class="row" style="gap:12px">${backBtn('#/')}<span class="ic" style="width:40px;height:40px;border-radius:20px;background:${c.t};display:flex;align-items:center;justify-content:center;flex-shrink:0">${catIcon(k, 26)}</span>
-      <div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px;line-height:1.1">${esc(k)}</h1><span style="font-size:14px;color:#C9D3E6">${list.length} places</span></div></div>
+      <div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px;line-height:1.1">${esc(t(k))}</h1><span style="font-size:14px;color:#C9D3E6">${t('{n} places', {n: list.length})}</span></div></div>
       ${banHTML}
       <div id="info" style="display:none;background:#fff;color:var(--ink);border-radius:14px;padding:10px 12px;font-size:14px;line-height:1.4"></div>
-      <div class="cpills">${pills.map((t, i) => `<button class="cpill" data-i="${i}"><span class="ci" style="background:${t.bg}">${t.icon ? `<img src="${t.icon}" alt="">` : '<span class="plaquedot" style="width:18px;height:18px;display:block"></span>'}</span><span>${esc(t.label)}</span></button>`).join('')}</div>
+      <div class="cpills">${pills.map((x, i) => `<button class="cpill" data-i="${i}"><span class="ci" style="background:${x.bg}">${x.icon ? `<img src="${x.icon}" alt="">` : '<span class="plaquedot" style="width:18px;height:18px;display:block"></span>'}</span><span>${esc(t(x.label))}</span></button>`).join('')}</div>
     </div>
     <div class="content">
-      <div class="filters${k === 'Restaurants' ? ' four' : ''}">${k === 'Restaurants' ? `<select id="cuisine" aria-label="Cuisine"><option value="">Cuisine</option>${cuisines.map(a => `<option>${esc(a)}</option>`).join('')}</select><select id="price" aria-label="Price"><option value="0">Price</option>${[1, 2, 3, 4].map(i => `<option value="${i}">${PRICE[i]} ${PRICE_TXT[i].replace(' a head', '')}</option>`).join('')}</select>` : ''}<select id="area" aria-label="Area"><option value="">Area</option>${areas.map(a => `<option>${esc(a)}</option>`).join('')}</select>
-      <select id="sort" aria-label="Sort"><option value="near">Nearest</option>${STAY ? `<option value="stay">Nearest to ${esc(STAY.label.length > 18 ? 'my stay' : STAY.label)}</option>` : ''}<option value="az">A to Z</option>${k === 'Pubs' || k === 'Shopping' ? '<option value="old">Oldest first</option>' : ''}</select></div>
+      <div class="filters${k === 'Restaurants' ? ' four' : ''}">${k === 'Restaurants' ? `<select id="cuisine" aria-label="${esc(t('Cuisine'))}"><option value="">${t('Cuisine')}</option>${cuisines.map(a => `<option value="${esc(a)}">${esc(t(a))}</option>`).join('')}</select><select id="price" aria-label="${esc(t('Price'))}"><option value="0">${t('Price')}</option>${[1, 2, 3, 4].map(i => `<option value="${i}">${PRICE[i]} ${t(PRICE_SHORT[i])}</option>`).join('')}</select>` : ''}<select id="area" aria-label="${esc(t('Area'))}"><option value="">${t('Area')}</option>${areas.map(a => `<option>${esc(a)}</option>`).join('')}</select>
+      <select id="sort" aria-label="${esc(t('Sort'))}"><option value="near">${t('Nearest')}</option>${STAY ? `<option value="stay">${esc(t('Nearest to {place}', {place: STAY.label.length > 18 ? t('my stay') : t(STAY.label)}))}</option>` : ''}<option value="az">${t('A to Z')}</option>${k === 'Pubs' || k === 'Shopping' ? `<option value="old">${t('Oldest first')}</option>` : ''}</select></div>
       <div id="list" style="display:flex;flex-direction:column;gap:6px"></div>
       ${k === 'Blue Plaques' ? '' : suggestLink(k)}
     </div>${tabs('Explore')}`;
@@ -1617,12 +1705,12 @@ function category(k) {
     else if (st.sort === 'near') L = L.slice().sort((a, b) => (a.lat == null) - (b.lat == null) || dist(...here().slice(0,2), a.lat ?? 0, a.lng ?? 0) - dist(...here().slice(0,2), b.lat ?? 0, b.lng ?? 0));
     else L = L.slice().sort((a, b) => a.name.replace(/^(The|Ye Olde) /, '').localeCompare(b.name.replace(/^(The|Ye Olde) /, '')));
     if (st.sort === 'stay' && STAY) FROM = [STAY.lat, STAY.lng];
-    document.getElementById('list').innerHTML = L.length ? L.map(p => catRow(p, k)).join('') : `<div class="empty">${pl && pl.empty ? esc(pl.empty) : 'Nothing here with those filters yet.'}</div>`;
+    document.getElementById('list').innerHTML = L.length ? L.map(p => catRow(p, k)).join('') : `<div class="empty">${esc(t(pl && pl.empty ? pl.empty : 'Nothing here with those filters yet.'))}</div>`;
     FROM = null;
   };
   const ban = document.getElementById('banner');
   if (ban) ban.onclick = e => { e.preventDefault();
-    if (b.info) { const i = document.getElementById('info'); i.style.display = i.style.display === 'none' ? 'block' : 'none'; i.textContent = b.info; return; }
+    if (b.info) { const i = document.getElementById('info'); i.style.display = i.style.display === 'none' ? 'block' : 'none'; i.textContent = t(b.info); return; }
     st.banner = !st.banner; st.pill = null; ban.style.boxShadow = st.banner ? 'inset 0 0 0 2px #0F1E3D' : ''; app.querySelectorAll('.cpill').forEach(x => x.classList.remove('on')); draw(); };
   app.querySelectorAll('.cpill').forEach(bt => bt.onclick = () => { const i = +bt.dataset.i; st.pill = st.pill === i ? null : i; st.banner = false; if (ban) ban.style.boxShadow = ''; app.querySelectorAll('.cpill').forEach(x => x.classList.toggle('on', +x.dataset.i === st.pill)); draw(); });
   document.getElementById('area').onchange = e => { st.area = e.target.value; draw(); };
@@ -1639,39 +1727,40 @@ function place(id) {
   const c = CAT[p.cats[0]] || CATS[0], isPlaque = p.cats.includes('Blue Plaques');
   const near = p.lat == null ? [] : P.filter(q => q.id !== p.id && q.lat != null).map(q => [q, dist(p.lat, p.lng, q.lat, q.lng)]).filter(x => x[1] < 900).sort((a, b) => a[1] - b[1]).slice(0, 4);
   const BG = ['#F5D9A8','#E6DBF4','#D3E6F8','#D5EBD6','#F8D3E1'];
-  const badges = [...new Set(p.cats.flatMap(k => (PILLS[k] || []).filter(c => c.test(p)).map(c => shortLabel(c.label))).concat(p.tags.filter(t => /^(Historic pub|Free to visit|Must-see|Top 10)$/.test(t))))].slice(0, 4);
-  const tags = p.price ? [PRICE[p.price] + ' · ' + PRICE_TXT[p.price]].concat(badges) : badges;
+  const badges = [...new Set(p.cats.flatMap(k => (PILLS[k] || []).filter(c => c.test(p)).map(c => shortLabel(c.label))).concat(p.tags.filter(x => /^(Historic pub|Free to visit|Must-see|Top 10)$/.test(x)).map(x => t(x))))].slice(0, 4);
+  const tags = p.price ? [PRICE[p.price] + ' · ' + t(PRICE_TXT[p.price])].concat(badges) : badges;
   app.innerHTML = `<div class="hero" id="hero" style="background:${isPlaque ? '#D3E6F8' : c.t}">
       <span class="heroic">${isPlaque ? '<span class="plaquedot" style="width:96px;height:96px;display:block;box-shadow:inset 0 0 0 7px #fff,0 0 0 2px var(--plaque)"></span>' : catIcon(c.k, 80)}</span>
       <div class="acts">${backBtn().replace('iconbtn', 'iconbtn light')}<span class="row" style="gap:8px">
-        <button class="iconbtn light" id="share" aria-label="Share">${svg('share', 20)}</button>
-        <button class="iconbtn light" id="save" aria-label="Save to My List" style="color:#E86A4F">${svg('heart', 20)}</button></span></div>
+        <button class="iconbtn light" id="share" aria-label="${esc(t('Share'))}">${svg('share', 20)}</button>
+        <button class="iconbtn light" id="save" aria-label="${esc(t('Save to My List'))}" style="color:#E86A4F">${svg('heart', 20)}</button></span></div>
     </div>
     <div class="credit" id="credit"></div>
     <div class="sheet">
-      <span class="kicker">${esc(p.cats.join(' · '))} · ${esc(p.area)}</span>
+      <span class="kicker">${esc(p.cats.map(x => t(x)).join(' · '))} · ${esc(p.area)}</span>
       <h1 style="margin:0;font-weight:800;font-size:26px;line-height:1.1">${esc(p.name)}</h1>
-      <span style="font-size:14px;color:var(--muted)">${esc(shortAddr(p))}${p.lat != null ? ' · ' + walkTime(p) : ''}${p.approx ? ' (approx. pin)' : ''}</span>
-      ${tags.length || p.cuisine ? `<div class="tags">${(p.cuisine ? p.cuisine.split(',').map(x => x.trim()).filter(Boolean).slice(0, 2) : []).concat(tags).slice(0, 4).map((t, i) => `<span class="tag" style="background:${BG[i % 5]}">${esc(t)}</span>`).join('')}</div>` : ''}
+      <span style="font-size:14px;color:var(--muted)">${esc(shortAddr(p))}${p.lat != null ? ' · ' + walkTime(p) : ''}${p.approx ? ' (' + t('approx. pin') + ')' : ''}</span>
+      ${tags.length || p.cuisine ? `<div class="tags">${(p.cuisine ? p.cuisine.split(',').map(x => t(x.trim())).filter(Boolean).slice(0, 2) : []).concat(tags).slice(0, 4).map((x, i) => `<span class="tag" style="background:${BG[i % 5]}">${esc(x)}</span>`).join('')}</div>` : ''}
       <p style="margin:0;font-size:15.5px;line-height:1.5;white-space:pre-line">${esc(p.why)}</p>
-      ${p.comment ? `<div style="background:#FFF4E8;border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:3px"><span class="kicker">⭐ Explore London customer comment</span><span style="font-size:15px;line-height:1.45">“${esc(p.comment.text)}”${p.comment.name ? ` – ${esc(p.comment.name)}` : ''}</span></div>` : ''}
+      ${p.comment ? `<div style="background:#FFF4E8;border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:3px"><span class="kicker">⭐ ${t('Explore London customer comment')}</span><span style="font-size:15px;line-height:1.45">“${esc(p.comment.text)}”${p.comment.name ? ` – ${esc(p.comment.name)}` : ''}</span></div>` : ''}
       <div class="row" style="gap:8px">
-        ${p.lat != null ? `<a class="bigbtn" style="height:46px;flex:1" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=walking">${svg('arrow', 18, '#F28C38', 2.2)} Walk there</a>` : ''}
-        ${p.website ? `<a class="ghost" target="_blank" rel="noopener" href="${esc(p.website)}">Website</a>` : ''}
-        ${p.lat != null && !p.website ? `<a class="ghost" href="#/map/${p.id}">Map</a>` : ''}
+        ${p.lat != null ? `<a class="bigbtn" style="height:46px;flex:1" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=walking">${svg('arrow', 18, '#F28C38', 2.2)} ${t('Walk there')}</a>` : ''}
+        ${p.website ? `<a class="ghost" target="_blank" rel="noopener" href="${esc(p.website)}">${t('Website')}</a>` : ''}
+        ${p.lat != null && !p.website ? `<a class="ghost" href="#/map/${p.id}">${t('Map')}</a>` : ''}
       </div>
-      ${(() => { const rw = WALKS.find(w => w.routes && w.stops.some(x => x.id === p.id)); return rw ? `<a class="bigbtn orange" style="height:46px" href="#/walk/${rw.id}">${svg('walk', 18, '#0F1E3D', 2.2)} See the ${esc(rw.title.split(':')[0])} route</a>` : ''; })()}
+      ${(() => { const rw = WALKS.find(w => w.routes && w.stops.some(x => x.id === p.id)); return rw ? `<a class="bigbtn orange" style="height:46px" href="#/walk/${rw.id}">${svg('walk', 18, '#0F1E3D', 2.2)} ${t('See the {walk} route', {walk: esc(rw.title.split(':')[0])})}</a>` : ''; })()}
       <div id="gt"></div>
     </div>
     <div class="content" style="padding-top:10px">
-      ${p.story ? `<div class="story" style="gap:8px"><span class="row" style="gap:10px"><img src="img/matt.jpg" alt="" style="width:40px;height:40px;border-radius:20px;object-fit:cover;background:var(--orange)"><span style="display:flex;flex-direction:column"><b class="disp" style="font-size:15px">The Cabbie's Story</b><span style="font-size:12.5px;color:#6B5440">from the cabbies</span></span></span><p style="margin:0;font-size:14.5px;line-height:1.4">${esc(p.story)}</p></div>` : ''}
-      ${near.length ? `<h2 style="margin:4px 0 0;font-size:15px;font-weight:800">Also nearby</h2><div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">${near.map(([q, m]) => `<a href="#/place/${q.id}" style="display:flex;align-items:center;gap:8px;background:#fff;border-radius:12px;padding:8px;text-decoration:none;box-shadow:0 1px 2px rgba(15,30,61,.08)">${catTile(q, q.cats[0], 34).replace('class="thumb', 'class="thumb sm')}<span style="display:flex;flex-direction:column;min-width:0"><span style="font-weight:700;font-size:13.5px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(q.name)}</span><span style="font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(q.cats[0] === 'Blue Plaques' ? 'Blue plaque' : (collOf(q, q.cats[0]) ? shortLabel(collOf(q, q.cats[0]).label) : (CAT[q.cats[0]] || CATS[0]).s))} · ${mins(m)} min</span></span></a>`).join('')}</div>` : ''}
+      ${p.story ? `<div class="story" style="gap:8px"><span class="row" style="gap:10px"><img src="img/matt.jpg" alt="" style="width:40px;height:40px;border-radius:20px;object-fit:cover;background:var(--orange)"><span style="display:flex;flex-direction:column"><b class="disp" style="font-size:15px">${t('The Cabbie’s Story')}</b><span style="font-size:12.5px;color:#6B5440">${t('from the cabbies')}</span></span></span><p style="margin:0;font-size:14.5px;line-height:1.4">${esc(p.story)}</p></div>` : ''}
+      ${near.length ? `<h2 style="margin:4px 0 0;font-size:15px;font-weight:800">${t('Also nearby')}</h2><div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">${near.map(([q, m]) => `<a href="#/place/${q.id}" style="display:flex;align-items:center;gap:8px;background:#fff;border-radius:12px;padding:8px;text-decoration:none;box-shadow:0 1px 2px rgba(15,30,61,.08)">${catTile(q, q.cats[0], 34).replace('class="thumb', 'class="thumb sm')}<span style="display:flex;flex-direction:column;min-width:0"><span style="font-weight:700;font-size:13.5px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(q.name)}</span><span style="font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(q.cats[0] === 'Blue Plaques' ? t('Blue plaque') : (collOf(q, q.cats[0]) ? shortLabel(collOf(q, q.cats[0]).label) : t((CAT[q.cats[0]] || CATS[0]).s)))} · ${t('{n} min', {n: mins(m)})}</span></span></a>`).join('')}</div>` : ''}
+      ${p.cats.includes('Blue Plaques') ? '' : suggestLink('place-' + p.id)}
     </div>${tabs('Explore')}`;
   const sv = document.getElementById('save');
   const paint = () => { sv.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="${saved.has(p.id) ? '#E86A4F' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true">${ICONS.heart}</svg>`; };
   paint();
   sv.onclick = () => { saved.has(p.id) ? saved.delete(p.id) : saved.add(p.id); persist(); paint(); toast(saved.has(p.id) ? 'Saved to My List' : 'Removed from My List'); };
-  document.getElementById('share').onclick = async () => { const u = NATIVE ? SITE_URL + location.hash : location.href, d = {title: p.name, text: `${p.name} – worth a visit, from Explore London`, url: u}; try { if (navigator.share) await navigator.share(d); else { await navigator.clipboard.writeText(u); toast('Link copied'); } } catch {} };
+  document.getElementById('share').onclick = async () => { const u = NATIVE ? SITE_URL + location.hash : location.href, d = {title: p.name, text: t('{name} – worth a visit, from Explore London', {name: p.name}), url: u}; try { if (navigator.share) await navigator.share(d); else { await navigator.clipboard.writeText(u); toast('Link copied'); } } catch {} };
   loadPhoto(p);
   gettingThere(p);
 }
@@ -1688,8 +1777,8 @@ async function gettingThere(p) {
   const ns = STN.map(s => [s, dist(p.lat, p.lng, s[1], s[2])]).filter(x => x[1] < 1600).sort((a, b) => a[1] - b[1]).slice(0, 2);
   const chip = l => `<span style="display:inline-block;font-size:11px;font-weight:700;padding:1px 6px;border-radius:6px;background:${LINE_COL[l] || '#555'};color:${LINE_TXT[l] || '#fff'}">${esc(l)}</span>`;
   el.innerHTML = `<div style="display:flex;flex-direction:column;gap:6px;border-top:1px solid #E1E6EE;padding-top:10px">
-    <b style="font-size:15px">Getting there</b>
-    ${ns.map(([s, d]) => `<div style="display:flex;align-items:center;gap:8px;font-size:14px">${svg('train', 18, '#0F1E3D', 1.8)}<span style="display:flex;flex-direction:column;gap:3px"><span><b>${esc(s[0])}</b> · ${mins(d)} min walk</span><span style="display:flex;flex-wrap:wrap;gap:3px">${s[3].map(chip).join('')}</span></span></div>`).join('') || '<span style="font-size:14px;color:var(--muted)">No station within a 20-minute walk. Easiest by cab.</span>'}
+    <b style="font-size:15px">${t('Getting there')}</b>
+    ${ns.map(([s, d]) => `<div style="display:flex;align-items:center;gap:8px;font-size:14px">${svg('train', 18, '#0F1E3D', 1.8)}<span style="display:flex;flex-direction:column;gap:3px"><span><b>${esc(s[0])}</b> · ${t('{n} min walk', {n: mins(d)})}</span><span style="display:flex;flex-wrap:wrap;gap:3px">${s[3].map(chip).join('')}</span></span></div>`).join('') || `<span style="font-size:14px;color:var(--muted)">${t('No station within a 20-minute walk. Easiest by cab.')}</span>`}
   </div>`;
 }
 
@@ -1733,26 +1822,26 @@ async function loadPhoto(p) {
   if (ph && location.hash === '#/place/' + p.id) {
     const h = document.getElementById('hero');
     h.style.backgroundImage = `url("${ph.src}")`; h.querySelector('.heroic')?.remove();
-    document.getElementById('credit').innerHTML = `Photo: ${esc(ph.by)}, ${esc(ph.lic)}, via <a href="${esc(ph.page)}" target="_blank" rel="noopener">Wikimedia Commons</a> · <a href="#" id="badph" style="color:#C8262B;font-weight:700">Wrong photo?</a>`;
-    document.getElementById('badph').onclick = e => { e.preventDefault(); const b = store.get('el_badphoto', []); if (!b.includes(p.id)) b.push(p.id); store.set('el_badphoto', b); h.style.backgroundImage = ''; document.getElementById('credit').textContent = 'Photo removed. Thanks, it’s on your list in About.'; };
+    document.getElementById('credit').innerHTML = `${t('Photo')}: ${esc(ph.by)}, ${esc(ph.lic)}, via <a href="${esc(ph.page)}" target="_blank" rel="noopener">Wikimedia Commons</a> · <a href="#" id="badph" style="color:#C8262B;font-weight:700">${t('Wrong photo?')}</a>`;
+    document.getElementById('badph').onclick = e => { e.preventDefault(); const b = store.get('el_badphoto', []); if (!b.includes(p.id)) b.push(p.id); store.set('el_badphoto', b); h.style.backgroundImage = ''; document.getElementById('credit').textContent = t('Photo removed. Thanks, it’s on your list in About.'); };
   }
 }
 
 /* ---------- map ---------- */
 function mapScreen(focusId) {
-  setTitle('Map');
+  setTitle(t('Map'));
   const GROUPS = [['All', null], ['Eat', '#E86A4F'], ['Drink', '#D99A1E'], ['See', '#2BB3A3'], ['Plaques', '#2E6FD8']];
   const st = {g: 'All', m: store.get('el_mins', 10)};
   app.innerHTML = `<div class="top" style="z-index:800">
-      <div class="row" style="position:relative"><label class="search">${svg('search', 18)}<span style="position:absolute;left:-9999px">Search the map</span><input id="mq" type="search" enterkeyhint="search" placeholder="Search the map" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="mdrop"></label><div class="sdrop" id="mdrop" role="listbox" style="display:none"></div></div>
-      <div class="hpills">${GROUPS.map(([g, c]) => `<button class="hpill${g === 'All' ? ' on' : ''}" data-g="${g}">${c ? `<span class="dot" style="background:${c}${g === 'Plaques' ? ';box-shadow:inset 0 0 0 2px #fff' : ''}"></span>` : ''}${g}</button>`).join('')}</div>
+      <div class="row" style="position:relative"><label class="search">${svg('search', 18)}<span style="position:absolute;left:-9999px">${t('Search the map')}</span><input id="mq" type="search" enterkeyhint="search" placeholder="${esc(t('Search the map'))}" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="mdrop"></label><div class="sdrop" id="mdrop" role="listbox" style="display:none"></div></div>
+      <div class="hpills">${GROUPS.map(([g, c]) => `<button class="hpill${g === 'All' ? ' on' : ''}" data-g="${g}">${c ? `<span class="dot" style="background:${c}${g === 'Plaques' ? ';box-shadow:inset 0 0 0 2px #fff' : ''}"></span>` : ''}${t(g)}</button>`).join('')}</div>
     </div>
     <div class="map"><div id="leaf"></div>
       <div class="overlay card" style="top:12px">
-        <div class="row" style="gap:6px">${svg('near', 16, '#F28C38', 2.4)}<b class="disp" style="font-size:15px">Near me now</b><span style="font-size:13px;color:var(--muted)" id="whereami"></span></div>
-        <div class="mins">${[5, 10, 15, 20].map(m => `<button data-m="${m}" class="${m === st.m ? 'on' : ''}"><b>${m} min</b><small id="c${m}">…</small></button>`).join('')}</div>
+        <div class="row" style="gap:6px">${svg('near', 16, '#F28C38', 2.4)}<b class="disp" style="font-size:15px">${t('Near me now')}</b><span style="font-size:13px;color:var(--muted)" id="whereami"></span></div>
+        <div class="mins">${[5, 10, 15, 20].map(m => `<button data-m="${m}" class="${m === st.m ? 'on' : ''}"><b>${t('{n} min', {n: m})}</b><small id="c${m}">…</small></button>`).join('')}</div>
       </div>
-      <button class="iconbtn light overlay" id="recentre" aria-label="Centre on me" style="left:auto;right:12px;top:130px;width:44px;color:var(--plaque)">${svg('locate', 20)}</button>
+      <button class="iconbtn light overlay" id="recentre" aria-label="${esc(t('Centre on me'))}" style="left:auto;right:12px;top:130px;width:44px;color:var(--plaque)">${svg('locate', 20)}</button>
       <div class="overlay" id="farbox" style="top:118px;display:none"></div>
       <div class="overlay" id="mcard" style="bottom:12px;display:none"></div>
     </div>${tabs('Map')}`;
@@ -1763,10 +1852,10 @@ function mapScreen(focusId) {
   const show = p => {
     const card = document.getElementById('mcard'); const isPl = p.cats.includes('Blue Plaques');
     card.style.display = 'block';
-    card.innerHTML = `<div class="card"><div class="row" style="align-items:flex-start">${thumb(p, 48)}<span class="rc-t"><span style="font-size:11.5px;font-weight:700;color:${isPl ? 'var(--plaque)' : '#A8551A'};text-transform:uppercase;letter-spacing:.5px">${esc(isPl ? 'Blue plaque · ' + (p.tags[1] || '') : p.cats[0])}</span><span class="rc-n" style="white-space:normal">${esc(p.name)}</span><span style="font-size:13px;color:#2B3A55">${esc(p.line)}</span><span class="rc-m">${esc(p.area)} · ${walkTime(p)}</span></span>
-      <button class="iconbtn light" id="mclose" aria-label="Close" style="width:36px;height:36px;box-shadow:none">✕</button></div>
-      ${p.story ? `<div class="story" style="padding:8px 10px;font-size:13px;line-height:1.35"><span><b class="k">Cabbie's story · </b>${esc(p.story)}</span></div>` : ''}
-      <div class="row" style="gap:8px"><a class="bigbtn" style="height:44px;flex:1" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=walking">${svg('arrow', 18, '#F28C38', 2.2)} Walk there</a><a class="ghost" href="#/place/${p.id}">More</a></div></div>`;
+    card.innerHTML = `<div class="card"><div class="row" style="align-items:flex-start">${thumb(p, 48)}<span class="rc-t"><span style="font-size:11.5px;font-weight:700;color:${isPl ? 'var(--plaque)' : '#A8551A'};text-transform:uppercase;letter-spacing:.5px">${esc(isPl ? t('Blue plaque') + ' · ' + (p.tags[1] || '') : t(p.cats[0]))}</span><span class="rc-n" style="white-space:normal">${esc(p.name)}</span><span style="font-size:13px;color:#2B3A55">${esc(p.line)}</span><span class="rc-m">${esc(p.area)} · ${walkTime(p)}</span></span>
+      <button class="iconbtn light" id="mclose" aria-label="${esc(t('Close'))}" style="width:36px;height:36px;box-shadow:none">✕</button></div>
+      ${p.story ? `<div class="story" style="padding:8px 10px;font-size:13px;line-height:1.35"><span><b class="k">${t('The Cabbie’s Story')} · </b>${esc(p.story)}</span></div>` : ''}
+      <div class="row" style="gap:8px"><a class="bigbtn" style="height:44px;flex:1" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=walking">${svg('arrow', 18, '#F28C38', 2.2)} ${t('Walk there')}</a><a class="ghost" href="#/place/${p.id}">${t('More')}</a></div></div>`;
     document.getElementById('mclose').onclick = () => { card.style.display = 'none'; if (st.sel) { st.sel = null; draw(); } };
     if (st.sel !== p.id) { st.sel = p.id; draw(); }
   };
@@ -1783,7 +1872,7 @@ function mapScreen(focusId) {
       if (far && nearest.length && !st.farHide) {
         const nn = nearest.slice(0, 3);
         fb.style.display = 'block';
-        fb.innerHTML = `<div class="card" style="display:flex;flex-direction:column;gap:6px"><b style="font-size:14.5px">Nothing in the app within a 20-minute walk of you yet</b><span style="font-size:13px;color:var(--muted)">Nearest: ${nn.map(([p, d]) => esc(p.name) + ' (' + (d / 1609).toFixed(1) + ' miles)').join(', ')}</span><div class="row" style="gap:8px"><button class="ghost" id="fbnear" style="height:38px;flex:1">Show the nearest</button><button class="ghost" id="fbcen" style="height:38px;flex:1">Central London</button></div></div>`;
+        fb.innerHTML = `<div class="card" style="display:flex;flex-direction:column;gap:6px"><b style="font-size:14.5px">${t('Nothing in the app within a 20-minute walk of you yet')}</b><span style="font-size:13px;color:var(--muted)">${t('Nearest')}: ${nn.map(([p, d]) => esc(p.name) + ' (' + t('{n} miles', {n: (d / 1609).toFixed(1)}) + ')').join(', ')}</span><div class="row" style="gap:8px"><button class="ghost" id="fbnear" style="height:38px;flex:1">${t('Show the nearest')}</button><button class="ghost" id="fbcen" style="height:38px;flex:1">${t('Central London')}</button></div></div>`;
         const fitNear = () => fitTo(map, [[a, b]].concat(nearest.slice(0, 8).map(([p]) => [p.lat, p.lng])), 50, 15);
         document.getElementById('fbnear').onclick = fitNear;
         document.getElementById('fbcen').onclick = () => { st.farHide = true; fb.style.display = 'none'; if (map) map.jumpTo({center: lngLat(CONFIG.demoStart), zoom: 14}); };
@@ -1800,11 +1889,11 @@ function mapScreen(focusId) {
       feats.push(pinFeature(p, !(d <= r || far)));
     } catch (e) {} });
     pins = FC(feats);
-    [5, 10, 15, 20].forEach(m => document.getElementById('c' + m).textContent = inc[m] + ' places');
+    [5, 10, 15, 20].forEach(m => document.getElementById('c' + m).textContent = t('{n} places', {n: inc[m]}));
     const wa = document.getElementById('whereami');
-    if (meReal) wa.textContent = '· from where you are';
-    else if (STAY) wa.textContent = '· from ' + STAY.label;
-    else { wa.innerHTML = `· from ${esc(CONFIG.demoStart[2])}${locErr ? ' · <a href="#" id="lochelp" style="color:#C8262B;font-weight:700">location off?</a>' : ''}`; const lh = document.getElementById('lochelp'); if (lh) lh.onclick = e => { e.preventDefault(); const fb2 = document.getElementById('farbox'); fb2.style.display = 'block'; fb2.innerHTML = `<div class="card" style="display:flex;flex-direction:column;gap:6px"><b style="font-size:14.5px">Your location is off</b><span style="font-size:13.5px;line-height:1.4">${esc(LOC_HELP)}</span><div class="row" style="gap:8px"><a class="ghost" href="#/stay" style="height:38px;flex:1">Set where I’m staying</a><button class="ghost" id="lhclose" style="height:38px;flex:1">OK</button></div></div>`; document.getElementById('lhclose').onclick = () => fb2.style.display = 'none'; }; }
+    if (meReal) wa.textContent = '· ' + t('from where you are');
+    else if (STAY) wa.textContent = '· ' + t('from {place}', {place: t(STAY.label)});
+    else { wa.innerHTML = `· ${esc(t('from {place}', {place: CONFIG.demoStart[2]}))}${locErr ? ` · <a href="#" id="lochelp" style="color:#C8262B;font-weight:700">${t('location off?')}</a>` : ''}`; const lh = document.getElementById('lochelp'); if (lh) lh.onclick = e => { e.preventDefault(); const fb2 = document.getElementById('farbox'); fb2.style.display = 'block'; fb2.innerHTML = `<div class="card" style="display:flex;flex-direction:column;gap:6px"><b style="font-size:14.5px">${t('Your location is off')}</b><span style="font-size:13.5px;line-height:1.4">${esc(t(LOC_HELP))}</span><div class="row" style="gap:8px"><a class="ghost" href="#/stay" style="height:38px;flex:1">${t('Set where I’m staying')}</a><button class="ghost" id="lhclose" style="height:38px;flex:1">${t('OK')}</button></div></div>`; document.getElementById('lhclose').onclick = () => fb2.style.display = 'none'; }; }
     if (!map) return;
     const ps = map.getSource('pins'), rs = map.getSource('ring');
     if (ps) ps.setData(pins);
@@ -1836,9 +1925,9 @@ function mapScreen(focusId) {
     descs.sort((x, y) => y[1].sc - x[1].sc || near(x[0]) - near(y[0]));
     const item = p => `<button type="button" role="option" data-id="${p.id}">${thumb(p, 36)}<span class="rc-t"><span class="rc-n">${esc(p.name)}</span><span class="sm">${esc(meta(p))}</span></span></button>`;
     let h = '';
-    if (names.length) h += `<div class="sh">Places</div>` + names.slice(0, 8).map(([p]) => item(p)).join('');
-    if (descs.length) h += `<div class="sh">Mentioned in the description</div>` + descs.slice(0, 12).map(([p]) => item(p)).join('');
-    drop.innerHTML = h || `<div class="none">No places match “${esc(raw)}”</div>`;
+    if (names.length) h += `<div class="sh">${t('Places')}</div>` + names.slice(0, 8).map(([p]) => item(p)).join('');
+    if (descs.length) h += `<div class="sh">${t('Mentioned in the description')}</div>` + descs.slice(0, 12).map(([p]) => item(p)).join('');
+    drop.innerHTML = h || `<div class="none">${t('No places match “{q}”', {q: esc(raw)})}</div>`;
     drop.style.display = 'block'; mq.setAttribute('aria-expanded', 'true');
   };
   const pick = id => {
@@ -1897,23 +1986,23 @@ const WICON = {'Royal':'arch','Royal Parks':'tree','Film & TV':'bolt','Day out':
 function walkRows(all) {
   const hp = WALKS.filter(w => w.id.startsWith('hp-'));
   const items = all ? WALKS.map(w => ({href:'#/walk/' + w.id, title:w.title, meta:w.meta, line:w.intro, color:w.color, tag:w.tag, isNew:w.isNew}))
-    : [WALKS.find(w => w.id === 'hyde-park'), {id:'hp', title:'Harry Potter in London', meta:'Film & TV · ' + hp.length + ' walks', intro:"King's Cross, Westminster and the City.", color:'#3B2F5C', tag:'Film & TV', isNew:true}, WALKS.find(w => w.id === 'greenwich'), WALKS.find(w => w.id === 'ted-lasso'), WALKS.find(w => w.id === 'music-trail'), WALKS.find(w => w.id === 'lgbtq-soho'), WALKS.find(w => w.id === 'changing-guard')].filter(Boolean)
-      .map(w => ({href: w.id === 'hp' ? '#/walks/all' : '#/walk/' + w.id, title:w.title, meta: w.id === 'hp' ? w.meta : w.tag + ' · ' + w.meta.replace(/^About /, '').split(' · ')[0] + (w.id === 'greenwich' ? ' · through the foot tunnel' : w.id === 'hyde-park' ? ' · ' + w.stops.length + ' stops' : ''), line: w.id === 'changing-guard' ? 'Foot guards and mounted guard, with the times to be in each spot.' : w.intro, color:w.color, tag:w.tag, isNew:w.isNew}));
-  return items.map(w => `<a class="row-card" href="${w.href}"><span class="thumb" style="background:${w.color}">${svg(WICON[w.tag] || 'walk', 24, '#F5D9A8')}</span><span class="rc-t"><span class="rc-n">${esc(w.title)}${w.isNew ? ' <span class="badge" style="background:var(--orange);font-size:10.5px;vertical-align:2px">NEW</span>' : ''}</span><span class="rc-m">${esc(w.meta)}</span><span class="rc-l">${esc(w.line)}</span></span></a>`).join('');
+    : [WALKS.find(w => w.id === 'hyde-park'), {id:'hp', title:t('Harry Potter in London'), meta:t('Film & TV') + ' · ' + t('{n} walks', {n: hp.length}), intro:t('King’s Cross, Westminster and the City.'), color:'#3B2F5C', tag:'Film & TV', isNew:true}, WALKS.find(w => w.id === 'greenwich'), WALKS.find(w => w.id === 'ted-lasso'), WALKS.find(w => w.id === 'music-trail'), WALKS.find(w => w.id === 'lgbtq-soho'), WALKS.find(w => w.id === 'changing-guard')].filter(Boolean)
+      .map(w => ({href: w.id === 'hp' ? '#/walks/all' : '#/walk/' + w.id, title:w.title, meta: w.id === 'hp' ? w.meta : t(w.tag) + ' · ' + w.meta.replace(/^About /, '').split(' · ')[0] + (w.id === 'greenwich' ? ' · ' + t('through the foot tunnel') : w.id === 'hyde-park' ? ' · ' + t('{n} stops', {n: w.stops.length}) : ''), line: w.id === 'changing-guard' ? t('Foot guards and mounted guard, with the times to be in each spot.') : w.intro, color:w.color, tag:w.tag, isNew:w.isNew}));
+  return items.map(w => `<a class="row-card" href="${w.href}"><span class="thumb" style="background:${w.color}">${svg(WICON[w.tag] || 'walk', 24, '#F5D9A8')}</span><span class="rc-t"><span class="rc-n">${esc(w.title)}${w.isNew ? ' <span class="badge" style="background:var(--orange);font-size:10.5px;vertical-align:2px">' + t('NEW') + '</span>' : ''}</span><span class="rc-m">${esc(w.meta)}</span><span class="rc-l">${esc(w.line)}</span></span></a>`).join('');
 }
 function walks(all) {
-  setTitle('Walks');
+  setTitle(t('Walks'));
   const st = {i: new Set(store.get('el_int', ['Music', 'Blue plaques'])), t: store.get('el_time', 60)};
   app.innerHTML = `<div class="top" style="position:static">
-      <div><h1 style="margin:0;font-weight:800;font-size:24px">Walks &amp; Guides</h1><span style="font-size:14px;color:#C9D3E6">Walk London with a cabbie's stories</span></div>
+      <div><h1 style="margin:0;font-weight:800;font-size:24px">${t('Walks &amp; Guides')}</h1><span style="font-size:14px;color:#C9D3E6">${t('Walk London with a cabbie’s stories')}</span></div>
       <div style="background:#fff;color:var(--ink);border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:10px">
-        <div class="row"><span style="width:36px;height:36px;border-radius:18px;background:var(--orange);display:flex;align-items:center;justify-content:center">${svg('walk', 20, '#0F1E3D', 2.2)}</span><span style="display:flex;flex-direction:column"><b class="disp" style="font-size:17px">Make My Walk</b><span style="font-size:13px;color:var(--muted)">Pick what you like and how long you've got</span></span></div>
-        <span class="lbl">I'm into</span><div class="chips">${Object.keys(INTERESTS).map(k => `<button class="chip${st.i.has(k) ? ' on' : ''}" data-k="${k}">${k}</button>`).join('')}</div>
-        <span class="lbl">I've got</span><div class="mins">${[[30,'30 min'],[60,'1 hour'],[120,'2 hours'],[240,'Half day']].map(([m, l]) => `<button data-t="${m}" class="${m === st.t ? 'on' : ''}" style="height:36px"><b>${l}</b></button>`).join('')}</div>
-        <button class="bigbtn orange" id="build" style="height:46px">Build my walk from here ${svg('arrow', 18, '#0F1E3D', 2.4)}</button>
+        <div class="row"><span style="width:36px;height:36px;border-radius:18px;background:var(--orange);display:flex;align-items:center;justify-content:center">${svg('walk', 20, '#0F1E3D', 2.2)}</span><span style="display:flex;flex-direction:column"><b class="disp" style="font-size:17px">${t('Make My Walk')}</b><span style="font-size:13px;color:var(--muted)">${t('Pick what you like and how long you’ve got')}</span></span></div>
+        <span class="lbl">${t('I’m into')}</span><div class="chips">${Object.keys(INTERESTS).map(k => `<button class="chip${st.i.has(k) ? ' on' : ''}" data-k="${k}">${esc(t(k))}</button>`).join('')}</div>
+        <span class="lbl">${t('I’ve got')}</span><div class="mins">${[[30, t('{n} min', {n: 30})], [60, t('1 hour')], [120, t('{n} hours', {n: 2})], [240, t('Half day')]].map(([m, l]) => `<button data-t="${m}" class="${m === st.t ? 'on' : ''}" style="height:36px"><b>${l}</b></button>`).join('')}</div>
+        <button class="bigbtn orange" id="build" style="height:46px">${t('Build my walk from here')} ${svg('arrow', 18, '#0F1E3D', 2.4)}</button>
       </div></div>
     <div class="content">
-      <div class="sec"><h2>Ready-made walks</h2><a href="#/walks/all">See all</a></div>
+      <div class="sec"><h2>${t('Ready-made walks')}</h2><a href="#/walks/all">${t('See all')}</a></div>
       ${walkRows(all)}
     </div>${tabs('Walks')}`;
   app.querySelectorAll('.chip').forEach(b => b.onclick = () => { const k = b.dataset.k; st.i.has(k) ? st.i.delete(k) : st.i.add(k); b.classList.toggle('on'); store.set('el_int', [...st.i]); });
@@ -1935,7 +2024,7 @@ function buildWalk() {
     stops.push({name: n.name, lat: n.lat, lng: n.lng, note: n.story || n.line, id: n.id, at: Math.round(T - left + walk)});
     left -= walk + dwell; cur = [n.lat, n.lng]; pool = pool.slice(1);
   }
-  return {id: 'mine', title: 'My walk: ' + ints.join(', '), meta: `${stops.length} stops · about ${T >= 60 ? T / 60 + ' hour' + (T > 60 ? 's' : '') : T + ' min'}`, intro: meReal ? 'Built from where you are now.' : `Built from ${CONFIG.demoStart[2]}. In London with location on, it starts where you are.`, color: '#F28C38', stops, start: [a, b]};
+  return {id: 'mine', title: t('My walk: {list}', {list: ints.map(x => t(x)).join(', ')}), meta: t('{n} stops · about {time}', {n: stops.length, time: T >= 60 ? (T === 60 ? t('1 hour') : t('{n} hours', {n: T / 60})) : t('{n} min', {n: T})}), intro: meReal ? t('Built from where you are now.') : t('Built from {place}. In London with location on, it starts where you are.', {place: CONFIG.demoStart[2]}), color: '#F28C38', stops, start: [a, b]};
 }
 /* two-route walks (Changing the Guard): number badges coloured by route – red foot guards, gold mounted guard, navy for both */
 function numSty(s) { return s.route === 'foot' ? 'background:#C8102E;color:#fff' : s.route === 'mounted' ? 'background:#F9B10F;color:#0F1E3D' : 'background:#0F1E3D;color:#fff'; }
@@ -1972,41 +2061,41 @@ function stopPop(w, i) {
   const old = document.getElementById('stoppop'); if (old) old.remove();
   const d = document.createElement('div'); d.id = 'stoppop'; d.className = 'stoppop';
   d.innerHTML = `<div class="sp-card" role="dialog" aria-label="${esc(s.name)}">
-    <span class="kicker">You’ve reached stop ${i + 1} of ${w.stops.length}</span>
+    <span class="kicker">${t('You’ve reached stop {n} of {total}', {n: i + 1, total: w.stops.length})}</span>
     <b class="disp" style="font-size:21px;line-height:1.15">${esc(s.name)}</b>
     ${s.note ? `<p style="margin:0;font-size:15px;line-height:1.45">${esc(s.note)}</p>` : ''}
-    ${story ? `<div class="story" style="gap:8px"><span class="row" style="gap:10px"><img src="img/matt.jpg" alt="" style="width:40px;height:40px;border-radius:20px;object-fit:cover;background:var(--orange)"><span style="display:flex;flex-direction:column"><b class="disp" style="font-size:15px">The Cabbie's Story</b><span style="font-size:12.5px;color:#6B5440">from the cabbies</span></span></span><p style="margin:0;font-size:14.5px;line-height:1.4">${esc(story)}</p></div>` : ''}
-    <button class="bigbtn" id="spok" style="height:46px">${i + 1 < w.stops.length ? 'On to stop ' + (i + 2) : 'Finish the walk'}</button></div>`;
+    ${story ? `<div class="story" style="gap:8px"><span class="row" style="gap:10px"><img src="img/matt.jpg" alt="" style="width:40px;height:40px;border-radius:20px;object-fit:cover;background:var(--orange)"><span style="display:flex;flex-direction:column"><b class="disp" style="font-size:15px">${t('The Cabbie’s Story')}</b><span style="font-size:12.5px;color:#6B5440">${t('from the cabbies')}</span></span></span><p style="margin:0;font-size:14.5px;line-height:1.4">${esc(story)}</p></div>` : ''}
+    <button class="bigbtn" id="spok" style="height:46px">${i + 1 < w.stops.length ? t('On to stop {n}', {n: i + 2}) : t('Finish the walk')}</button></div>`;
   d.onclick = e => { if (e.target === d || e.target.id === 'spok') d.remove(); };
   document.body.appendChild(d);
 }
 addEventListener('hashchange', () => { stopWalkAlerts(); const sp = document.getElementById('stoppop'); if (sp) sp.remove(); });
 function walkScreen(id) {
   let w = id === 'mine' ? buildWalk() : WALKS.find(x => x.id === id);
-  if (!w && id && id.startsWith('plan-') && PLANS) { const pl = PLANS.find(x => 'plan-' + x.n === id); if (pl) { const st = pl.stops.filter(x => !x.meal).map(x => (x.ids || []).map(i => byId[i]).find(q => q && q.lat != null)).filter(Boolean); w = {id, title: pl.title + ': the route', meta: st.length + ' stops', intro: pl.sub + '. Meal stops are left out of the map.', color: '#0F1E3D', stops: st.filter((q, i, A) => A.indexOf(q) === i).map(q => ({name: q.name, lat: q.lat, lng: q.lng, note: q.line, id: q.id}))}; } }
-  if (!w && id && id.startsWith('trip-') && TRIPS) { const t = TRIPS.find(x => 'trip-' + x.id === id); if (t) w = {id, title: t.title + ': walking route', meta: t.stops.length + ' stops · from the station', intro: t.intro, color: t.color, stops: t.stops}; }
+  if (!w && id && id.startsWith('plan-') && PLANS) { const pl = PLANS.find(x => 'plan-' + x.n === id); if (pl) { const st = pl.stops.filter(x => !x.meal).map(x => (x.ids || []).map(i => byId[i]).find(q => q && q.lat != null)).filter(Boolean); w = {id, title: t('{name}: the route', {name: pl.title}), meta: t('{n} stops', {n: st.length}), intro: pl.sub + '. ' + t('Meal stops are left out of the map.'), color: '#0F1E3D', stops: st.filter((q, i, A) => A.indexOf(q) === i).map(q => ({name: q.name, lat: q.lat, lng: q.lng, note: q.line, id: q.id}))}; } }
+  if (!w && id && id.startsWith('trip-') && TRIPS) { const tp = TRIPS.find(x => 'trip-' + x.id === id); if (tp) w = {id, title: t('{name}: walking route', {name: tp.title}), meta: t('{n} stops · from the station', {n: tp.stops.length}), intro: tp.intro, color: tp.color, stops: tp.stops}; }
   if (!w) return walks();
   setTitle(w.title);
   const total = w.stops.reduce((s, x, i, A) => s + (i ? dist(A[i-1].lat, A[i-1].lng, x.lat, x.lng) : 0), 0);
   const gm = w.stops.length ? `https://www.google.com/maps/dir/?api=1&travelmode=walking&origin=${w.stops[0].lat},${w.stops[0].lng}&destination=${w.stops.at(-1).lat},${w.stops.at(-1).lng}&waypoints=${w.stops.slice(1, -1).slice(0, 9).map(s => s.lat + ',' + s.lng).join('|')}` : '';
-  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/walks')}<div style="display:flex;flex-direction:column;min-width:0"><h1 style="margin:0;font-weight:800;font-size:20px;line-height:1.15">${esc(w.title)}</h1><span style="font-size:13.5px;color:#C9D3E6">${esc(w.meta)}${total && !w.routes ? ' · ' + (total / 1000).toFixed(1) + ' km walking' : ''}</span></div></div></div>
+  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/walks')}<div style="display:flex;flex-direction:column;min-width:0"><h1 style="margin:0;font-weight:800;font-size:20px;line-height:1.15">${esc(w.title)}</h1><span style="font-size:13.5px;color:#C9D3E6">${esc(w.meta)}${total && !w.routes ? ' · ' + t('{n} km walking', {n: (total / 1000).toFixed(1)}) : ''}</span></div></div></div>
     <div style="height:300px;position:relative"><div id="leaf"></div></div>
     <div class="content">
       <p style="margin:0;font-size:15px;line-height:1.45">${esc(w.intro)}</p>
-      ${w.stops.length ? `<button class="bigbtn orange" id="alerts" style="height:46px">${svg('walk', 18, '#0F1E3D', 2.2)} <span id="alertlbl">Start walk: buzz me at each stop</span></button><span class="note" id="alertnote" style="display:none"></span>` : ''}
-      ${w.legend ? `<div class="row" style="gap:14px;flex-wrap:wrap">${w.legend.map(([l, c]) => `<span style="display:flex;align-items:center;gap:6px;font-size:14px;font-weight:700"><i style="width:22px;height:5px;border-radius:3px;background:${c}"></i>${esc(l)} route</span>`).join('')}</div>` : ''}
-      ${w.routes ? '' : w.stops.length ? `<div class="row" style="gap:8px"><a class="bigbtn" style="flex:1;height:46px" target="_blank" rel="noopener" href="${gm}">${svg('walk', 18, '#F28C38', 2.2)} Open in Google Maps</a>${id === 'mine' ? '<a class="ghost" href="#/mywalk" onclick="setTimeout(()=>route(),0)">Rebuild</a>' : ''}</div>` : `<div class="empty">No matching places close enough. Try more interests or more time.</div>`}
+      ${w.stops.length ? `<button class="bigbtn orange" id="alerts" style="height:46px">${svg('walk', 18, '#0F1E3D', 2.2)} <span id="alertlbl">${t('Start walk: buzz me at each stop')}</span></button><span class="note" id="alertnote" style="display:none"></span>` : ''}
+      ${w.legend ? `<div class="row" style="gap:14px;flex-wrap:wrap">${w.legend.map(([l, c]) => `<span style="display:flex;align-items:center;gap:6px;font-size:14px;font-weight:700"><i style="width:22px;height:5px;border-radius:3px;background:${c}"></i>${esc(t('{name} route', {name: t(l)}))}</span>`).join('')}</div>` : ''}
+      ${w.routes ? '' : w.stops.length ? `<div class="row" style="gap:8px"><a class="bigbtn" style="flex:1;height:46px" target="_blank" rel="noopener" href="${gm}">${svg('walk', 18, '#F28C38', 2.2)} ${t('Open in Google Maps')}</a>${id === 'mine' ? `<a class="ghost" href="#/mywalk" onclick="setTimeout(()=>route(),0)">${t('Rebuild')}</a>` : ''}</div>` : `<div class="empty">${t('No matching places close enough. Try more interests or more time.')}</div>`}
       ${w.stops.map((s, i) => `<div class="stop"><span class="num" style="flex-shrink:0${s.route ? ';' + numSty(s) : ''}">${i + 1}</span><span style="display:flex;flex-direction:column;gap:2px"><b class="disp" style="font-size:15px">${s.id ? `<a href="#/place/${s.id}" style="text-decoration:none">${esc(s.name)}</a>` : esc(s.name)}</b><span style="font-size:14px;line-height:1.4">${esc(s.note)}</span></span></div>`).join('')}
-      <p class="note">${w.routes ? 'Routes are a guide to where the guards go. Timings are for a weekday ceremony day.' : 'Route lines are drawn straight between stops. Google Maps gives the real walking route.'}</p>
+      <p class="note">${w.routes ? t('Routes are a guide to where the guards go. Timings are for a weekday ceremony day.') : t('Route lines are drawn straight between stops. Google Maps gives the real walking route.')}</p>
     </div>${tabs('Walks')}`;
   const ab = document.getElementById('alerts');
   if (ab) ab.onclick = () => {
     const lbl = document.getElementById('alertlbl'), nt = document.getElementById('alertnote');
-    if (walkWatch) { stopWalkAlerts(); lbl.textContent = 'Start walk: buzz me at each stop'; nt.style.display = 'none'; return; }
-    const ok = startWalkAlerts(w, () => { stopWalkAlerts(); lbl.textContent = 'Start walk: buzz me at each stop'; nt.style.display = 'none'; toast('We couldn’t get your location'); setTimeout(() => alert(LOC_HELP), 300); });
+    if (walkWatch) { stopWalkAlerts(); lbl.textContent = t('Start walk: buzz me at each stop'); nt.style.display = 'none'; return; }
+    const ok = startWalkAlerts(w, () => { stopWalkAlerts(); lbl.textContent = t('Start walk: buzz me at each stop'); nt.style.display = 'none'; toast('We couldn’t get your location'); setTimeout(() => alert(t(LOC_HELP)), 300); });
     if (!ok) return toast('Your phone can’t share its location here');
-    lbl.textContent = 'Stop walk alerts';
-    nt.textContent = 'Keep this screen open as you walk. When you reach a stop, your phone buzzes and the Cabbie’s Story pops up.' + (IOS && !NATIVE ? ' (iPhones don’t let websites buzz, so the story just pops up.)' : '');
+    lbl.textContent = t('Stop walk alerts');
+    nt.textContent = t('Keep this screen open as you walk. When you reach a stop, your phone buzzes and the Cabbie’s Story pops up.') + (IOS && !NATIVE ? ' ' + t('(iPhones don’t let websites buzz, so the story just pops up.)') : '');
     nt.style.display = '';
   };
   /* route lines are map layers; the start dot and the numbered stops are a few page elements on top */
@@ -2036,24 +2125,24 @@ function walkScreen(id) {
 /* ---------- my list ---------- */
 function listRow(p) {
   const k = CAT[p.cats[0]] ? p.cats[0] : CATS[0].k, col = collOf(p, k);
-  const m = [k === 'Blue Plaques' ? 'Blue plaque' : col ? shortLabel(col.label) : (p.cuisine ? p.cuisine.split(',')[0] : CAT[k].s), shortAddr(p).replace(/^\d+[a-z]?\s+/i, '')].concat(p.tags.includes('Free to visit') && k !== 'Blue Plaques' ? ['Free'] : []).join(' · ');
-  return `<div class="row-card" style="padding:8px">${catTile(p, k, 44)}<a href="#/place/${p.id}" class="rc-t" style="text-decoration:none"><span class="rc-n">${esc(p.name)}</span><span class="rc-m">${esc(m)}</span></a><button class="tick${visited.has(p.id) ? ' on' : ''}" data-id="${p.id}" aria-label="Mark as visited" aria-pressed="${visited.has(p.id)}">${svg('check', 20, 'currentColor', 2.6)}</button></div>`;
+  const m = [k === 'Blue Plaques' ? t('Blue plaque') : col ? shortLabel(col.label) : t(p.cuisine ? p.cuisine.split(',')[0].trim() : CAT[k].s), shortAddr(p).replace(/^\d+[a-z]?\s+/i, '')].concat(p.tags.includes('Free to visit') && k !== 'Blue Plaques' ? [t('Free')] : []).join(' · ');
+  return `<div class="row-card" style="padding:8px">${catTile(p, k, 44)}<a href="#/place/${p.id}" class="rc-t" style="text-decoration:none"><span class="rc-n">${esc(p.name)}</span><span class="rc-m">${esc(m)}</span></a><button class="tick${visited.has(p.id) ? ' on' : ''}" data-id="${p.id}" aria-label="${esc(t('Mark as visited'))}" aria-pressed="${visited.has(p.id)}">${svg('check', 20, 'currentColor', 2.6)}</button></div>`;
 }
 function myList(view) {
   view = view || 'area';
-  setTitle('My List');
+  setTitle(t('My List'));
   const L0 = [...saved].map(i => byId[i]).filter(Boolean);
   const groups = {}; L0.forEach(p => (groups[p.area] = groups[p.area] || []).push(p));
   const big = Object.entries(groups).sort((a, b) => b[1].length - a[1].length)[0];
   const plaques = P.filter(p => p.cats.includes('Blue Plaques')), seen = plaques.filter(p => visited.has(p.id)).length;
-  app.innerHTML = `<div class="top"><div class="row" style="justify-content:space-between"><div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:24px">My List</h1><span style="font-size:14px;color:#C9D3E6">${L0.length} saved · ${L0.filter(p => visited.has(p.id)).length} visited · kept on this phone</span></div>
-      <button class="iconbtn" id="share" aria-label="Share my list" style="width:auto;padding:0 14px;gap:6px;font-weight:700">${svg('share', 16)} Share</button></div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);background:var(--navy2);border-radius:14px;padding:4px;gap:4px">${[['area','By area'],['near','Nearest'],['map','On the map']].map(([v, l]) => `<a href="#/list/${v}" style="height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;text-decoration:none;font-weight:700;font-size:15px;${view === v ? 'background:#fff;color:var(--navy)' : 'color:#fff'}">${l}</a>`).join('')}</div></div>
+  app.innerHTML = `<div class="top"><div class="row" style="justify-content:space-between"><div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:24px">${t('My List')}</h1><span style="font-size:14px;color:#C9D3E6">${t('{n} saved · {v} visited · kept on this phone', {n: L0.length, v: L0.filter(p => visited.has(p.id)).length})}</span></div>
+      <button class="iconbtn" id="share" aria-label="${esc(t('Share my list'))}" style="width:auto;padding:0 14px;gap:6px;font-weight:700">${svg('share', 16)} ${t('Share')}</button></div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));background:var(--navy2);border-radius:14px;padding:4px;gap:4px">${[['area','By area'],['near','Nearest'],['map','On the map']].map(([v, l]) => `<a href="#/list/${v}" style="height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.05;text-decoration:none;font-weight:700;font-size:${LANG === 'en' ? 15 : 14}px;${view === v ? 'background:#fff;color:var(--navy)' : 'color:#fff'}">${t(l)}</a>`).join('')}</div></div>
     <div class="content">
-      ${big && big[1].length >= 3 ? `<a href="#/daywalk/${encodeURIComponent(big[0])}" style="display:flex;align-items:center;gap:12px;background:var(--orange);border-radius:16px;padding:10px 12px;text-decoration:none"><span style="width:40px;height:40px;border-radius:20px;background:#F5D9A8;display:flex;align-items:center;justify-content:center;flex-shrink:0">${svg('walk', 22, '#0F1E3D', 2.2)}</span><span style="display:flex;flex-direction:column"><b class="disp">Make a day of it</b><span style="font-size:13.5px">${big[1].length} of your places are in ${esc(big[0])}. Walk them in about ${Math.max(1, Math.round(big[1].length * 12 / 60))} hour${big[1].length * 12 / 60 >= 1.5 ? 's' : ''}.</span></span></a>` : ''}
-      <div style="display:flex;align-items:center;gap:10px;background:#fff;border-radius:14px;padding:8px 12px;box-shadow:0 1px 2px rgba(15,30,61,.08)"><span class="plaquedot" style="width:30px;height:30px;flex-shrink:0"></span><span style="display:flex;flex-direction:column;gap:4px;flex:1"><span style="display:flex;justify-content:space-between;font-size:13.5px"><b>Plaque collector</b><span style="color:var(--muted)">${seen} of ${plaques.length} spotted</span></span><span style="height:6px;border-radius:3px;background:#E3E8F0;display:block"><span style="display:block;width:${plaques.length ? Math.round(seen / plaques.length * 100) : 0}%;height:6px;border-radius:3px;background:var(--plaque)"></span></span></span></div>
+      ${big && big[1].length >= 3 ? `<a href="#/daywalk/${encodeURIComponent(big[0])}" style="display:flex;align-items:center;gap:12px;background:var(--orange);border-radius:16px;padding:10px 12px;text-decoration:none"><span style="width:40px;height:40px;border-radius:20px;background:#F5D9A8;display:flex;align-items:center;justify-content:center;flex-shrink:0">${svg('walk', 22, '#0F1E3D', 2.2)}</span><span style="display:flex;flex-direction:column"><b class="disp">${t('Make a day of it')}</b><span style="font-size:13.5px">${t(big[1].length * 12 / 60 >= 1.5 ? '{n} of your places are in {area}. Walk them in about {h} hours.' : '{n} of your places are in {area}. Walk them in about {h} hour.', {n: big[1].length, area: esc(big[0]), h: Math.max(1, Math.round(big[1].length * 12 / 60))})}</span></span></a>` : ''}
+      <div style="display:flex;align-items:center;gap:10px;background:#fff;border-radius:14px;padding:8px 12px;box-shadow:0 1px 2px rgba(15,30,61,.08)"><span class="plaquedot" style="width:30px;height:30px;flex-shrink:0"></span><span style="display:flex;flex-direction:column;gap:4px;flex:1"><span style="display:flex;justify-content:space-between;font-size:13.5px"><b>${t('Plaque collector')}</b><span style="color:var(--muted)">${t('{n} of {total} spotted', {n: seen, total: plaques.length})}</span></span><span style="height:6px;border-radius:3px;background:#E3E8F0;display:block"><span style="display:block;width:${plaques.length ? Math.round(seen / plaques.length * 100) : 0}%;height:6px;border-radius:3px;background:var(--plaque)"></span></span></span></div>
       ${view === 'map' ? `<div style="height:420px;border-radius:16px;overflow:hidden;position:relative"><div id="leaf"></div></div>` : view === 'near' && L0.length ? L0.slice().sort((a, b) => (a.lat == null) - (b.lat == null) || dist(...here().slice(0,2), a.lat ?? 0, a.lng ?? 0) - dist(...here().slice(0,2), b.lat ?? 0, b.lng ?? 0)).map(p => listRow(p)).join('') : L0.length ? Object.entries(groups).sort((x, y) => y[1].length - x[1].length || x[0].localeCompare(y[0])).map(([a, ps]) => `<h2 style="margin:4px 0 0;font-size:15px;font-weight:800;display:flex;justify-content:space-between"><span>${esc(a)}</span><span style="font-family:'Source Sans 3';color:var(--muted)">${ps.length}</span></h2>${ps.map(p => listRow(p)).join('')}`).join('')
-        : `<div class="empty">Tap the heart on any place to save it here. Your list stays on this phone, no sign-up needed.</div>`}
+        : `<div class="empty">${t('Tap the heart on any place to save it here. Your list stays on this phone, no sign-up needed.')}</div>`}
     </div>${tabs('My List')}`;
   app.querySelectorAll('.tick').forEach(b => b.onclick = () => { const i = +b.dataset.id; visited.has(i) ? visited.delete(i) : visited.add(i); persist(); myList(view); });
   if (view === 'map') {
@@ -2062,36 +2151,36 @@ function myList(view) {
     makeMap('leaf', pts.length ? {pts, pad: 30, maxZoom: 16} : {center: here(), zoom: 14}, m => addPinLayers(m, 'pins', FC(ps.map(p => pinFeature(p, false)))))
       .then(m => { if (m) pinTaps(m, 'pins', id => { location.hash = '#/place/' + id; }); }).catch(e => console.error('Map could not start', e));
   }
-  document.getElementById('share').onclick = async () => { const t = 'My London list, from Explore London:\n' + L0.map(p => '• ' + p.name + ' (' + p.area + ')').join('\n'); try { if (navigator.share) await navigator.share({title: 'My London list', text: t}); else { await navigator.clipboard.writeText(t); toast('List copied'); } } catch {} };
+  document.getElementById('share').onclick = async () => { const txt = t('My London list, from Explore London:') + '\n' + L0.map(p => '• ' + p.name + ' (' + p.area + ')').join('\n'); try { if (navigator.share) await navigator.share({title: t('My London list'), text: txt}); else { await navigator.clipboard.writeText(txt); toast('List copied'); } } catch {} };
 }
 function dayWalk(area) {
   const ps = [...saved].map(i => byId[i]).filter(p => p && p.area === area && p.lat != null);
   const stops = []; let pool = ps.slice(), cur = pool.length ? [pool[0].lat, pool[0].lng] : here();
   while (pool.length) { pool.sort((x, y) => dist(cur[0], cur[1], x.lat, x.lng) - dist(cur[0], cur[1], y.lat, y.lng)); const n = pool.shift(); stops.push({name: n.name, lat: n.lat, lng: n.lng, note: n.story || n.line, id: n.id}); cur = [n.lat, n.lng]; }
-  WALKS = WALKS.filter(w => w.id !== 'day'); WALKS.push({id: 'day', title: 'My day in ' + area, meta: stops.length + ' stops from My List', intro: 'Your saved places, in a sensible walking order.', color: '#F28C38', tag: 'My List', stops});
+  WALKS = WALKS.filter(w => w.id !== 'day'); WALKS.push({id: 'day', title: t('My day in {area}', {area}), meta: t('{n} stops from My List', {n: stops.length}), intro: t('Your saved places, in a sensible walking order.'), color: '#F28C38', tag: 'My List', stops});
   walkScreen('day'); WALKS = WALKS.filter(w => w.id !== 'day');
 }
 
 /* ---------- transfers ---------- */
 function transfers(toId) {
-  setTitle('Transfers');
+  setTitle(t('Transfers'));
   const tripT = toId && String(toId).startsWith('trip-') && TRIPS ? TRIPS.find(x => 'trip-' + x.id === toId) : null;
-  const toP = tripT ? {name: 'Day trip to ' + tripT.title, area: 'Beyond London'} : toId && byId[toId];
+  const toP = tripT ? {name: 'Day trip to ' + tripT.title, label: t('Day trip to {place}', {place: tripT.title}), area: 'Beyond London'} : toId && byId[toId];
   const D = [['Heathrow', 'All terminals'], ['Gatwick', 'North & South'], ['London City', 'Docklands'], ['Stansted', 'Essex'], ['Luton', 'Bedfordshire'], ['Harry Potter Studio', 'Leavesden, Watford'], ['Day trip', 'Windsor, Oxford, Bath…']];
-  if (tripT) D.unshift([toP.name, 'Day trip from London']);
+  if (tripT) D.unshift([toP.name, 'Day trip from London', toP.label]);
   let pick = tripT ? toP.name : 'Heathrow';
-  app.innerHTML = `<div class="top"><div class="row"><span style="width:48px;height:48px;border-radius:24px;background:var(--orange);display:flex;align-items:center;justify-content:center;flex-shrink:0">${svg('cab', 28, '#0F1E3D', 1.9)}</span><div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px">Transfers</h1><span style="font-size:14px;color:#C9D3E6">Airports, the Harry Potter Studio and day trips</span></div></div>
-      <p style="margin:0;font-size:14.5px;line-height:1.4;color:#C9D3E6">Airports and days out, with a London cabbie. Plenty of room for luggage.</p>
-      <div class="row" style="background:var(--orange);color:var(--navy);border-radius:14px;padding:8px 12px"><b class="disp" style="font-size:20px;flex-shrink:0">10% off</b><span style="font-size:14px;font-weight:600;line-height:1.25">the meter on every transfer booked through the app</span></div></div>
+  app.innerHTML = `<div class="top"><div class="row"><span style="width:48px;height:48px;border-radius:24px;background:var(--orange);display:flex;align-items:center;justify-content:center;flex-shrink:0">${svg('cab', 28, '#0F1E3D', 1.9)}</span><div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px">${t('Transfers')}</h1><span style="font-size:14px;color:#C9D3E6">${t('Airports, the Harry Potter Studio and day trips')}</span></div></div>
+      <p style="margin:0;font-size:14.5px;line-height:1.4;color:#C9D3E6">${t('Airports and days out, with a London cabbie. Plenty of room for luggage.')}</p>
+      <div class="row" style="background:var(--orange);color:var(--navy);border-radius:14px;padding:8px 12px"><b class="disp" style="font-size:20px;flex-shrink:0">${t('10% off')}</b><span style="font-size:14px;font-weight:600;line-height:1.25">${t('the meter on every transfer booked through the app')}</span></div></div>
     <div class="content">
-      <h2 style="margin:0;font-size:17px;font-weight:800">Where are you heading?</h2>
-      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">${D.map(([n, m], i) => `<button class="dest" data-n="${n}" style="${i === D.length - 1 ? 'grid-column:span 2;' : ''}display:flex;flex-direction:column;align-items:flex-start;text-align:left;min-height:52px;border-radius:14px;padding:6px 12px;color:var(--ink);background:#fff;border:2px solid #E1E6EE"><b style="font-size:15px">${n}</b><span style="font-size:12.5px;color:var(--muted)">${m}</span></button>`).join('')}</div>
+      <h2 style="margin:0;font-size:17px;font-weight:800">${t('Where are you heading?')}</h2>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">${D.map(([n, m, lbl], i) => `<button class="dest" data-n="${esc(n)}" style="${i === D.length - 1 ? 'grid-column:span 2;' : ''}display:flex;flex-direction:column;align-items:flex-start;text-align:left;min-height:52px;border-radius:14px;padding:6px 12px;color:var(--ink);background:#fff;border:2px solid #E1E6EE"><b style="font-size:15px">${esc(lbl || t(n))}</b><span style="font-size:12.5px;color:var(--muted)">${esc(t(m))}</span></button>`).join('')}</div>
       <div style="background:#fff;border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 1px 3px rgba(15,30,61,.08)">
-        <span style="font-size:14.5px;line-height:1.4">Tell us where from, when, and how many people and bags.</span>
-        <a class="bigbtn orange" id="wa" target="_blank" rel="noopener" href="#">${svg('chat', 20, '#0F1E3D', 2.2)} Message us on WhatsApp</a>
-        <span style="font-size:13px;color:var(--muted)">We're working cabbies, so please give us 24 hours' notice if you can.</span>
+        <span style="font-size:14.5px;line-height:1.4">${t('Tell us where from, when, and how many people and bags.')}</span>
+        <a class="bigbtn orange" id="wa" target="_blank" rel="noopener" href="#">${svg('chat', 20, '#0F1E3D', 2.2)} ${t('Message us on WhatsApp')}</a>
+        <span style="font-size:13px;color:var(--muted)">${t('We’re working cabbies, so please give us 24 hours’ notice if you can.')}</span>
       </div>
-      <div class="story" style="flex-direction:row;gap:10px"><span style="color:#A8551A;flex-shrink:0">${svg('cab', 20, '#A8551A')}</span><span style="font-size:13.5px;line-height:1.4"><b class="k">Cabbie's tip · </b>The Heathrow Express is £26 each (less if you book a month ahead), and you still have to get to Paddington with your bags. For two, a black cab costs a little more but takes you door to door in about the same time. For three or more, it's usually cheaper.</span></div>
+      <div class="story" style="flex-direction:row;gap:10px"><span style="color:#A8551A;flex-shrink:0">${svg('cab', 20, '#A8551A')}</span><span style="font-size:13.5px;line-height:1.4"><b class="k">${t('Cabbie’s tip')} · </b>${t('The Heathrow Express is £26 each (less if you book a month ahead), and you still have to get to Paddington with your bags. For two, a black cab costs a little more but takes you door to door in about the same time. For three or more, it’s usually cheaper.')}</span></div>
     </div>${tabs('Transfers')}`;
   const paint = () => {
     app.querySelectorAll('.dest').forEach(b => { const on = b.dataset.n === pick; b.style.background = on ? '#FFF4E8' : '#fff'; b.style.borderColor = on ? '#F28C38' : '#E1E6EE'; });
@@ -2104,48 +2193,63 @@ function transfers(toId) {
 
 /* ---------- suggest a place: goes to Netlify Forms, which emails it on ---------- */
 function suggestLink(k) {
-  return `<a class="suggestlink" href="#/suggest${k ? '/' + encodeURIComponent(k) : ''}">${svg('plus', 20, '#A8551A', 2.2)}<span style="display:flex;flex-direction:column;gap:1px"><b class="disp" style="font-size:15.5px">Know somewhere we’ve missed?</b><span style="font-size:13px;color:var(--muted)">Suggest a place for Explore London</span></span></a>`;
+  return `<a class="suggestlink" href="#/suggest${k ? '/' + encodeURIComponent(k) : ''}">${svg('plus', 20, '#A8551A', 2.2)}<span style="display:flex;flex-direction:column;gap:1px"><b class="disp" style="font-size:15.5px">${t('Share a London favourite')}</b><span style="font-size:13px;color:var(--muted)">${t('A place you love, or an idea for the app')}</span></span></a>`;
 }
 function suggest(from) {
-  setTitle('Suggest a place');
+  setTitle(t('Share a London favourite'));
   const GOOD = ['Great food', 'Good value', 'Excellent service', 'Friendly staff', 'Great atmosphere', 'Hidden gem', 'Great for families', 'Good for groups'];
   const picked = new Set();
-  app.innerHTML = `<div class="top"><div class="row" style="gap:12px">${backBtn(from ? '#/cat/' + encodeURIComponent(from) : '#/')}<h1 style="margin:0;font-weight:800;font-size:22px;line-height:1.1">Suggest a place</h1></div>
-      <p style="margin:0;font-size:14.5px;line-height:1.4;color:#C9D3E6">Found a restaurant, pub or place you loved that isn’t on Explore London? Tell us. If we add it, we may show your comment on its page.</p></div>
+  const back = !from ? '#/' : from.startsWith('place-') ? '#/place/' + from.slice(6) : '#/cat/' + encodeURIComponent(from);
+  app.innerHTML = `<div class="top"><div class="row" style="gap:12px">${backBtn(back)}<h1 style="margin:0;font-weight:800;font-size:22px;line-height:1.1">${t('Share a London favourite')}</h1></div>
+      <p style="margin:0;font-size:14.5px;line-height:1.4;color:#C9D3E6">${t('Found a restaurant, pub or place you loved that isn’t on Explore London? Tell us. If we add it, we may show your comment on its page.')}</p></div>
     <form class="content sg" id="sg" autocomplete="off">
-      <label>What’s the place called?<input type="text" name="place" required maxlength="120" placeholder="e.g. Rita’s Café"></label>
-      <label>Where is it?<input type="text" name="where" maxlength="160" placeholder="Area or street, e.g. Bermondsey, near the station"></label>
-      <div style="display:flex;flex-direction:column;gap:6px"><b style="font-size:15px">What’s it good for? <span style="font-weight:400;color:var(--muted)">Tick any</span></b>
-        <div class="chips">${GOOD.map(g => `<button type="button" class="chip" data-g="${g}">${g}</button>`).join('')}</div></div>
-      <label>Tell us in a sentence<textarea name="comment" maxlength="600" placeholder="e.g. Best bacon sandwich I’ve ever had"></textarea></label>
-      <label>Your first name <span style="font-weight:400;color:var(--muted)">(optional)</span><input type="text" name="first_name" maxlength="40"></label>
-      <label style="flex-direction:row;align-items:flex-start;gap:10px;font-weight:600;font-size:14.5px"><input type="checkbox" name="ok_to_quote" style="width:22px;height:22px;flex-shrink:0;margin:0"> Happy for Explore London to quote my comment</label>
+      <div style="display:flex;flex-direction:column;gap:6px"><b style="font-size:15px">${t('What would you like to share?')}</b>
+        <div class="chips" role="group">${[['place', t('A place')], ['idea', t('An idea for the app')]].map(([v, l]) => `<button type="button" class="chip${v === 'place' ? ' on' : ''}" data-type="${v}" aria-pressed="${v === 'place'}">${l}</button>`).join('')}</div></div>
+      <label class="sgp">${t('What’s the place called?')}<input type="text" name="place" required maxlength="120" placeholder="${esc(t('e.g. Rita’s Café'))}"></label>
+      <label class="sgp">${t('Where is it?')}<input type="text" name="where" maxlength="160" placeholder="${esc(t('Area or street, e.g. Bermondsey, near the station'))}"></label>
+      <div class="sgp" style="display:flex;flex-direction:column;gap:6px"><b style="font-size:15px">${t('What’s it good for?')} <span style="font-weight:400;color:var(--muted)">${t('Tick any')}</span></b>
+        <div class="chips">${GOOD.map(g => `<button type="button" class="chip" data-g="${g}">${esc(t(g))}</button>`).join('')}</div></div>
+      <label><span id="sgcl">${t('Tell us in a sentence')}</span><textarea name="comment" maxlength="600" placeholder="${esc(t('e.g. Best bacon sandwich I’ve ever had'))}"></textarea></label>
+      <label>${t('Your first name')} <span style="font-weight:400;color:var(--muted)">${t('(optional)')}</span><input type="text" name="first_name" maxlength="40"></label>
+      <label style="flex-direction:row;align-items:flex-start;gap:10px;font-weight:600;font-size:14.5px"><input type="checkbox" name="ok_to_quote" style="width:22px;height:22px;flex-shrink:0;margin:0"> ${t('Happy for Explore London to quote my comment')}</label>
       <input type="text" name="bot-field" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
-      <button class="bigbtn orange" type="submit" id="sgsend">Send suggestion</button>
-      <p class="note" style="margin:0">Suggestions go to the Explore London team. We read every one.</p>
+      <button class="bigbtn orange" type="submit" id="sgsend">${t('Send suggestion')}</button>
+      <p class="note" style="margin:0">${t('Suggestions go to the Explore London team. We read every one.')}</p>
     </form>${tabs('Explore')}`;
-  app.querySelectorAll('.chip').forEach(b => b.onclick = () => { const g = b.dataset.g; picked.has(g) ? picked.delete(g) : picked.add(g); b.classList.toggle('on', picked.has(g)); });
+  app.querySelectorAll('.chip[data-g]').forEach(b => b.onclick = () => { const g = b.dataset.g; picked.has(g) ? picked.delete(g) : picked.add(g); b.classList.toggle('on', picked.has(g)); });
   const f = document.getElementById('sg');
+  /* "A place" or "An idea for the app": an idea doesn't need a place name */
+  let kind = 'place';
+  app.querySelectorAll('.chip[data-type]').forEach(b => b.onclick = () => {
+    kind = b.dataset.type; const idea = kind === 'idea';
+    app.querySelectorAll('.chip[data-type]').forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', x === b); });
+    f.classList.toggle('idea', idea);
+    f.elements.place.required = !idea;
+    document.getElementById('sgcl').textContent = idea ? t('Tell us your idea') : t('Tell us in a sentence');
+    f.elements.comment.placeholder = idea ? t('e.g. Show which places are open late') : t('e.g. Best bacon sandwich I’ve ever had');
+  });
   f.onsubmit = async e => {
     e.preventDefault();
     const fd = new FormData(f);
-    if (!String(fd.get('place') || '').trim()) return toast('Please tell us the name of the place');
-    const body = new URLSearchParams({'form-name': 'suggest', 'bot-field': fd.get('bot-field') || '', place: fd.get('place'), where: fd.get('where') || '', good_for: [...picked].join(', '), comment: fd.get('comment') || '', first_name: fd.get('first_name') || '', ok_to_quote: fd.get('ok_to_quote') ? 'Yes' : 'No', from_page: from || 'Home'});
-    const btn = document.getElementById('sgsend'); btn.disabled = true; btn.textContent = 'Sending…';
+    const idea = kind === 'idea';
+    if (idea && !String(fd.get('comment') || '').trim()) return toast('Please tell us your idea');
+    if (!idea && !String(fd.get('place') || '').trim()) return toast('Please tell us the name of the place');
+    const body = new URLSearchParams({'form-name': 'suggest', 'bot-field': fd.get('bot-field') || '', type: kind, place: idea ? '(idea)' : fd.get('place'), where: idea ? '' : fd.get('where') || '', good_for: idea ? '' : [...picked].join(', '), comment: fd.get('comment') || '', first_name: fd.get('first_name') || '', ok_to_quote: fd.get('ok_to_quote') ? 'Yes' : 'No', from_page: !from ? 'Home' : from.startsWith('place-') ? 'Place page: ' + ((byId[+from.slice(6)] || {}).name || from) : 'Category: ' + from});
+    const btn = document.getElementById('sgsend'); btn.disabled = true; btn.textContent = t('Sending…');
     try {
       /* in the phone apps the page isn't on our web address, so post to the website itself */
       const r = await fetch(NATIVE ? SITE_URL : '/', {method: 'POST', mode: NATIVE ? 'no-cors' : 'same-origin', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: body.toString()});
       if (!NATIVE && !r.ok) throw new Error(r.status);
-      app.querySelector('.content').outerHTML = `<div class="content"><div class="story" style="align-items:center;text-align:center;padding:22px 16px;gap:8px"><b class="disp" style="font-size:20px">Thank you!</b><span style="font-size:15px;line-height:1.45">We’ll take a look at <b>${esc(fd.get('place'))}</b>. If it makes it into Explore London, you’ll find it in the app.</span></div><a class="bigbtn" href="${from ? '#/cat/' + encodeURIComponent(from) : '#/'}">Back to exploring</a></div>`;
-    } catch (err) { btn.disabled = false; btn.textContent = 'Send suggestion'; toast('Sorry, that didn’t send. Please check your connection and try again.'); }
+      app.querySelector('.content').outerHTML = `<div class="content"><div class="story" style="align-items:center;text-align:center;padding:22px 16px;gap:8px"><b class="disp" style="font-size:20px">${t('Thank you!')}</b><span style="font-size:15px;line-height:1.45">${idea ? t('Thanks for your idea. We read every one.') : t('We’ll take a look at <b>{place}</b>. If it makes it into Explore London, you’ll find it in the app.', {place: esc(fd.get('place'))})}</span></div><a class="bigbtn" href="${back}">${t('Back to exploring')}</a></div>`;
+    } catch (err) { btn.disabled = false; btn.textContent = t('Send suggestion'); toast('Sorry, that didn’t send. Please check your connection and try again.'); }
   };
 }
 
 /* ---------- getting around: Tube & Trains ---------- */
 function around() {
-  setTitle('Tube & Trains');
+  setTitle(t('Tube & Trains'));
   const card = (title, body) => `<div style="background:#fff;border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:8px;box-shadow:0 1px 3px rgba(15,30,61,.08)"><h2 style="margin:0;font-size:17px;font-weight:800">${title}</h2>${body}</div>`;
-  const li = a => `<ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:14.5px;line-height:1.4">${a.map(x => `<li>${x}</li>`).join('')}</ul>`;
+  const li = a => `<ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:14.5px;line-height:1.4">${a.map(x => `<li>${t(x)}</li>`).join('')}</ul>`;
   const ST = [
     ['Paddington', 'Heathrow (Heathrow Express and Elizabeth line), Oxford, Bath, Bristol, Cornwall. Windsor: change at Slough.'],
     ["King's Cross", 'Edinburgh, York, Cambridge, and Platform 9¾ for Harry Potter fans.'],
@@ -2157,53 +2261,53 @@ function around() {
     ['Marylebone', 'Stratford-upon-Avon, Warwick and Birmingham.'],
     ['London Bridge', 'Brighton, Gatwick, Greenwich and Kent.']
   ];
-  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<span style="width:48px;height:48px;border-radius:24px;background:#F9D6D6;display:flex;align-items:center;justify-content:center;flex-shrink:0">${svg('train', 28, '#0F1E3D', 1.9)}</span><div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px">Tube &amp; Trains</h1><span style="font-size:14px;color:#C9D3E6">Getting around London, and getting out of it</span></div></div></div>
+  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<span style="width:48px;height:48px;border-radius:24px;background:#F9D6D6;display:flex;align-items:center;justify-content:center;flex-shrink:0">${svg('train', 28, '#0F1E3D', 1.9)}</span><div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px">${t('Tube &amp; Trains')}</h1><span style="font-size:14px;color:#C9D3E6">${t('Getting around London, and getting out of it')}</span></div></div></div>
     <div class="content">
-      <a href="#/transfers" class="row" style="background:var(--orange);color:var(--navy);border-radius:18px;padding:12px 14px;text-decoration:none;gap:12px"><span style="flex-shrink:0">${svg('cab', 30, '#0F1E3D', 2)}</span><span style="display:flex;flex-direction:column;gap:2px"><b style="font-size:16px">Off to the airport with bags?</b><span style="font-size:13.5px;line-height:1.35;font-weight:600">A black cab takes you door to door, with no stairs or changes. 10% off the meter when you book through the app.</span></span><span style="flex-shrink:0">${svg('chev', 20, '#0F1E3D', 2.4)}</span></a>
-      ${card('The Tube map', `<span style="font-size:14.5px;line-height:1.4">Transport for London's official maps, always up to date. Save one to your phone before you go underground, as signal can drop out.</span>
-        <a class="bigbtn" href="https://tfl.gov.uk/maps/track/tube" target="_blank" rel="noopener">Open the Tube map</a>
-        <a class="ghost" href="https://tfl.gov.uk/maps/track" target="_blank" rel="noopener">All rail maps (Overground, Elizabeth line, DLR)</a>
-        <span style="font-size:13px;color:var(--muted)">For door-to-door directions, the free TfL Go and Citymapper apps are both excellent.</span>`)}
-      ${card('How to pay', li([
+      <a href="#/transfers" class="row" style="background:var(--orange);color:var(--navy);border-radius:18px;padding:12px 14px;text-decoration:none;gap:12px"><span style="flex-shrink:0">${svg('cab', 30, '#0F1E3D', 2)}</span><span style="display:flex;flex-direction:column;gap:2px"><b style="font-size:16px">${t('Off to the airport with bags?')}</b><span style="font-size:13.5px;line-height:1.35;font-weight:600">${t('A black cab takes you door to door, with no stairs or changes. 10% off the meter when you book through the app.')}</span></span><span style="flex-shrink:0">${svg('chev', 20, '#0F1E3D', 2.4)}</span></a>
+      ${card(t('The Tube map'), `<span style="font-size:14.5px;line-height:1.4">${t('Transport for London’s official maps, always up to date. Save one to your phone before you go underground, as signal can drop out.')}</span>
+        <a class="bigbtn" href="https://tfl.gov.uk/maps/track/tube" target="_blank" rel="noopener">${t('Open the Tube map')}</a>
+        <a class="ghost" href="https://tfl.gov.uk/maps/track" target="_blank" rel="noopener">${t('All rail maps (Overground, Elizabeth line, DLR)')}</a>
+        <span style="font-size:13px;color:var(--muted)">${t('For door-to-door directions, the free TfL Go and Citymapper apps are both excellent.')}</span>`)}
+      ${card(t('How to pay'), li([
         '<b>Tap a contactless card or your phone</b> on the yellow reader going in and out. No ticket needed.',
         'Use the <b>same card or phone</b> every time. The daily and weekly caps then work automatically, so you never pay more than a day ticket.',
         'No contactless? Buy an <b>Oyster card</b> at any station.',
         '<b>Buses</b>: tap on only, and they don’t take cash. Change buses within an hour and the second one is free (the Hopper fare).',
         'Children under 11 travel free with a paying adult.'
       ]))}
-      ${card('Cabbie’s tips', li([
+      ${card(t('Cabbie’s tips'), li([
         'Stand on the right on escalators. Walk on the left.',
         'Avoid the rush hours if you can (roughly 7.30–9.30am and 5–7pm). Off-peak fares are cheaper too.',
         'Some stations are closer than the map suggests: Leicester Square to Covent Garden is a 5-minute walk, quicker than the Tube.',
         'The <b>Night Tube</b> runs all night on Fridays and Saturdays on the Central, Jubilee, Northern, Piccadilly and Victoria lines.',
         'Weekend engineering works are common. Check before you travel on the TfL website or app.'
       ]))}
-      ${card('Main stations: where the trains go', `<div style="display:flex;flex-direction:column;gap:8px">${ST.map(([n, d]) => `<div style="display:flex;flex-direction:column;gap:2px;border-top:1px solid #E1E6EE;padding-top:8px"><b style="font-size:15px">${n}</b><span style="font-size:14px;line-height:1.4;color:var(--ink)">${d}</span></div>`).join('')}</div>
-        <a class="bigbtn" href="https://www.nationalrail.co.uk/live-trains/" target="_blank" rel="noopener">Live train times</a>
-        <span style="font-size:13px;color:var(--muted)">Book trains ahead for the cheapest fares, on National Rail or the train company's app.</span>`)}
-      ${card('Other ways to get around', li([
+      ${card(t('Main stations: where the trains go'), `<div style="display:flex;flex-direction:column;gap:8px">${ST.map(([n, d]) => `<div style="display:flex;flex-direction:column;gap:2px;border-top:1px solid #E1E6EE;padding-top:8px"><b style="font-size:15px">${n}</b><span style="font-size:14px;line-height:1.4;color:var(--ink)">${t(d)}</span></div>`).join('')}</div>
+        <a class="bigbtn" href="https://www.nationalrail.co.uk/live-trains/" target="_blank" rel="noopener">${t('Live train times')}</a>
+        <span style="font-size:13px;color:var(--muted)">${t('Book trains ahead for the cheapest fares, on National Rail or the train company’s app.')}</span>`)}
+      ${card(t('Other ways to get around'), li([
         '<b>River bus</b>: Uber Boat by Thames Clippers runs along the Thames, from Westminster and the London Eye to Tower Bridge and Greenwich. A great way to see the sights.',
         '<b>Santander Cycles</b>: hire bikes from docking stations all over central London, paid by app or card.',
         '<b>Black cab</b>: hail one with its yellow TAXI light on, or find a rank at stations and big hotels. Every driver has passed the Knowledge, so no sat nav needed.'
       ]))}
-      <a class="bigbtn orange" href="#/transfers">${svg('cab', 20, '#0F1E3D', 2.2)} Airport transfers</a>
+      <a class="bigbtn orange" href="#/transfers">${svg('cab', 20, '#0F1E3D', 2.2)} ${t('Airport transfers')}</a>
     </div>${tabs('Explore')}`;
 }
 
 function about(b) {
-  setTitle('About');
+  setTitle(t('About'));
   const noPin = P.filter(p => p.lat == null).length;
-  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<h1 style="margin:0;font-weight:800;font-size:22px">About Explore London</h1></div></div>
+  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<h1 style="margin:0;font-weight:800;font-size:22px">${t('About Explore London')}</h1></div></div>
     <div class="content" style="font-size:15px;line-height:1.5">
-      <p style="margin:0">Explore London is a cabbie's guide to the city, from All Black Taxis. Every place is picked by London cabbies who learned the city doing the Knowledge.</p>
-      ${A2.want() ? `<button class="ghost" id="a2about">${svg('share', 18)} How to add this app to your home screen</button>` : ''}
-      <div class="story"><b class="disp">In this version</b><span>${P.length} places in ${CATS.length} categories · ${WALKS.length} ready-made walks · Make My Walk · My List · Airport transfers</span></div>
-      <p style="margin:0"><b>Stations</b> from open TfL data, compiled by Oliver O’Brien (github.com/oobrien/vis). Line colours are TfL’s.</p>
-      <p style="margin:0"><b>Photos</b> come from Wikimedia Commons under free licences, credited on each place. Places without a free photo show their category picture.</p>
-      <p style="margin:0"><b>Maps</b> © OpenStreetMap contributors. Missing pins are filled from postcodes using postcodes.io (contains OS data © Crown copyright and database right).</p>
-      <p style="margin:0"><b>Your privacy.</b> Saved places and settings stay on your phone. If you allow location, it is used on your phone to show what is near you and is not sent to us. A Transfers enquiry only reaches us when you send the WhatsApp message yourself.${CONFIG.umami ? ' We count visits anonymously (which screens are opened, which buttons are pressed) with Umami. No cookies, and nothing that identifies you.' : ''}</p>
+      <p style="margin:0">${t('Explore London is a cabbie’s guide to the city, from All Black Taxis. Every place is picked by London cabbies who learned the city doing the Knowledge.')}</p>
+      ${A2.want() ? `<button class="ghost" id="a2about">${svg('share', 18)} ${t('How to add this app to your home screen')}</button>` : ''}
+      <div class="story"><b class="disp">${t('In this version')}</b><span>${t('{n} places in {c} categories · {w} ready-made walks · Make My Walk · My List · Airport transfers', {n: P.length, c: CATS.length, w: WALKS.length})}</span></div>
+      <p style="margin:0">${t('<b>Stations</b> from open TfL data, compiled by Oliver O’Brien (github.com/oobrien/vis). Line colours are TfL’s.')}</p>
+      <p style="margin:0">${t('<b>Photos</b> come from Wikimedia Commons under free licences, credited on each place. Places without a free photo show their category picture.')}</p>
+      <p style="margin:0">${t('<b>Maps</b> © OpenStreetMap contributors. Missing pins are filled from postcodes using postcodes.io (contains OS data © Crown copyright and database right).')}</p>
+      <p style="margin:0">${t('<b>Your privacy.</b> Saved places and settings stay on your phone. If you allow location, it is used on your phone to show what is near you and is not sent to us. A Transfers enquiry only reaches us when you send the WhatsApp message yourself.')}${CONFIG.umami ? ' ' + t('We count visits anonymously (which screens are opened, which buttons are pressed) with Umami. No cookies, and nothing that identifies you.') : ''}</p>
       ${(() => { const b = store.get('el_badphoto', []); if (!b.length) return ''; const txt = 'Wrong photos: ' + b.map(id => { const q = P.find(x => x.id === id); return q ? q.name + ' (' + id + ')' : id; }).join(', '); return `<div class="story"><b class="disp">Photos you flagged (${b.length})</b><span style="font-size:14px">${esc(txt)}</span><button class="ghost" id="copybad">Copy the list to send to Claude</button></div>`; })()}
-      <button class="ghost" id="reset">Clear my saved places and settings</button>
+      <button class="ghost" id="reset">${t('Clear my saved places and settings')}</button>
       ${NATIVE && b === 'check' ? `<p style="margin:0;font-size:12.5px;color:var(--muted)">App check · map: ${esc(MAPNOTE)} · website copy ${esc(window.BUNDLE_VER || '?')} · update: ${esc(window.UPDNOTE || '?')}</p>` : ''}
     </div>${tabs('Explore')}`;
   const cb = document.getElementById('copybad'); if (cb) cb.onclick = async () => { const b = store.get('el_badphoto', []); const txt = 'Wrong photos: ' + b.map(id => { const q = P.find(x => x.id === id); return q ? q.name + ' (' + id + ')' : id; }).join(', '); try { await navigator.clipboard.writeText(txt); toast('Copied'); } catch { toast('Couldn’t copy. Take a screenshot instead.'); } };
@@ -2217,30 +2321,31 @@ const MONTHS = ['January','February','March','April','May','June','July','August
 function otdScreen(b) {
   const now = new Date(); let [m, d] = (b || '').split('-').map(Number);
   if (!m || !d || !ON_THIS_DAY[m + '-' + d]) { m = now.getMonth() + 1; d = now.getDate(); }
-  const k = m + '-' + d, t = ON_THIS_DAY[k] || '', pid = ON_THIS_DAY_PLACE[k], pl = pid && P.find(p => p.id === pid);
+  const k = m + '-' + d, story = ON_THIS_DAY[k] || '', pid = ON_THIS_DAY_PLACE[k], pl = pid && P.find(p => p.id === pid);
   const isToday = m === now.getMonth() + 1 && d === now.getDate();
   const step = n => { const x = new Date(2024, m - 1, d + n); return (x.getMonth() + 1) + '-' + x.getDate(); };
-  setTitle('On this day');
+  setTitle(t('On this day'));
+  const dayName = new Date(2024, m - 1, d).toLocaleDateString(LOCALE(), {day: 'numeric', month: 'long'});
   const dayOpts = Array.from({length: 31}, (_, i) => `<option value="${i + 1}"${i + 1 === d ? ' selected' : ''}>${i + 1}</option>`).join('');
-  const monOpts = MONTHS.map((n, i) => `<option value="${i + 1}"${i + 1 === m ? ' selected' : ''}>${n}</option>`).join('');
+  const monOpts = MONTHS.map((n, i) => `<option value="${i + 1}"${i + 1 === m ? ' selected' : ''}>${LANG === 'en' ? n : new Date(2024, i, 1).toLocaleDateString(LOCALE(), {month: 'long'})}</option>`).join('');
   const sel = 'height:48px;border-radius:12px;border:1px solid #C9D1DE;padding:0 10px;font-size:17px;background:#fff;color:var(--ink)';
-  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px">On this day</h1><span style="font-size:14px;color:#C9D3E6">A London story for every day of the year</span></div></div></div>
+  app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px">${t('On this day')}</h1><span style="font-size:14px;color:#C9D3E6">${t('A London story for every day of the year')}</span></div></div></div>
     <div class="content">
       <div style="background:#FFF4E8;border-radius:18px;padding:14px 14px 16px;display:flex;flex-direction:column;gap:12px">
         <div class="row" style="justify-content:space-between;align-items:center">
-          <a class="iconbtn" href="#/otd/${step(-1)}" aria-label="Previous day" style="background:#fff;transform:rotate(180deg)">${svg('chev', 20, '#0F1E3D', 2.4)}</a>
-          <span style="display:flex;flex-direction:column;align-items:center"><b class="disp" style="font-size:21px;color:#A8551A">${d} ${MONTHS[m - 1]}</b>${isToday ? '<span style="font-size:12px;font-weight:700;color:#A8551A;text-transform:uppercase;letter-spacing:.5px">Today</span>' : ''}</span>
-          <a class="iconbtn" href="#/otd/${step(1)}" aria-label="Next day" style="background:#fff">${svg('chev', 20, '#0F1E3D', 2.4)}</a>
+          <a class="iconbtn" href="#/otd/${step(-1)}" aria-label="${esc(t('Previous day'))}" style="background:#fff;transform:rotate(180deg)">${svg('chev', 20, '#0F1E3D', 2.4)}</a>
+          <span style="display:flex;flex-direction:column;align-items:center"><b class="disp" style="font-size:21px;color:#A8551A">${LANG === 'en' ? d + ' ' + MONTHS[m - 1] : esc(dayName)}</b>${isToday ? `<span style="font-size:12px;font-weight:700;color:#A8551A;text-transform:uppercase;letter-spacing:.5px">${t('Today')}</span>` : ''}</span>
+          <a class="iconbtn" href="#/otd/${step(1)}" aria-label="${esc(t('Next day'))}" style="background:#fff">${svg('chev', 20, '#0F1E3D', 2.4)}</a>
         </div>
-        <p style="margin:0;font-size:18px;line-height:1.4;font-weight:600">${esc(t)}</p>
-        ${pl ? `<a href="#/place/${pl.id}" style="display:flex;align-items:center;gap:10px;background:#fff;border-radius:12px;padding:8px;text-decoration:none;color:var(--ink)">${catTile(pl, pl.cats[0], 40).replace('class="thumb', 'class="thumb sm')}<span style="flex:1;font-weight:700;font-size:15px">See ${esc(pl.name)}</span>${svg('chev', 16)}</a>` : ''}
-        <button class="bigbtn" id="otdshare">${svg('share', 18, '#F28C38', 2.2)} Share this day</button>
+        <p style="margin:0;font-size:18px;line-height:1.4;font-weight:600">${esc(story)}</p>
+        ${pl ? `<a href="#/place/${pl.id}" style="display:flex;align-items:center;gap:10px;background:#fff;border-radius:12px;padding:8px;text-decoration:none;color:var(--ink)">${catTile(pl, pl.cats[0], 40).replace('class="thumb', 'class="thumb sm')}<span style="flex:1;font-weight:700;font-size:15px">${t('See {name}', {name: esc(pl.name)})}</span>${svg('chev', 16)}</a>` : ''}
+        <button class="bigbtn" id="otdshare">${svg('share', 18, '#F28C38', 2.2)} ${t('Share this day')}</button>
       </div>
       <div style="background:#fff;border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 1px 3px rgba(15,30,61,.08)">
-        <b class="disp" style="font-size:18px">What happened on your birthday?</b>
-        <span style="font-size:14px;color:var(--muted);margin-top:-6px">Pick a day and month – no year needed.</span>
-        <div style="display:grid;grid-template-columns:1fr 2fr;gap:8px"><select id="od" aria-label="Day" style="${sel}">${dayOpts}</select><select id="om" aria-label="Month" style="${sel}">${monOpts}</select></div>
-        <button class="bigbtn orange" id="ogo">Show me</button>
+        <b class="disp" style="font-size:18px">${t('What happened on your birthday?')}</b>
+        <span style="font-size:14px;color:var(--muted);margin-top:-6px">${t('Pick a day and month – no year needed.')}</span>
+        <div style="display:grid;grid-template-columns:1fr 2fr;gap:8px"><select id="od" aria-label="${esc(t('Day'))}" style="${sel}">${dayOpts}</select><select id="om" aria-label="${esc(t('Month'))}" style="${sel}">${monOpts}</select></div>
+        <button class="bigbtn orange" id="ogo">${t('Show me')}</button>
       </div>
     </div>${tabs('Explore')}`;
   document.getElementById('ogo').onclick = () => {
@@ -2250,9 +2355,9 @@ function otdScreen(b) {
   };
   document.getElementById('otdshare').onclick = async () => {
     const url = 'https://explorelondon.allblacktaxis.co.uk/#/otd/' + k;
-    const text = `${d} ${MONTHS[m - 1]} in London – ${t}. What happened on your birthday? Find out on Explore London:`;
+    const text = t('{date} in London – {story}. What happened on your birthday? Find out on Explore London:', {date: LANG === 'en' ? d + ' ' + MONTHS[m - 1] : dayName, story});
     STATS.ev('On this day: share', {date: k});
-    try { if (navigator.share) { await navigator.share({title: 'On this day in London', text, url}); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
+    try { if (navigator.share) { await navigator.share({title: t('On this day in London'), text, url}); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
     try { await navigator.clipboard.writeText(text + ' ' + url); toast('Copied – paste it anywhere'); } catch { toast('Couldn’t share from here'); }
   };
 }
@@ -2289,7 +2394,7 @@ function route() {
   home();
 }
 addEventListener('hashchange', route);
-load().then(route).catch(e => { app.innerHTML = '<div class="content"><div class="empty">Sorry, the places didn\'t load. Please refresh.</div></div>'; console.error(e); }).finally(hideLaunch);
+Promise.all([load(), loadLang(LANG)]).then(route).catch(e => { app.innerHTML = `<div class="content"><div class="empty">${esc(t('Sorry, the places didn’t load. Please refresh.'))}</div></div>`; console.error(e); }).finally(hideLaunch);
 </script>
 <script src="desktop.js"></script>
 </body>
