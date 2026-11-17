@@ -7,7 +7,6 @@ Tick items off (`- [x]`) when they're done, and add anything new Matt asks for.
 - [ ] Re-check New Year's Eve prices nearer the day, especially Oscar (£45 may be old), Kinz (not yet confirmed for NYE) and the Thames cruises
 
 ## Still open from 9 Nov
-- [ ] Smooth map zoom
 - [ ] Buzz + Cabbie's Story at walk stops
 - [ ] Suggestions/Help button
 - [ ] www address
@@ -34,6 +33,7 @@ Tick items off (`- [x]`) when they're done, and add anything new Matt asks for.
 - [ ] Making money
 
 ## Done
+- [x] Smooth map zoom – already fixed when the map moved to MapLibre; confirmed by Matt 17 Nov
 - [x] London Museum card now says "open from 28 November 2026" – 17 Nov
 - [x] "See the Changing the Guard route" button on every place that's a stop on that walk (Buckingham Palace, St James's Palace, Horse Guards Parade, Wellington Arch, Guards Museum) – 17 Nov
 - [x] Guards Museum added (#1337) and linked from the Wellington Barracks stop on the Changing the Guard walk – 17 Nov

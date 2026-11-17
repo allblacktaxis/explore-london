@@ -4,8 +4,9 @@
   #    If that ever fails, the website still goes live as normal.
   # 2. leave the app's own code (app/ folder) off the website.
   command = "(python3 app/scripts/web_bundle.py --zip app-bundle || echo 'App update bundle skipped'); rm -rf app"
-  # skip the Netlify build (and its credits) when only the app's own code or the cloud-build settings changed
-  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ':(exclude)app' ':(exclude).github'"
+  # skip the Netlify build (and its credits) when only the app's own code, the cloud-build settings,
+  # or the notes for Claude (TODO.md, CLAUDE.md) changed
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ':(exclude)app' ':(exclude).github' ':(exclude)TODO.md' ':(exclude)CLAUDE.md'"
 
 # the apps check this for updates
 [[headers]]
