@@ -440,6 +440,7 @@ const afterDay = (m, d) => { const n = new Date(); return n.getMonth() + 1 > m |
 const tagIs = (p, ...t) => p.tags.some(x => t.some(y => x.toLowerCase() === y.toLowerCase()));
 const kw = re => p => re.test(TXT(p));
 function yearOf(p) {
+  if (p.year) return p.year;   /* a set year in places.json wins over reading it from the description */
   const t = p.tags.join(' ') + ' ' + p.why + ' ' + p.name;
   let m = t.match(/(?:since|from|built in|built|dates? (?:back )?(?:to|from)|dating (?:back )?(?:to|from)|established in|opened in|founded in|rebuilt in|trading since|open since|in business since)\s+(?:the\s+)?(1[0-8]\d\d)\b/i);
   return m ? +m[1] : null;
