@@ -7,3 +7,4 @@
 - Explain things in plain English, one step at a time.
 - Group changes into batches rather than going live after every small change, because each Netlify build uses credits.
 - Before adding a place, check `places.json`, since it may already be in the app.
+- TODO.md is the shared to-do list. Read it at the start, tick off what you finish, add anything new Matt asks for.
