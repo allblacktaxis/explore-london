@@ -18,7 +18,7 @@ Tick items off (`- [x]`) when they're done, and add anything new Matt asks for.
 
 ## Content
 - [ ] Oldest pubs: set a `year` for other old pubs that still have none (e.g. The Anchor Bankside, The Dove, The Gatehouse, The Grenadier, The Gun) – check dates first
-- [ ] Photos – fix the photos on every place where the photo isn't correct (go through all places, Matt to confirm the wrong ones).
+- [ ] Photos – fix the photos on every place where the photo isn't correct (go through all places, Matt to confirm the wrong ones). Checklist sent 24 Nov: https://claude.ai/artifact/7cmCpo9ixJEakbM9yWfFTF – 235 places get a Wikipedia photo, 29 flagged as likely wrong. Matt ticks Right/Wrong there; Claude then reads the answers and blocks the wrong ones (PHOTO_BLOCK in index.html) in one batch.
 - [ ] Restaurant batch, area by area (held list from the old chat is lost, so building fresh): done Battersea, Richmond & Kew, Greenwich, King's Cross, Kensington, Docklands (first pass) – Matt wants to talk more about Kensington
 - [ ] Fish & chips: King's Cross still has no chippy in its own area (nearest is North Sea Fish, Leigh Street, filed under Bloomsbury) – leave unless Matt wants it moved
 
