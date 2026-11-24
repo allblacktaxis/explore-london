@@ -54,6 +54,8 @@
 html,body{margin:0;height:100%;background:#C9D1DD}
 body{font-family:'Source Sans 3',system-ui,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
 #app{max-width:480px;margin:0 auto;min-height:100%;background:var(--bg);position:relative;display:flex;flex-direction:column}
+/* room for the bottom tab bar (8px + 58px + 10px + the iPhone home-bar gap), so the last item on every page clears it */
+:where(body.el-hasnav) #app{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
 h1,h2,h3,.disp{font-family:'Archivo',sans-serif}
 a{color:inherit}
 button{font-family:inherit;cursor:pointer}
@@ -63,7 +65,7 @@ button{font-family:inherit;cursor:pointer}
 .iconbtn.light{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(15,30,61,.15)}
 .search{display:flex;align-items:center;gap:10px;height:46px;min-height:46px;box-sizing:border-box;border-radius:23px;background:#fff;color:var(--muted);padding:0 16px;flex:1;min-width:0}
 .search input{border:0;outline:0;font:inherit;font-size:16px;color:var(--ink);flex:1;min-width:0;background:transparent}
-.content{flex:1;padding:14px 16px 96px;display:flex;flex-direction:column;gap:12px}
+.content{flex:1;padding:14px 16px 20px;display:flex;flex-direction:column;gap:12px}
 .tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .tile{display:flex;flex-direction:column;align-items:center;gap:6px;background:linear-gradient(#fff,#F1F4F8);border:1px solid #D2D9E3;border-radius:14px;padding:8px 4px 10px;min-height:88px;text-decoration:none;text-align:center;box-shadow:inset 0 -4px 0 var(--c,#C9D1DE),0 6px 12px rgba(15,30,61,.16),0 1px 3px rgba(15,30,61,.12);transition:transform .08s,box-shadow .08s}
 .tile:active{transform:translateY(2px);box-shadow:inset 0 -2px 0 var(--c,#C9D1DE),0 2px 4px rgba(15,30,61,.14)}
@@ -108,7 +110,7 @@ button{font-family:inherit;cursor:pointer}
 .dot{width:10px;height:10px;border-radius:5px;display:inline-block}
 .filters{display:flex;gap:8px;flex-wrap:wrap}.filters select{flex:1 1 0;min-width:0}.filters.four select{flex:1 1 calc(50% - 4px)}
 .filters select{flex:1;min-width:0;height:40px;border-radius:12px;border:1px solid var(--line);background:#fff;font:inherit;font-size:14px;font-weight:600;color:var(--ink);padding:0 10px}
-nav.tabs{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--navy);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:8px 2px calc(10px + env(safe-area-inset-bottom));z-index:1000}
+nav.tabs{position:fixed;bottom:0;left:0;right:0;margin:0 auto;width:100%;box-sizing:border-box;max-width:480px;background:var(--navy);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:8px 2px calc(10px + env(safe-area-inset-bottom));z-index:1000}
 /* tablets held upright (every iPad in portrait, even the 13"): the phone layout, filling the whole width (11 Nov 2026). Wide and landscape: desktop.js */
 @media (min-width: 600px) and (max-width: 1023px), (min-width: 1024px) and (orientation: portrait){#app,nav.tabs{max-width:none}}
 nav.tabs a{display:flex;flex-direction:column;align-items:center;gap:3px;min-height:58px;justify-content:center;text-decoration:none;font-size:14px;font-weight:700;color:#A9B6CE;white-space:nowrap}
@@ -753,6 +755,16 @@ function tabs(on) {
 function toast(msg) { const d = document.createElement('div'); d.className = 'toast'; d.textContent = t(msg); document.body.appendChild(d); setTimeout(() => d.remove(), 2600); }
 function backBtn(h = 'javascript:history.back()') { return `<a class="iconbtn" href="${h}" aria-label="${esc(t('Back'))}">${svg('back', 20)}</a>`; }
 const app = document.getElementById('app');
+/* The bottom tab bar must sit directly in <body>, never inside #app: anything around it with a transform,
+   filter, will-change etc. (or an iPhone Safari quirk with fixed bars inside other boxes) makes it scroll
+   away with the page. Each page draws its bar with tabs() inside #app; this lifts it straight out into <body>
+   (before the screen is painted) and removes the old one. A new page without a bar (welcome) removes it. */
+new MutationObserver(ms => {
+  const nav = app.querySelector('nav.tabs'), old = document.querySelector('body > nav.tabs');
+  if (nav) { if (old) old.remove(); document.body.appendChild(nav); }
+  else if (old && ms.some(m => m.addedNodes.length)) old.remove();
+  document.body.classList.toggle('el-hasnav', !!document.querySelector('body > nav.tabs'));
+}).observe(app, {childList: true});
 /* ---------- base map: our own All Black Taxis map (the same map tiles and style as the Taxi Knowledge app), drawn by MapLibre ----------
    Map tiles: map-tiles-v3 on Cloudflare (maptiles.allblacktaxi.co.uk). The style, labels and map symbols are hosted on this site.
    If Cloudflare fails, tiles come from our backup copy on this site (TILES_BACKUP), so the map looks the same.
@@ -1867,7 +1879,7 @@ function mapScreen(focusId) {
       <div class="overlay" id="farbox" style="top:118px;display:none"></div>
       <div class="overlay" id="mcard" style="bottom:12px;display:none"></div>
     </div>${tabs('Map')}`;
-  const mEl = app.querySelector('.map'), fit = () => { mEl.style.height = Math.max(380, innerHeight - app.querySelector('.top').offsetHeight - app.querySelector('nav.tabs').offsetHeight) + 'px'; };
+  const mEl = app.querySelector('.map'), fit = () => { mEl.style.height = Math.max(380, innerHeight - app.querySelector('.top').offsetHeight - document.querySelector('nav.tabs').offsetHeight) + 'px'; };
   fit();
   let map = null, meMk = null, selMk = null, pins = FC([]), ring = FC([]);
   const groupOf = p => p.cats.includes('Blue Plaques') ? 'Plaques' : (CAT[p.cats[0]] || CATS[0]).g;

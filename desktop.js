@@ -10,11 +10,11 @@
 @media ${DESK} {
   :root{--el-side:248px;--el-wide:1180px;--el-toph:120px}
   body{background:#E6EBF2}
-  #app{max-width:none;margin:0 0 0 var(--el-side);min-height:100vh;box-shadow:none}
+  #app{max-width:none;margin:0 0 0 var(--el-side);min-height:100vh;box-shadow:none;padding-bottom:0}
   #app.el-nonav{margin:0 auto;max-width:480px}
 
   /* bottom tab bar -> left-hand menu */
-  nav.tabs{left:0;top:0;bottom:0;right:auto;transform:none;width:var(--el-side);max-width:none;display:flex;flex-direction:column;gap:4px;padding:22px 14px 18px;grid-template-columns:none}
+  nav.tabs{left:0;top:0;bottom:0;right:auto;margin:0;transform:none;width:var(--el-side);max-width:none;display:flex;flex-direction:column;gap:4px;padding:22px 14px 18px;grid-template-columns:none}
   nav.tabs::before{content:'Explore London';display:block;font:800 22px/1.1 'Archivo','Poppins',sans-serif;color:#fff;padding:4px 14px 6px}
   nav.tabs::after{content:'Picked by London cabbies \\00B7  free, no sign-up';margin-top:auto;padding:12px 14px 0;font-size:13px;line-height:1.4;color:#A9B6CE;border-top:1px solid rgba(255,255,255,.12)}
   nav.tabs a:first-of-type{margin-top:18px}
@@ -109,7 +109,7 @@
     if (busy) return; busy = true;
     try {
       var on = mq.matches, root = document.documentElement;
-      var nav = app.querySelector('nav.tabs');
+      var nav = document.querySelector('nav.tabs');
       app.classList.toggle('el-nonav', !nav);
 
       /* place page */
