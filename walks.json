@@ -574,6 +574,66 @@
   ]
  },
  {
+  "id": "dickens",
+  "title": "Charles Dickens's London",
+  "tag": "Writers",
+  "meta": "About 2 hours · 4.5 km · 6 stops",
+  "color": "#4A3B2A",
+  "isNew": true,
+  "intro": "From the house where he wrote Bleak House to the Southwark streets of his childhood, by way of the pubs and lanes that turn up in his books. Finish with a pint at The George.",
+  "stops": [
+   {
+    "name": "Tavistock Square plaque",
+    "lat": 51.526189,
+    "lng": -0.129076,
+    "id": 1442,
+    "note": "Start at BMA House. Tavistock House stood here, and Dickens lived in it from 1851 to 1860, writing Bleak House, Hard Times, Little Dorrit and A Tale of Two Cities."
+   },
+   {
+    "name": "Charles Dickens Museum",
+    "lat": 51.5235,
+    "lng": -0.1162,
+    "id": 398,
+    "note": "His only surviving London home, 1837–39, where he finished The Pickwick Papers and wrote Oliver Twist and Nicholas Nickleby. Open Wednesday to Sunday."
+   },
+   {
+    "name": "The Lamb",
+    "lat": 51.523141,
+    "lng": -0.119177,
+    "id": 171,
+    "note": "A Victorian pub round the corner from Doughty Street, with its snob screens still at the bar. Dickens is said to have drunk here while he lived nearby."
+   },
+   {
+    "name": "The Old Curiosity Shop",
+    "lat": 51.5154,
+    "lng": -0.117,
+    "id": 428,
+    "note": "A 16th-century shop that took the name of his 1841 novel The Old Curiosity Shop after the book came out. There's no proof it was his model, but it makes a good photo."
+   },
+   {
+    "name": "Ye Olde Cheshire Cheese",
+    "lat": 51.514353,
+    "lng": -0.107197,
+    "id": 160,
+    "note": "One of his Fleet Street haunts from his days as a young reporter. It's thought to be the tavern where Sydney Carton takes Charles Darnay to dinner in A Tale of Two Cities."
+   },
+   {
+    "name": "The George Inn",
+    "lat": 51.504359,
+    "lng": -0.090221,
+    "id": 159,
+    "note": "Over the river to Southwark, where his father was locked up in the Marshalsea debtors' prison when Dickens was 12. The George, London's last galleried coaching inn, gets a mention in Little Dorrit, his novel of the Marshalsea."
+   }
+  ],
+  "further": [
+   {
+    "name": "The Grapes, Limehouse",
+    "id": 156,
+    "note": "Generally taken to be the Six Jolly Fellowship Porters in Our Mutual Friend; Dickens knew this stretch of river well. It's a short ride east on the DLR to Limehouse."
+   }
+  ]
+ },
+ {
   "id": "changing-guard",
   "title": "Changing the Guard: the two routes",
   "tag": "Royal",
