@@ -503,7 +503,7 @@ let saved = new Set(store.get('el_saved', []));
 let visited = new Set(store.get('el_visited', []));
 const persist = () => { store.set('el_saved', [...saved]); store.set('el_visited', [...visited]); };
 
-/* ---------- languages (stage 1: the app's own words; place descriptions stay in English for now) ----------
+/* ---------- languages: the app's own words (lang/xx.json) and the places, walks, plans and trips (lang/xx-text.json) ----------
    t(english) gives those words in the chosen language (from lang/xx.json, keyed by the exact English),
    or the English itself if there's no translation. Placeholders: t('{n} places', {n: 12}).
    The choice is kept on the phone (el_lang). The first time, the phone's own language is used if we have it. */
@@ -519,6 +519,25 @@ async function loadLang(l) {
   if (my !== langReq) return;
   TR = tr || {};
   document.documentElement.lang = tr ? (l === 'zh' ? 'zh-Hans' : l) : 'en';
+  TXL = l === 'en' ? null : await (TXL_CACHE[l] = TXL_CACHE[l] || fetch('lang/' + l + '-text.json').then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).catch(() => { delete TXL_CACHE[l]; return null; }));
+  if (my !== langReq) return;
+  applyTx();
+}
+/* stages 2 and 3: place descriptions, Cabbie's Stories, walks, day plans and day trips, from lang/xx-text.json.
+   Places are looked up with PT(place, 'why' | 'line' | 'story' | 'claim'); the English stays in the place itself,
+   because searches and lists (Michelin, oldest pubs, film…) test the English words. Anything not yet translated
+   (e.g. a place added since) simply shows in English. */
+let TXL = null; const TXL_CACHE = {};
+const PT = (p, f) => (TXL && TXL.places && TXL.places[p.id] && TXL.places[p.id][f]) || p[f];
+/* walks, plans and trips are swapped over in place: the English is kept in _en so we can switch back */
+function mergeTx(o, tr) { for (const k in tr) { const v = tr[k]; if (typeof v === 'string') { if (v) o[k] = v; } else if (v && o[k] && typeof o[k] === 'object') mergeTx(o[k], v); } }
+function applyTx() {
+  [[typeof WALKS !== 'undefined' && WALKS, 'walks', 'id'], [typeof PLANS !== 'undefined' && PLANS, 'plans', 'n'], [typeof TRIPS !== 'undefined' && TRIPS, 'trips', 'id']].forEach(([list, k, key]) => {
+    (list || []).forEach(o => {
+      if (!o._en) o._en = JSON.parse(JSON.stringify(o)); else mergeTx(o, o._en);
+      const tr = TXL && TXL[k] && TXL[k][o[key]]; if (tr) mergeTx(o, tr);
+    });
+  });
 }
 async function setLang(l) { if (!LANGS.some(x => x[0] === l)) return; LANG = l; store.set('el_lang', l); STATS.ev('Language', {lang: l}); await loadLang(l); route(); }
 /* the six flags on Home, drawn here (emoji flags don't show on Windows) */
@@ -602,7 +621,7 @@ function walkTime(p, short) { if (p.lat == null) return ''; const m = mins(dist(
 
 async function load() {
   const [a, b] = await Promise.all([fetch('places.json').then(r => r.json()), fetch('walks.json').then(r => r.json())]);
-  P = a; WALKS = b; byId = Object.fromEntries(P.map(p => [p.id, p]));
+  P = a; WALKS = b; byId = Object.fromEntries(P.map(p => [p.id, p])); applyTx();
   applyGeoCache(); geocodeMissing();
 }
 
@@ -746,7 +765,7 @@ function meta(p) {
 }
 function row(p, cat, badge) {
   const m = badge ? [p.area.replace(/ & .*/, ''), walkTime(p, true)].filter(Boolean).join(' · ') : meta(p);
-  return `<a class="row-card" href="#/place/${p.id}">${thumb(p, 52, cat)}<span class="rc-t"><span class="rc-n">${esc(p.name)}</span><span class="rc-m">${badge ? `<span class="hit">${esc(badge)}</span> · ` : ''}${esc(m)}</span><span class="rc-l">${esc(p.line)}</span></span></a>`;
+  return `<a class="row-card" href="#/place/${p.id}">${thumb(p, 52, cat)}<span class="rc-t"><span class="rc-n">${esc(p.name)}</span><span class="rc-m">${badge ? `<span class="hit">${esc(badge)}</span> · ` : ''}${esc(m)}</span><span class="rc-l">${esc(PT(p, 'line'))}</span></span></a>`;
 }
 function tabs(on) {
   const tb = [['Explore','#/','home2'],['Map','#/map','pin'],['Walks','#/walks','walk'],['My List','#/list','heart'],['Transfers','#/transfers','cab']];
@@ -1415,7 +1434,7 @@ const ON_THIS_DAY = {
 const ON_THIS_DAY_PLACE = {'1-4':349, '1-5':348, '1-8':449, '1-9':353, '1-10':77, '1-11':353, '1-13':702, '1-15':377, '1-18':348, '1-20':349, '1-24':355, '1-25':358, '1-26':839, '1-27':349, '1-29':383, '1-30':83, '1-31':349, '2-2':415, '2-3':496, '2-6':52, '2-7':398, '2-8':77, '2-9':356, '2-10':352, '2-12':347, '2-13':358, '2-20':463, '2-23':34, '2-25':353, '3-3':393, '3-7':77, '3-9':5, '3-10':464, '3-14':433, '3-15':310, '3-16':467, '3-18':361, '3-19':382, '3-20':528, '3-23':68, '3-25':72, '3-29':453, '3-31':85, '4-2':349, '4-3':463, '4-4':422, '4-5':361, '4-8':378, '4-9':72, '4-11':348, '4-12':455, '4-14':68, '4-15':426, '4-18':379, '4-20':349, '4-23':367, '4-24':52, '4-25':369, '4-26':348, '4-27':371, '4-28':455, '4-29':348, '4-30':51, '5-1':128, '5-3':521, '5-6':348, '5-7':462, '5-8':350, '5-9':347, '5-10':349, '5-11':349, '5-12':381, '5-13':355, '5-15':462, '5-16':426, '5-17':64, '5-19':347, '5-21':347, '5-22':399, '5-23':419, '5-24':356, '5-26':81, '5-28':667, '5-31':349, '6-1':348, '6-2':348, '6-4':355, '6-5':371, '6-6':81, '6-9':398, '6-10':381, '6-11':496, '6-12':367, '6-14':347, '6-15':396, '6-17':381, '6-18':437, '6-19':516, '6-20':356, '6-21':128, '6-24':348, '6-25':369, '6-26':430, '6-28':496, '6-29':367, '6-30':6, '7-2':128, '7-3':86, '7-4':77, '7-5':128, '7-6':410, '7-7':469, '7-9':469, '7-11':349, '7-12':443, '7-13':455, '7-17':68, '7-19':348, '7-21':382, '7-22':462, '7-23':460, '7-27':499, '7-29':353, '7-30':455, '7-31':455, '8-4':499, '8-5':77, '8-6':248, '8-7':350, '8-8':81, '8-9':348, '8-10':453, '8-12':503, '8-16':462, '8-17':500, '8-20':698, '8-21':349, '8-23':417, '8-24':396, '8-29':52, '9-2':362, '9-3':355, '9-5':463, '9-6':348, '9-7':355, '9-9':350, '9-10':352, '9-12':418, '9-13':350, '9-14':349, '9-16':448, '9-17':516, '9-18':85, '9-19':348, '9-20':440, '9-22':702, '9-26':128, '9-28':699, '9-30':354, '10-1':989, '10-2':468, '10-8':393, '10-12':129, '10-13':370, '10-14':454, '10-15':493, '10-16':349, '10-20':353, '10-21':354, '10-25':477, '10-29':349, '10-30':92, '10-31':993, '11-1':52, '11-2':588, '11-3':462, '11-4':893, '11-5':349, '11-7':49, '11-8':68, '11-11':348, '11-13':398, '11-14':989, '11-16':308, '11-17':349, '11-18':348, '11-19':348, '11-20':348, '11-21':310, '11-22':361, '11-24':445, '11-29':400, '11-30':500, '12-2':353, '12-3':454, '12-4':396, '12-9':349, '12-11':462, '12-12':349, '12-13':426, '12-15':77, '12-18':77, '12-19':398, '12-20':494, '12-22':81, '12-25':348, '12-27':51, '12-28':348, '12-29':353, '12-31':349};
 /* ---------- Free day plans ("I've got a free day") ---------- */
 let PLANS = null;
-async function loadPlans() { if (!PLANS) { try { PLANS = await fetch('plans.json').then(r => r.json()); } catch { PLANS = []; } } return PLANS; }
+async function loadPlans() { if (!PLANS) { try { PLANS = await fetch('plans.json').then(r => r.json()); applyTx(); } catch { PLANS = []; } } return PLANS; }
 async function plansScreen() {
   setTitle(t('Free day plans')); await loadPlans();
   app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px">${t('I’ve got a free day')}</h1><span style="font-size:14px;color:#C9D3E6">${t('Day plans from the cabbies, hour by hour')}</span></div></div></div>
@@ -1438,7 +1457,7 @@ async function planScreen(n) {
 
 /* ---------- Beyond London: day trips ---------- */
 let TRIPS = null;
-async function loadTrips() { if (!TRIPS) { try { TRIPS = await fetch('trips.json').then(r => r.json()); } catch { TRIPS = []; } } return TRIPS; }
+async function loadTrips() { if (!TRIPS) { try { TRIPS = await fetch('trips.json').then(r => r.json()); applyTx(); } catch { TRIPS = []; } } return TRIPS; }
 async function dayTrips() {
   setTitle(t('Day trips'));
   await loadTrips();
@@ -1580,7 +1599,7 @@ const oldestList = () => P.filter(p => tagIs(p, 'London\'s oldest')).sort((a, b)
 function oldestScreen() {
   setTitle(t('London’s oldest'));
   app.innerHTML = `<div class="top"><div class="row">${backBtn('#/')}<div style="display:flex;flex-direction:column"><h1 style="margin:0;font-weight:800;font-size:22px">${t('London’s oldest')}</h1><span style="font-size:14px;color:#C9D3E6">${t('The oldest of everything, in one place')}</span></div></div></div>
-    <div class="content"><div style="display:flex;flex-direction:column;gap:6px">${oldestList().map(p => row(p).replace(/<span class="rc-l">[^<]*<\/span>/, `<span class="rc-l" style="white-space:normal;color:var(--ink);font-weight:600">${esc(p.claim || p.line)}</span>`)).join('')}</div>
+    <div class="content"><div style="display:flex;flex-direction:column;gap:6px">${oldestList().map(p => row(p).replace(/<span class="rc-l">[^<]*<\/span>/, `<span class="rc-l" style="white-space:normal;color:var(--ink);font-weight:600">${esc(PT(p, 'claim') || PT(p, 'line'))}</span>`)).join('')}</div>
     <p class="note" style="margin:0">${t('Where a record is disputed, we say the place claims it.')}</p></div>${tabs('Explore')}`;
 }
 
@@ -1700,7 +1719,7 @@ function catMeta(p, k) {
   return bits.filter(Boolean).join(' · ');
 }
 function catRow(p, k) {
-  return `<a class="row-card" href="#/place/${p.id}">${catTile(p, k)}<span class="rc-t"><span class="rc-n">${esc(p.name)}</span><span class="rc-m">${esc(catMeta(p, k))}</span><span class="rc-l">${esc(p.line)}</span></span></a>`;
+  return `<a class="row-card" href="#/place/${p.id}">${catTile(p, k)}<span class="rc-t"><span class="rc-n">${esc(p.name)}</span><span class="rc-m">${esc(catMeta(p, k))}</span><span class="rc-l">${esc(PT(p, 'line'))}</span></span></a>`;
 }
 function category(k) {
   const c = CAT[k]; if (!c) return home();
@@ -1775,8 +1794,8 @@ function place(id) {
       <h1 style="margin:0;font-weight:800;font-size:26px;line-height:1.1">${esc(p.name)}</h1>
       <span style="font-size:14px;color:var(--muted)">${esc(shortAddr(p))}${p.lat != null ? ' · ' + walkTime(p) : ''}${p.approx ? ' (' + t('approx. pin') + ')' : ''}</span>
       ${tags.length || p.cuisine ? `<div class="tags">${(p.cuisine ? p.cuisine.split(',').map(x => t(x.trim())).filter(Boolean).slice(0, 2) : []).concat(tags).slice(0, 4).map((x, i) => `<span class="tag" style="background:${BG[i % 5]}">${esc(x)}</span>`).join('')}</div>` : ''}
-      <p style="margin:0;font-size:15.5px;line-height:1.5;white-space:pre-line">${esc(p.why)}</p>
-      ${p.comment ? `<div style="background:#FFF4E8;border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:3px"><span class="kicker">⭐ ${t('Explore London customer comment')}</span><span style="font-size:15px;line-height:1.45">“${esc(p.comment.text)}”${p.comment.name ? ` – ${esc(p.comment.name)}` : ''}</span></div>` : ''}
+      <p style="margin:0;font-size:15.5px;line-height:1.5;white-space:pre-line">${esc(PT(p, 'why'))}</p>
+      ${p.comment ? `<div style="background:#FFF4E8;border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:3px"><span class="kicker">⭐ ${t('Explore London customer comment')}</span><span style="font-size:15px;line-height:1.45">“${esc(PT(p, 'comment') || p.comment.text)}”${p.comment.name ? ` – ${esc(p.comment.name)}` : ''}</span></div>` : ''}
       <div class="row" style="gap:8px">
         ${p.lat != null ? `<a class="bigbtn" style="height:46px;flex:1" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=walking">${svg('arrow', 18, '#F28C38', 2.2)} ${t('Walk there')}</a>` : ''}
         ${p.website ? `<a class="ghost" target="_blank" rel="noopener" href="${esc(p.website)}">${t('Website')}</a>` : ''}
@@ -1786,7 +1805,7 @@ function place(id) {
       <div id="gt"></div>
     </div>
     <div class="content" style="padding-top:10px">
-      ${p.story ? `<div class="story" style="gap:8px"><span class="row" style="gap:10px"><img src="img/matt.jpg" alt="" style="width:40px;height:40px;border-radius:20px;object-fit:cover;background:var(--orange)"><span style="display:flex;flex-direction:column"><b class="disp" style="font-size:15px">${t('The Cabbie’s Story')}</b><span style="font-size:12.5px;color:#6B5440">${t('from the cabbies')}</span></span></span><p style="margin:0;font-size:14.5px;line-height:1.4">${esc(p.story)}</p></div>` : ''}
+      ${p.story ? `<div class="story" style="gap:8px"><span class="row" style="gap:10px"><img src="img/matt.jpg" alt="" style="width:40px;height:40px;border-radius:20px;object-fit:cover;background:var(--orange)"><span style="display:flex;flex-direction:column"><b class="disp" style="font-size:15px">${t('The Cabbie’s Story')}</b><span style="font-size:12.5px;color:#6B5440">${t('from the cabbies')}</span></span></span><p style="margin:0;font-size:14.5px;line-height:1.4">${esc(PT(p, 'story'))}</p></div>` : ''}
       ${near.length ? `<h2 style="margin:4px 0 0;font-size:15px;font-weight:800">${t('Also nearby')}</h2><div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">${near.map(([q, m]) => `<a href="#/place/${q.id}" style="display:flex;align-items:center;gap:8px;background:#fff;border-radius:12px;padding:8px;text-decoration:none;box-shadow:0 1px 2px rgba(15,30,61,.08)">${catTile(q, q.cats[0], 34).replace('class="thumb', 'class="thumb sm')}<span style="display:flex;flex-direction:column;min-width:0"><span style="font-weight:700;font-size:13.5px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(q.name)}</span><span style="font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(q.cats[0] === 'Blue Plaques' ? t('Blue plaque') : (collOf(q, q.cats[0]) ? shortLabel(collOf(q, q.cats[0]).label) : t((CAT[q.cats[0]] || CATS[0]).s)))} · ${t('{n} min', {n: mins(m)})}</span></span></a>`).join('')}</div>` : ''}
       ${p.cats.includes('Blue Plaques') ? '' : suggestLink('place-' + p.id)}
     </div>${tabs('Explore')}`;
@@ -1886,9 +1905,9 @@ function mapScreen(focusId) {
   const show = p => {
     const card = document.getElementById('mcard'); const isPl = p.cats.includes('Blue Plaques');
     card.style.display = 'block';
-    card.innerHTML = `<div class="card"><div class="row" style="align-items:flex-start">${thumb(p, 48)}<span class="rc-t"><span style="font-size:11.5px;font-weight:700;color:${isPl ? 'var(--plaque)' : '#A8551A'};text-transform:uppercase;letter-spacing:.5px">${esc(isPl ? t('Blue plaque') + ' · ' + (p.tags[1] || '') : t(p.cats[0]))}</span><span class="rc-n" style="white-space:normal">${esc(p.name)}</span><span style="font-size:13px;color:#2B3A55">${esc(p.line)}</span><span class="rc-m">${esc(p.area)} · ${walkTime(p)}</span></span>
+    card.innerHTML = `<div class="card"><div class="row" style="align-items:flex-start">${thumb(p, 48)}<span class="rc-t"><span style="font-size:11.5px;font-weight:700;color:${isPl ? 'var(--plaque)' : '#A8551A'};text-transform:uppercase;letter-spacing:.5px">${esc(isPl ? t('Blue plaque') + ' · ' + (p.tags[1] || '') : t(p.cats[0]))}</span><span class="rc-n" style="white-space:normal">${esc(p.name)}</span><span style="font-size:13px;color:#2B3A55">${esc(PT(p, 'line'))}</span><span class="rc-m">${esc(p.area)} · ${walkTime(p)}</span></span>
       <button class="iconbtn light" id="mclose" aria-label="${esc(t('Close'))}" style="width:36px;height:36px;box-shadow:none">✕</button></div>
-      ${p.story ? `<div class="story" style="padding:8px 10px;font-size:13px;line-height:1.35"><span><b class="k">${t('The Cabbie’s Story')} · </b>${esc(p.story)}</span></div>` : ''}
+      ${p.story ? `<div class="story" style="padding:8px 10px;font-size:13px;line-height:1.35"><span><b class="k">${t('The Cabbie’s Story')} · </b>${esc(PT(p, 'story'))}</span></div>` : ''}
       <div class="row" style="gap:8px"><a class="bigbtn" style="height:44px;flex:1" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=walking">${svg('arrow', 18, '#F28C38', 2.2)} ${t('Walk there')}</a><a class="ghost" href="#/place/${p.id}">${t('More')}</a></div></div>`;
     document.getElementById('mclose').onclick = () => { card.style.display = 'none'; if (st.sel) { st.sel = null; draw(); } };
     if (st.sel !== p.id) { st.sel = p.id; draw(); }
@@ -2055,7 +2074,7 @@ function buildWalk() {
     pool.sort((x, y) => dist(cur[0], cur[1], x.lat, x.lng) - dist(cur[0], cur[1], y.lat, y.lng));
     const n = pool[0], walk = dist(cur[0], cur[1], n.lat, n.lng) / CONFIG.walkSpeed, dwell = T >= 120 ? 12 : 7;
     if (walk + dwell > left) break;
-    stops.push({name: n.name, lat: n.lat, lng: n.lng, note: n.story || n.line, id: n.id, at: Math.round(T - left + walk)});
+    stops.push({name: n.name, lat: n.lat, lng: n.lng, note: PT(n, 'story') || PT(n, 'line'), id: n.id, at: Math.round(T - left + walk)});
     left -= walk + dwell; cur = [n.lat, n.lng]; pool = pool.slice(1);
   }
   return {id: 'mine', title: t('My walk: {list}', {list: ints.map(x => t(x)).join(', ')}), meta: t('{n} stops · about {time}', {n: stops.length, time: T >= 60 ? (T === 60 ? t('1 hour') : t('{n} hours', {n: T / 60})) : t('{n} min', {n: T})}), intro: meReal ? t('Built from where you are now.') : t('Built from {place}. In London with location on, it starts where you are.', {place: CONFIG.demoStart[2]}), color: '#F28C38', stops, start: [a, b]};
@@ -2067,7 +2086,7 @@ const ARRIVE_M = 35;
 let walkWatch = null;
 function stopStory(s) {
   const p = s.id ? byId[s.id] : P.find(q => q.story && q.lat != null && dist(s.lat, s.lng, q.lat, q.lng) < 6);
-  return p && p.story ? p.story : '';
+  return p && p.story ? PT(p, 'story') : '';
 }
 function buzz() {
   try { if (NATIVE && Capacitor.Plugins && Capacitor.Plugins.Haptics) return native('Haptics', 'vibrate', {duration: 500}).catch(() => {}); } catch {}
@@ -2191,7 +2210,7 @@ function myList(view) {
 function dayWalk(area) {
   const ps = [...saved].map(i => byId[i]).filter(p => p && p.area === area && p.lat != null);
   const stops = []; let pool = ps.slice(), cur = pool.length ? [pool[0].lat, pool[0].lng] : here();
-  while (pool.length) { pool.sort((x, y) => dist(cur[0], cur[1], x.lat, x.lng) - dist(cur[0], cur[1], y.lat, y.lng)); const n = pool.shift(); stops.push({name: n.name, lat: n.lat, lng: n.lng, note: n.story || n.line, id: n.id}); cur = [n.lat, n.lng]; }
+  while (pool.length) { pool.sort((x, y) => dist(cur[0], cur[1], x.lat, x.lng) - dist(cur[0], cur[1], y.lat, y.lng)); const n = pool.shift(); stops.push({name: n.name, lat: n.lat, lng: n.lng, note: PT(n, 'story') || PT(n, 'line'), id: n.id}); cur = [n.lat, n.lng]; }
   WALKS = WALKS.filter(w => w.id !== 'day'); WALKS.push({id: 'day', title: t('My day in {area}', {area}), meta: t('{n} stops from My List', {n: stops.length}), intro: t('Your saved places, in a sensible walking order.'), color: '#F28C38', tag: 'My List', stops});
   walkScreen('day'); WALKS = WALKS.filter(w => w.id !== 'day');
 }
