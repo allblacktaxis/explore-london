@@ -13,17 +13,18 @@ Tick items off (`- [x]`) when they're done, and add anything new Matt asks for.
 
 ## Translation (agreed 17 Nov: option C – everything, in stages; Spanish, French, German, Italian, Chinese; row of 6 small flags under "Explore London" on Home, UK flag to switch back; auto-pick phone language)
 - [x] Stage 1: flags + the app's own words (641 phrases × 5 languages, lang/*.json) – live 17 Nov. Search still English-only (box says so); WhatsApp/suggest messages stay English
-- [ ] Stage 2: most-visited places, walks and Cabbie's Stories
-- [ ] Stage 3: everything else, area by area (and translate each new place as it's added)
+- [x] Stage 2 + 3 (25 Nov): every place description and one-liner (all 1,460 places), all Cabbie's Stories, "London's oldest" claims, the 13 walks, 16 day plans and 9 day trips, in all 5 languages (lang/xx-text.json). Place names, street names and business names stay in English
+- [ ] Translate each new place as it's added (until then a new place simply shows in English)
+- [ ] Search still only understands English words (the box says so) – making it work in other languages, especially Chinese, is a bigger job; ask Matt if wanted
 
 ## Content
+- [ ] Notes-to-self showing in place descriptions (in English and now all 5 languages): Harry Potter flagship store (#541, "check address and opening before publishing" – it opened 4 Nov), SPYSCAPE (#576, "Check location before publishing"), The Umi (#722, "Address to confirm"), and a "(Matt's pick – spelt Caddi.)" note. Check the facts, then remove the notes in English and the translations
 - [ ] Oldest pubs: set a `year` for other old pubs that still have none (e.g. The Anchor Bankside, The Dove, The Gatehouse, The Grenadier, The Gun) – check dates first
 - [ ] Photos – fix the photos on every place where the photo isn't correct (go through all places, Matt to confirm the wrong ones). Checklist sent 24 Nov: https://claude.ai/artifact/7cmCpo9ixJEakbM9yWfFTF – 235 places get a Wikipedia photo, 29 flagged as likely wrong. Matt ticks Right/Wrong there; Claude then reads the answers and blocks the wrong ones (PHOTO_BLOCK in index.html) in one batch.
 - [ ] Restaurant batch, area by area (held list from the old chat is lost, so building fresh): done Battersea, Richmond & Kew, Greenwich, King's Cross, Kensington, Docklands (first pass) – Matt wants to talk more about Kensington
 - [ ] Fish & chips: King's Cross still has no chippy in its own area (nearest is North Sea Fish, Leigh Street, filed under Bloomsbury) – leave unless Matt wants it moved
 
 - [ ] Batch 24 Nov – still to confirm: The Bull is in Charlbury, Oxfordshire (added under Beyond London – keep or remove?); "Virtual Arena" at Battersea doesn't exist, added DNA VR Battersea instead; Veeraswamy lease case in court (Nov 2026) – re-check it's still open; car hire opening hours came from search results, not the firms' own pages – spot-check (Enterprise Paddington and Europcar Heathrow hours unknown); "Arcades" pill still includes bingo/board-game bars (Hijingo, Dabbers, Draughts, Fairgame) – rename to "Arcades & games"?
-- [ ] Translation stage 2/3 not started, so the 41 new places are English only for now (new buttons and labels are translated)
 
 ## To discuss
 - [x] Built 17 Nov – Home screen redesign (mock-up: https://claude.ai/artifact/49YuMGTNF89FiYZsDcKcYL): 4 group buttons (History & sights first) with hints; Near me now + Tube & Trains at the top; bigger "Plan your day" cards; keep search, Where are you staying?, On this day. Matt chose A (options open underneath on the same screen) and the list layout (one group per row, not 2×2). Headings: "Things to do in London" above the 4 groups, "Plan your day" above the cards. Keep the app's existing category icons and tile colours exactly (catIcon / CAT colours) – the mock-up's emoji are placeholders only. Built and live 17 Nov.
